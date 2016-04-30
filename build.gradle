@@ -1,0 +1,21 @@
+plugins {
+    id "java"
+    id "idea"
+    id "eclipse"
+    id "application"
+}
+
+version = "0.0.0"
+group = "net.gegy1000"
+archivesBaseName = "slyther"
+mainClassName = "net.gegy1000.slyther.client.ClientMain"
+sourceCompatibility = targetCompatibility = "1.8"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: "libs", include: "*.jar")
+    compile "org.java-websocket:Java-WebSocket:1.3.0"
+}
