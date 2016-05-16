@@ -6,7 +6,7 @@ import java.nio.ByteOrder;
 public class MessageByteBuffer {
     private byte[] bytes;
     private int index;
-    private int highestIndex;
+    private int length;
 
     public static final ByteOrder BYTE_ORDER = ByteOrder.BIG_ENDIAN;
 
@@ -16,9 +16,10 @@ public class MessageByteBuffer {
     }
 
     public MessageByteBuffer(byte[] bytes) {
-        this.bytes = bytes;
-        this.highestIndex = bytes.length;
-        resetIndex();
+        this.resetIndex();
+        this.bytes = new byte[bytes.length];
+        this.length = bytes.length;
+        System.arraycopy(bytes, 0, this.bytes, 0, bytes.length);
     }
 
     public void writeByte(byte b) {
@@ -162,28 +163,32 @@ public class MessageByteBuffer {
     public void incrementIndex(int amount) {
         index += amount;
 
-        if (index > highestIndex) {
-            highestIndex = index;
+        if (index > length) {
+            length = index;
         }
     }
 
     public byte[] toBytes() {
-        byte[] returnBytes = new byte[highestIndex];
+        byte[] returnBytes = new byte[length];
 
-        System.arraycopy(bytes, 0, returnBytes, 0, highestIndex);
+        System.arraycopy(bytes, 0, returnBytes, 0, length);
 
         return returnBytes;
     }
 
     public boolean hasNext() {
-        return hasNext(0);
+        return hasNext(1);
     }
 
     public boolean hasNext(int count) {
-        return index + count < bytes.length;
+        return index + count < length;
     }
 
-    public int amountLeft() {
+    public int getBytesLeft() {
         return bytes.length - index;
+    }
+
+    public int length() {
+        return length;
     }
 }

@@ -1,38 +1,40 @@
 package net.gegy1000.slyther.game;
 
 public class Food {
-    private int id;
-    private short x;
-    private short y;
-    private byte color;
-    private byte size;
+    public int id;
+    public float posX;
+    public float posY;
+    public float rx;
+    public float ry;
+    public int rsp;
+    public Color cv;
+    public float rad;
+    public float sz;
+    public float lrrad;
+    public float fr;
+    public float gfr;
+    public float gr;
+    public float wsp;
+    public float eatenFr;
+    public boolean eaten;
+    public Snake eater;
+    public int sx; // Sector X?
+    public int sy;
 
-    public Food(int id, short x, short y, byte size, byte color) {
+    public Food(int id, float x, float y, float size, boolean u, Color color) {
         this.id = id;
-        this.x = x;
-        this.y = y;
-        this.size = size;
-        this.color = color;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public short getX() {
-        return this.x;
-    }
-
-    public short getY() {
-        return this.y;
-    }
-
-    public byte getSize() {
-        return this.size;
-    }
-
-    public byte getColor() {
-        return this.color;
+        this.posX = x;
+        this.posY = y;
+        this.rx = x;
+        this.ry = y;
+        this.rsp = u ? 2 : 1;
+        this.cv = color;
+        this.rad = 0.00001F;
+        this.sz = size;
+        this.lrrad = this.rad;
+        this.gfr = (int) (64.0F * Math.random());
+        this.gr = 0.64F + 0.1F * this.sz;
+        this.wsp = (float) (0.0225F * (2.0F * Math.random() - 1.0F));
     }
 
     @Override

@@ -11,17 +11,31 @@ public enum MessageHandler {
     private final Map<Byte, Class<? extends SlytherServerMessageBase>> SERVER_MESSAGES = new HashMap<>();
 
     MessageHandler() {
+        this.registerServer(MessagePing.class);
         this.registerServer(MessageSetup.class);
         this.registerServer(MessageNewSnake.class);
-        this.registerServer(MessagePositionUpdate.class);
-        this.registerServer(MessageAddFood.class);
-        this.registerServer(MessageFoodEaten.class);
+        this.registerServer(MessageSendSector.class);
+        this.registerServer(MessageNewFood.class);
+        this.registerServer(MessageNewPrey.class);
+        this.registerServer(MessageUpdateSnakePosition.class);
+        this.registerServer(MessageUpdateSnakeParts.class);
+        this.registerServer(MessagePreyPositionUpdate.class);
+        this.registerServer(MessageUpdateFam.class);
+        this.registerServer(MessageRemoveFood.class);
+        this.registerServer(MessageRemoveSnakePart.class);
+        this.registerServer(MessageUpdateLeaderboard.class);
+        this.registerServer(MessageUpdateLongestPlayer.class);
+        this.registerServer(MessageAddSector.class);
+        this.registerServer(MessageRemoveSector.class);
+        this.registerServer(MessagePlayerDeath.class);
     }
 
     public void registerServer(Class<? extends SlytherServerMessageBase> message) {
         try {
             SlytherServerMessageBase messageObject = message.getConstructor().newInstance();
-            SERVER_MESSAGES.put((byte) messageObject.getMessageId(), message);
+            for (int id : messageObject.getMessageIds()) {
+                SERVER_MESSAGES.put((byte) id, message);
+            }
         } catch (Exception e) {
             System.err.println("Error while registering message " + message.getName());
             e.printStackTrace();

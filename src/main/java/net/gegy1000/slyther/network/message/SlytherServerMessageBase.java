@@ -8,12 +8,12 @@ import net.gegy1000.slyther.server.SlytherServer;
  * Message being sent to the client
  */
 public abstract class SlytherServerMessageBase {
-    public byte messageType;
-    public short timeSinceLastMessage;
+    public byte messageId;
+    public short serverTimeDelta;
 
     public final void writeBase(MessageByteBuffer buffer, SlytherServer server) {
-        buffer.writeShort((short) 0); //TODO timeSinceLastMessage
-        buffer.writeByte((byte) this.getMessageId());
+//        buffer.writeShort((short) 0); //TODO serverTimeDelta
+//        buffer.writeByte((byte) this.getMessageIds());
         this.write(buffer, server);
     }
 
@@ -25,5 +25,5 @@ public abstract class SlytherServerMessageBase {
 
     public abstract void read(MessageByteBuffer buffer, SlytherClient client);
 
-    public abstract int getMessageId();
+    public abstract int[] getMessageIds();
 }

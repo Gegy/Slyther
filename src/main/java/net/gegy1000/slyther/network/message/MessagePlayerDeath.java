@@ -1,25 +1,23 @@
 package net.gegy1000.slyther.network.message;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.game.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.server.SlytherServer;
 
-public class MessagePing extends SlytherServerMessageBase {
+public class MessagePlayerDeath extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server) {
     }
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        client.wfpr = false;
-        if (client.lagging) {
-            client.etm *= client.lagMultiplier;
-            client.lagging = false;
-        }
+        Snake player = client.player;
+        System.out.println("Final length: " + (int) Math.floor(15.0F * (client.getFPSL(player.sct) + player.fam / client.getFMLT(player.sct) - 1.0F) - 5.0F));
     }
 
     @Override
     public int[] getMessageIds() {
-        return new int[] { 'p' };
+        return new int[] { 'v' };
     }
 }

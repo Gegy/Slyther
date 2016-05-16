@@ -24,23 +24,23 @@ public class MessageSetup extends SlytherServerMessageBase {
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         int gameRadius = buffer.readInt24();
-        short msCPS = buffer.readShort();
+        short mscps = buffer.readShort();
         short sectorSize = buffer.readShort();
         short sectorCountAlongEdge = buffer.readShort();
         float spangDV = buffer.readByte() / 10.0F;
-        float nodeSpeed1 = buffer.readShort() / 100.0F;
-        float nodeSpeed2 = buffer.readShort() / 100.0F;
-        float nodeSpeed3 = buffer.readShort() / 100.0F;
+        float nsp1 = buffer.readShort() / 100.0F;
+        float nsp2 = buffer.readShort() / 100.0F;
+        float nsp3 = buffer.readShort() / 100.0F;
         float mamu = buffer.readShort() / 1000.0F;
         float manu2 = buffer.readShort() / 1000.0F;
         float cst = buffer.readShort() / 1000.0F;
         byte protocolVersion = buffer.readByte();
 
-        client.setup(gameRadius, msCPS, sectorSize, sectorCountAlongEdge, spangDV, nodeSpeed1, nodeSpeed2, nodeSpeed3, mamu, manu2, cst, protocolVersion);
+        client.setup(gameRadius, mscps, sectorSize, sectorCountAlongEdge, spangDV, nsp1, nsp2, nsp3, mamu, manu2, cst, protocolVersion);
     }
 
     @Override
-    public int getMessageId() {
-        return 'a';
+    public int[] getMessageIds() {
+        return new int[] { 'a' };
     }
 }
