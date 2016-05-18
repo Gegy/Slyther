@@ -20,6 +20,8 @@ public class Food {
     public Snake eater;
     public int sx; // Sector X?
     public int sy;
+    public float fw;
+    public float fh;
 
     public Food(int id, float x, float y, float size, boolean u, Color color) {
         this.id = id;

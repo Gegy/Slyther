@@ -58,10 +58,10 @@ public class MessageUpdateSnakeParts extends SlytherServerMessageBase {
                 float fy = snake.posY + snake.fy - part.posY;
                 part.fx += fx;
                 part.fy += fy;
-                part.exs.set(part.eiu, fx);
-                part.eys.set(part.eiu, fy);
-                part.efs.set(part.eiu, 0);
-                part.ems.set(part.eiu, 1.0F);
+                part.exs[part.eiu] = fx;
+                part.eys[part.eiu] = fy;
+                part.efs[part.eiu] = 0;
+                part.ems[part.eiu] = 1.0F;
                 part.eiu++;
             }
             if (snake.pts.size() - 3 >= 1) {
@@ -82,10 +82,10 @@ public class MessageUpdateSnakeParts extends SlytherServerMessageBase {
                         fy -= part.posY;
                         part.fx += fx;
                         part.fy += fy;
-                        part.exs.set(part.eiu, fx);
-                        part.eys.set(part.eiu, fy);
-                        part.efs.set(part.eiu, 0);
-                        part.ems.set(part.eiu, 2.0F);
+                        part.exs[part.eiu] = fx;
+                        part.eys[part.eiu] = fy;
+                        part.efs[part.eiu] = 0;
+                        part.ems[part.eiu] = 2.0F;
                         part.eiu++;
                     }
                     prevPart = part;

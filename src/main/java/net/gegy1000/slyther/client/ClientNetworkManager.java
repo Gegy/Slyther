@@ -24,6 +24,8 @@ public class ClientNetworkManager extends WebSocketClient {
 
     public static final Map<String, String> HEADERS = new HashMap<>();
 
+    public int bytesPerSecond;
+
     static {
         HEADERS.put("Origin", "http://slither.io");
         HEADERS.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
@@ -61,7 +63,7 @@ public class ClientNetworkManager extends WebSocketClient {
 
     public void ping() {
         if (!client.wfpr) {
-            this.send(new byte[] { 'p' });
+            this.send(new byte[] { (byte) 251 });
             this.client.wfpr = true;
         }
     }
@@ -74,6 +76,7 @@ public class ClientNetworkManager extends WebSocketClient {
     public void onMessage(ByteBuffer byteBuffer) {
         MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer.order(MessageByteBuffer.BYTE_ORDER).array());
         if (buffer.length() >= 2) {
+            bytesPerSecond += buffer.length();
             client.lastPacketTime = client.currentPacketTime;
             client.currentPacketTime = System.currentTimeMillis();
             short serverTimeDelta = buffer.readShort();

@@ -49,8 +49,8 @@ public class Snake {
     public int epiw;
     public int epih;
     public int episz;
-    public int[] rbcs;
-    public int cv;
+    public SkinColor[] rbcs;
+    public SkinColor cv;
     public int fnfr = 0;
     public int na;
     public float chl;
@@ -118,10 +118,9 @@ public class Snake {
         this.posY = y;
         this.setSkin(skin);
         this.na = 1;
-        SkinColor color = SkinColor.values()[this.cv];
-        this.rr = (int) Math.min(255, color.red + Math.floor(20.0F * Math.random()));
-        this.gg = (int) Math.min(255, color.green + Math.floor(20.0F * Math.random()));
-        this.bb = (int) Math.min(255, color.blue + Math.floor(20.0F * Math.random()));
+        this.rr = (int) Math.min(255, this.cv.red + Math.floor(20.0F * Math.random()));
+        this.gg = (int) Math.min(255, this.cv.green + Math.floor(20.0F * Math.random()));
+        this.bb = (int) Math.min(255, this.cv.blue + Math.floor(20.0F * Math.random()));
         this.cs = ((rr & 0xFF) << 16) | ((gg & 0xFF) << 8) | (bb & 0xFF);
         this.cs04 = (int) ((Math.min(255, Math.max(0, Math.round(0.4 * rr))) & 0xFF) << 16 | Math.min(255, Math.max(0, Math.round(0.4 * gg) & 0xFF) << 8) | Math.min(255, Math.max(0, Math.round(0.4 * bb) & 0xFF)));
         this.csw = (int) ((Math.min(255, Math.max(0, Math.round(0.5 * rr))) & 0xFF) << 16 | Math.min(255, Math.max(0, Math.round(0.5 * gg) & 0xFF) << 8) | Math.min(255, Math.max(0, Math.round(0.5 * bb) & 0xFF)));
@@ -239,15 +238,16 @@ public class Snake {
             this.swell = 0.06F;
         }
 
-        int[] pattern = SkinColorHandler.INSTANCE.getPattern(skin);
+        SkinColor[] pattern = SkinColorHandler.INSTANCE.getPattern(skin);
+
+        this.rbcs = pattern;
 
         if (pattern != null) {
             this.cv = pattern[0];
         } else {
-            this.cv = skin.ordinal();
+            this.cv = SkinColor.values()[skin.ordinal()];
+            this.rbcs = new SkinColor[] { this.cv };
         }
-
-        this.rbcs = pattern;
     }
 
     public void snl() {
@@ -425,7 +425,7 @@ public class Snake {
             this.posY += Math.sin(this.ang) * moveAmount;
             this.chl += moveAmount / this.msl;
         }
-        if (vfrb < 0) {
+        if (vfrb > 0) {
             for (int partIndex = this.pts.size() - 1; partIndex >= 0; partIndex--) {
                 part = this.pts.get(partIndex);
                 if (part.dying) {
@@ -436,28 +436,25 @@ public class Snake {
                         client.deadpool.add(part);
                     }
                 }
-            }
-            for (int partIndex = this.pts.size() - 1; partIndex >= 0; partIndex--) {
-                part = this.pts.get(partIndex);
                 if (part.eiu > 0) {
                     int fx = 0;
                     int fy = 0;
                     int cm = part.eiu - 1;
                     for (int qq = cm; qq >= 0; qq--) {
-                        part.efs.set(qq, (int) (2 == part.ems.get(qq) ? part.efs.get(qq) + vfrb2 : part.efs.get(qq) + vfrb));
-                        int h = part.efs.get(qq);
+                        part.efs[qq] = (int) (part.ems[qq] == 2 ? part.efs[qq] + vfrb2 : part.efs[qq] + vfrb);
+                        int h = part.efs[qq];
                         if (h >= SlytherClient.HFC) {
                             if (qq != cm) {
-                                part.exs.set(qq, part.exs.get(cm));
-                                part.eys.set(qq, part.eys.get(cm));
-                                part.efs.set(qq, part.efs.get(cm));
-                                part.ems.set(qq, part.ems.get(cm));
+                                part.exs[qq] = part.exs[cm];
+                                part.eys[qq] = part.eys[cm];
+                                part.efs[qq] = part.efs[cm];
+                                part.ems[qq] = part.ems[cm];
                             }
                             part.eiu--;
                             cm--;
                         } else {
-                            fx += part.exs.get(qq) * SlytherClient.HFAS[h];
-                            fy += part.eys.get(qq) * SlytherClient.HFAS[h];
+                            fx += part.exs[qq] * SlytherClient.HFAS[h];
+                            fy += part.eys[qq] * SlytherClient.HFAS[h];
                         }
                     }
                     part.fx = fx;
@@ -465,30 +462,30 @@ public class Snake {
                 }
             }
         }
-        float eX = (float) (Math.cos(this.eang) * this.pma);
-        float eY = (float) (Math.sin(this.eang) * this.pma);
-        if (this.rex < eX) {
+        float ex = (float) (Math.cos(this.eang) * this.pma);
+        float ey = (float) (Math.sin(this.eang) * this.pma);
+        if (this.rex < ex) {
             this.rex += vfr / 6.0F;
-            if (this.rex > eX) {
-                this.rex = eX;
+            if (this.rex > ex) {
+                this.rex = ex;
             }
         }
-        if (this.rey < eY) {
+        if (this.rey < ey) {
             this.rey += vfr / 6.0F;
-            if (this.rey > eY) {
-                this.rey = eY;
+            if (this.rey > ey) {
+                this.rey = ey;
             }
         }
-        if (this.rex > eX) {
+        if (this.rex > ex) {
             this.rex -= vfr / 6;
-            if (this.rex <= eX) {
-                this.rex = eX;
+            if (this.rex <= ex) {
+                this.rex = ex;
             }
         }
-        if (this.rey > eY) {
+        if (this.rey > ey) {
             this.rey -= vfr / 6;
-            if (this.rey <= eY) {
-                this.rey = eY;
+            if (this.rey <= ey) {
+                this.rey = ey;
             }
         }
         if (vfrb > 0) {

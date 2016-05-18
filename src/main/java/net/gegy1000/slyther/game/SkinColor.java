@@ -28,11 +28,11 @@ public enum SkinColor {
     GRAY_2(128, 132, 144),
     GREEN(60, 192, 72);
 
-    public int red, green, blue;
+    public float red, green, blue;
 
     SkinColor(int red, int green, int blue) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
+        this.red = red / 255.0F;
+        this.green = green / 255.0F;
+        this.blue = blue / 255.0F;
     }
 }

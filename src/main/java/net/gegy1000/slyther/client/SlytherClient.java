@@ -33,12 +33,14 @@ public class SlytherClient {
     public static final int VFC = 62;
     public static final float NSEP = 4.5F;
     public static final float INITIAL_GSC = 0.9F;
+    public static float MQSM = 1.7F;
     public static final double PI_2 = Math.PI * 2.0;
     public static final float[] LFAS = new float[LFC];
     public static final float[] HFAS = new float[HFC];
     public static final float[] AFAS = new float[AFC];
     public static final float[] RFAS = new float[RFC];
     public static final float[] VFAS = new float[VFC];
+    public static final float[] AT2LT = new float[65536];
 
     private int fps;
     private double delta;
@@ -65,8 +67,8 @@ public class SlytherClient {
     public boolean keyDownRight;
     public float keyDownLeftFrb;
     public float keyDownRightFrb;
-    public float gla;
-    public float qsm;
+    public float gla = 1.0F;
+    public float qsm = 1.0F;
     public long locationUpdateTime;
     public long lastAccelerateUpdateTime;
 
@@ -84,7 +86,10 @@ public class SlytherClient {
     public float viewX;
     public float viewY;
 
-    public float ovxx;
+    public float viewAng;
+    public float viewDist;
+
+    public float ovxx; //oldViewX?
     public float ovyy;
 
     public float gsc = INITIAL_GSC; // Global Scale
@@ -99,6 +104,8 @@ public class SlytherClient {
     public String nickname;
 
     public int fvpos;
+    public float fvx;
+    public float fvy;
     public float[] fvxs = new float[VFC];
     public float[] fvys = new float[VFC];
     public int fvtg;
@@ -115,6 +122,29 @@ public class SlytherClient {
     public String longestPlayerName;
     public int longestPlayerScore = -1;
     public String longestPlayerMessage;
+
+    public long lastPingTime;
+
+    public float mww2;
+    public float mhh2;
+
+    public float[] pbx = new float[32767];
+    public float[] pby = new float[32767];
+    public float[] pba = new float[32767];
+    public int[] pbu = new int[32767];
+
+    public float bpx1;
+    public float bpy1;
+    public float bpx2;
+    public float bpy2;
+    public float fpx1;
+    public float fpy1;
+    public float fpx2;
+    public float fpy2;
+    public float apx1;
+    public float apy1;
+    public float apx2;
+    public float apy2;
 
     static {
         for (int i = 0; i < LFC; i++) {
@@ -133,6 +163,11 @@ public class SlytherClient {
             float vf = (float) (0.5F * (1.0F - Math.cos(Math.PI * (VFC - 1.0F - i) / (VFC - 1.0F))));
             vf += 0.5F * (0.5F * (1.0F - Math.cos(Math.PI * vf)) - vf);
             VFAS[i] = vf;
+        }
+        for (int y = 0; y < 256; y++) {
+            for (int x = 0; x < 256; x++) {
+                AT2LT[y << 8 | x] = (float) Math.atan2(y - 128, x - 128);
+            }
         }
     }
 
@@ -173,6 +208,8 @@ public class SlytherClient {
                 GL11.glScissor(0, 0, width, height);
                 GL11.glViewport(0, 0, width, height);
                 this.renderHandler.resetResolution();
+                this.mww2 = Display.getWidth() / 2.0F;
+                this.mhh2 = Display.getHeight() / 2.0F;
             }
 
             long currentTime = System.nanoTime();
@@ -195,7 +232,12 @@ public class SlytherClient {
             this.fps++;
 
             if (System.currentTimeMillis() - timer > 1000) {
-                Display.setTitle("Slyther - FPS: " + fps + " - UPS: " + ups);
+                int bytesPerSecond = 0;
+                if (networkManager != null) {
+                    bytesPerSecond = networkManager.bytesPerSecond;
+                    networkManager.bytesPerSecond = 0;
+                }
+                Display.setTitle("Slyther - FPS: " + fps + " - UPS: " + ups + " - BPS: " + bytesPerSecond);
                 this.fps = 0;
 
                 timer += 1000;
@@ -300,16 +342,26 @@ public class SlytherClient {
             if (keyDownRight) {
                 keyDownRightFrb += vfrb;
             }
-            if (gla < 1) {
+            if (gla < 1.0F) {
                 gla += 0.0075F * vfr;
-                if (gla > 1) {
-                    gla = 1;
+                if (gla > 1.0F) {
+                    gla = 1.0F;
+                }
+            } else if (gla > 0.0F) {
+                gla -= 0.0075F * vfr;
+                if (gla < 0.0F) {
+                    gla = 0.0F;
                 }
             }
-            if (qsm > 1) {
+            if (qsm > 1.0F) {
                 qsm -= 0.00004F * vfr;
-                if (qsm < 1) {
-                    qsm = 1;
+                if (qsm < 1.0F) {
+                    qsm = 1.0F;
+                }
+            } else if (qsm < MQSM) {
+                qsm += 0.00004F;
+                if (qsm > MQSM) {
+                    qsm = MQSM;
                 }
             }
             if (player != null) {
@@ -348,9 +400,8 @@ public class SlytherClient {
                     }
                 }
                 if (!wfpr) {
-                    if (time - lastPacketTime > 250) {
-                        lastPacketTime = time;
-                        wfpr = true;
+                    if (time - lastPingTime > 250) {
+                        lastPingTime = time;
                         networkManager.ping();
                         lastSendAngleTime = time;
                     }
@@ -399,10 +450,10 @@ public class SlytherClient {
                         this.networkManager.send(new MessageSetAngle(ang));
                     }
                 }
-                for (Snake snake : this.snakes) {
+                for (Snake snake : new ArrayList<>(this.snakes)) {
                     snake.update(vfr, vfrb, vfrb2);
                 }
-                for (Prey prey : this.preys) {
+                for (Prey prey : new ArrayList<>(this.preys)) {
                     prey.update(vfr, vfrb);
                 }
 
