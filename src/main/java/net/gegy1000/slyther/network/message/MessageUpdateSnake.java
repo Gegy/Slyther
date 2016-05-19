@@ -5,7 +5,7 @@ import net.gegy1000.slyther.game.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.server.SlytherServer;
 
-public class MessageUpdateSnakePosition extends SlytherServerMessageBase {
+public class MessageUpdateSnake extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server) {
     }

@@ -14,7 +14,7 @@ public class MessageRemoveFood extends SlytherServerMessageBase {
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         int x = buffer.readShort();
         int y = buffer.readShort();
-        int id = y * client.GAME_RADIUS + x;
+        int id = y * client.GAME_RADIUS * 3 + x;
         Food food = client.getFood(id);
         if (food != null) {
             food.eaten = true;

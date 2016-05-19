@@ -35,4 +35,11 @@ public enum SkinColor {
         this.green = green / 255.0F;
         this.blue = blue / 255.0F;
     }
+
+    public int toHex() {
+        int red = (int) (this.red * 255);
+        int green = (int) (this.green * 255);
+        int blue = (int) (this.blue * 255);
+        return red << 16 | green << 8 | blue;
+    }
 }

@@ -10,15 +10,20 @@ import java.util.*;
 public enum ServerListHandler {
     INSTANCE;
 
+    private volatile int pingedCount;
+    private List<Server> serverList;
     private String encodedServerList;
-    private Map<String, List<String>> servers;
 
-    public Map<String, List<String>> getServers() throws IOException {
-        if (servers == null) {
-            this.servers = this.decodeServerList(this.getEncodedServerList());
-            System.out.println("Found " + servers.size() + " official server clusters.");
+    public List<Server> getServerList() throws IOException {
+        if (serverList == null) {
+            serverList = new ArrayList<>();
+            Map<String, List<String>> rawServers = this.decodeServerList(this.getEncodedServerList());
+            for (Map.Entry<String, List<String>> entry : rawServers.entrySet()) {
+                serverList.add(new Server(entry.getKey(), entry.getValue()));
+            }
+            System.out.println("Found " + serverList.size() + " official server clusters.");
         }
-        return servers;
+        return serverList;
     }
 
     private Map<String, List<String>> decodeServerList(String encoded) {
@@ -125,5 +130,50 @@ public enum ServerListHandler {
             }
         }
         return encodedServerList;
+    }
+
+    public int getPingedCount() {
+        return pingedCount;
+    }
+
+    public class Server implements Comparable<Server> {
+        private String ip;
+        private List<String> ports;
+        private long ping = -1;
+
+        public Server(String ip, List<String> ports) {
+            this.ip = ip;
+            this.ports = ports;
+        }
+
+        public String getIp() {
+            return ip + ":" + this.ports.get(new Random().nextInt(this.ports.size()));
+        }
+
+        public String getClusterIp() {
+            return ip;
+        }
+
+        public List<String> getPorts() {
+            return this.ports;
+        }
+
+        public long getPing() {
+            return ping;
+        }
+
+        public void setPing(long[] pings) {
+            this.ping = 0;
+            for (long ping : pings) {
+                this.ping += ping;
+            }
+            this.ping /= pings.length;
+            ServerListHandler.INSTANCE.pingedCount++;
+        }
+
+        @Override
+        public int compareTo(Server server) {
+            return Long.compare(this.ping != -1 ? this.ping : Long.MAX_VALUE, server.ping != -1 ? server.ping : Long.MAX_VALUE);
+        }
     }
 }

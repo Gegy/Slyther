@@ -6,6 +6,8 @@ import net.gegy1000.slyther.game.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.server.SlytherServer;
 
+import java.util.Arrays;
+
 public class MessageNewPrey extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server) {
@@ -29,7 +31,7 @@ public class MessageNewPrey extends SlytherServerMessageBase {
                     client.preys.remove(prey);
                 }
             }
-        } else {
+        } else if (buffer.hasNext(17)) {
             int cv = buffer.readByte();
             float x = buffer.readInt24() / 5.0F;
             float y = buffer.readInt24() / 5.0F;

@@ -16,20 +16,10 @@ public class MessageSetAngle extends SlytherClientMessageBase {
 
     @Override
     public void write(MessageByteBuffer buffer, SlytherClient client) {
-        if (client.PROTOCOL_VERSION >= 5) {
-            int sendAngle = (int) Math.floor(251 * ang / SlytherClient.PI_2);
-            client.lastSendAngle = sendAngle;
-            buffer.writeByte((byte) (sendAngle & 0xFF));
-            client.lastSendAngleTime = System.currentTimeMillis();
-        } else {
-            int sendAngle = (int) Math.floor(0xFFFFFF * ang / SlytherClient.PI_2);
-            client.lastSendAngle = sendAngle;
-            buffer.writeByte((byte) 101);
-            buffer.writeByte((byte) (sendAngle >> 16 & 0xFF));
-            buffer.writeByte((byte) (sendAngle >> 8 & 0xFF));
-            buffer.writeByte((byte) (sendAngle & 0xFF));
-            client.lastSendAngleTime = System.currentTimeMillis();
-        }
+        int sendAngle = (int) Math.floor(251 * ang / SlytherClient.PI_2);
+        client.lastSendAngle = sendAngle;
+        buffer.writeByte((byte) (sendAngle & 0xFF));
+        client.lastSendAngleTime = System.currentTimeMillis();
     }
 
     @Override

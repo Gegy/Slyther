@@ -12,43 +12,39 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 public class ServerPingManager extends WebSocketClient {
-    private static final int PING_TIMEOUT = 10000;
-    private static volatile List<ServerPingManager> PINGERS = new ArrayList<>();
-    private static volatile ServerPingManager BEST_SERVER;
-    private String ip;
+    private static final int PING_TIMEOUT = 20000;
+    private ServerListHandler.Server server;
     private int pingCount = 0;
     private boolean closed;
+    private long[] pings = new long[4];
+    private long pingSendTime;
 
-    public ServerPingManager(String ip) throws URISyntaxException {
-        super(new URI("ws://" + ip + ":80/ptc"), new Draft_17(), ClientNetworkManager.HEADERS, 0);
-        this.ip = ip;
+    public ServerPingManager(ServerListHandler.Server server) throws URISyntaxException {
+        super(new URI("ws://" + server.getClusterIp() + ":80/ptc"), new Draft_17(), ClientNetworkManager.HEADERS, 0);
+        this.server = server;
         this.connect();
     }
 
     @Override
     public void onOpen(ServerHandshake handshake) {
-        if (BEST_SERVER == null) {
-            PINGERS.add(this);
-            this.send(new byte[] { 'p' });
-        } else {
-            this.close();
-        }
+        this.pingSendTime = System.currentTimeMillis();
+        this.send(new byte[] { 'p' });
     }
 
     @Override
     public void onMessage(ByteBuffer buffer) {
-        if (BEST_SERVER == null) {
-            if (buffer.get() == 'p') {
-                if (this.pingCount < 4) {
-                    this.send(new byte[] { 'p' });
-                    this.pingCount++;
-                } else {
-                    System.out.println(ip + " pinged " + pingCount + " times");
-                    BEST_SERVER = this;
-                }
+        if (buffer.get() == 'p') {
+            if (this.pingCount < 4) {
+                long currentTime = System.currentTimeMillis();
+                this.pings[pingCount] = currentTime - this.pingSendTime;
+                this.pingSendTime = currentTime;
+                this.send(new byte[] { 'p' });
+                this.pingCount++;
+            } else {
+                server.setPing(this.pings);
+                System.out.println(this.server.getClusterIp() + " has a ping time of " + server.getPing());
+                this.close();
             }
-        } else {
-            this.close();
         }
     }
 
@@ -66,30 +62,29 @@ public class ServerPingManager extends WebSocketClient {
         this.closed = true;
     }
 
-    public static String getBestServer() throws IOException {
-        PINGERS.clear();
-        Map<String, List<String>> servers = ServerListHandler.INSTANCE.getServers();
-        if (servers.size() > 0) {
-            long time = System.currentTimeMillis();
-            for (Map.Entry<String, List<String>> cluster : servers.entrySet()) {
+    public static void pingServers() throws IOException {
+        List<ServerListHandler.Server> servers = ServerListHandler.INSTANCE.getServerList();
+        List<ServerPingManager> pingers = new ArrayList<>();
+        if (servers != null && servers.size() > 0) {
+            for (ServerListHandler.Server server : servers) {
                 try {
-                    new ServerPingManager(cluster.getKey());
+                    pingers.add(new ServerPingManager(server));
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
             }
-            while (BEST_SERVER == null && System.currentTimeMillis() - time < PING_TIMEOUT) ;
-            for (ServerPingManager pinger : PINGERS) {
-                if (pinger != null) {
-                    pinger.close();
+        }
+        new Thread(() -> {
+            long start = System.currentTimeMillis();
+            while (true) {
+                if (System.currentTimeMillis() - start > ServerPingManager.PING_TIMEOUT) {
+                    for (ServerPingManager server : new ArrayList<>(pingers)) {
+                        if (!server.closed) {
+                            server.close();
+                        }
+                    }
                 }
             }
-            while (!BEST_SERVER.closed);
-            if (BEST_SERVER != null) {
-                List<String> ports = servers.get(BEST_SERVER.ip);
-                return BEST_SERVER.ip + ":" + ports.get(new Random().nextInt(ports.size()));
-            }
-        }
-        return null;
+        }).start();
     }
 }

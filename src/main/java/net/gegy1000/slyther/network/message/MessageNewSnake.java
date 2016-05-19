@@ -32,16 +32,15 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             for (int i = 0; i < buffer.readByte(); i++) {
                 name += (char) buffer.readByte();
             }
-            boolean head = false;
             float prevPartY;
             float prevPartX;
             float partY = 0;
             float partX = 0;
             List<SnakePart> parts = new ArrayList<>();
-            while (buffer.hasNext()) {
+            while (buffer.hasNext(2)) {
                 prevPartX = partX;
                 prevPartY = partY;
-                if (head) {
+                if (parts.size() != 0) {
                     partX += (buffer.readByte() - 127) / 2.0F;
                     partY += (buffer.readByte() - 127) / 2.0F;
                 } else {
@@ -49,20 +48,12 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                     partY = buffer.readInt24() / 5.0F;
                     prevPartX = partX;
                     prevPartY = partY;
-                    head = true;
                 }
-                SnakePart part = client.deadpool.get();
-                if (part == null) {
-                    part = new SnakePart();
-                }
+                SnakePart part = new SnakePart();
                 part.posX = partX;
                 part.posY = partY;
                 part.ebx = partX - prevPartX;
                 part.eby = partY - prevPartY;
-                part.eiu = 0;
-                part.fx = 0;
-                part.fy = 0;
-                part.da = 0;
                 parts.add(part);
             }
             Snake snake = new Snake(client, id, x, y, skin, angle, parts);

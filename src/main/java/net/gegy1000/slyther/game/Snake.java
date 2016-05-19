@@ -433,7 +433,6 @@ public class Snake {
                     if (part.da > 1) {
                         this.pts.remove(partIndex);
                         part.dying = false;
-                        client.deadpool.add(part);
                     }
                 }
                 if (part.eiu > 0) {

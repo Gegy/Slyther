@@ -2,6 +2,7 @@ package net.gegy1000.slyther.client;
 
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
+import net.gegy1000.slyther.network.ServerListHandler;
 import net.gegy1000.slyther.network.message.MessageSetUsername;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -42,15 +43,12 @@ public class ClientNetworkManager extends WebSocketClient {
         this.connect();
     }
 
-    public static ClientNetworkManager create(SlytherClient client) throws Exception {
-        String bestServer = ServerPingManager.getBestServer();
-        if (bestServer != null) {
-            System.out.println("Connecting to server " + bestServer);
-            Map<String, String> headers = new HashMap<>(HEADERS);
-            headers.put("Host", bestServer);
-            return new ClientNetworkManager(client, bestServer, headers);
-        }
-        return null;
+    public static ClientNetworkManager create(SlytherClient client, ServerListHandler.Server server) throws Exception {
+        String ip = server.getIp();
+        System.out.println("Connecting to server " + ip);
+        Map<String, String> headers = new HashMap<>(HEADERS);
+        headers.put("Host", ip);
+        return new ClientNetworkManager(client, ip, headers);
     }
 
     @Override
@@ -86,6 +84,7 @@ public class ClientNetworkManager extends WebSocketClient {
                 timeDelta = 0;
             }
             client.packetTimeOffset += timeDelta - serverTimeDelta;
+            client.etm += Math.max(-180, Math.min(180, timeDelta - serverTimeDelta));
             Class<? extends SlytherServerMessageBase> messageType = MessageHandler.INSTANCE.getServerMessage(messageId);
             if (messageType != null) {
                 try {

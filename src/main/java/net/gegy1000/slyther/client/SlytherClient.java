@@ -1,16 +1,19 @@
 package net.gegy1000.slyther.client;
 
+import net.gegy1000.slyther.client.gui.Gui;
 import net.gegy1000.slyther.client.render.RenderHandler;
 import net.gegy1000.slyther.game.*;
+import net.gegy1000.slyther.network.ServerListHandler;
 import net.gegy1000.slyther.network.message.MessageAccelerate;
-import net.gegy1000.slyther.network.message.MessageSetAngle;
 import net.gegy1000.slyther.network.message.MessageSetTurn;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class SlytherClient {
     public int GAME_RADIUS;
@@ -45,9 +48,9 @@ public class SlytherClient {
     private int fps;
     private double delta;
 
-    private RenderHandler renderHandler;
+    public RenderHandler renderHandler;
 
-    private ClientNetworkManager networkManager;
+    public ClientNetworkManager networkManager;
 
     public boolean wumsts;
     public Snake player;
@@ -98,8 +101,6 @@ public class SlytherClient {
     public List<Prey> preys = new ArrayList<>();
     public List<Food> foods = new ArrayList<>();
     public List<Sector> sectors = new ArrayList<>();
-
-    public Deadpool deadpool = new Deadpool();
 
     public String nickname;
 
@@ -177,8 +178,24 @@ public class SlytherClient {
     }
 
     private void setup() {
-        this.renderHandler = new RenderHandler();
-        this.renderHandler.setupDisplay();
+        this.renderHandler = new RenderHandler(this);
+        this.renderHandler.setup();
+
+        try {
+            ServerPingManager.pingServers();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        new Thread(() -> {
+            try {
+                while (ServerListHandler.INSTANCE.getPingedCount() < 5);
+                List<ServerListHandler.Server> servers = ServerListHandler.INSTANCE.getServerList();
+                Collections.sort(servers);
+                while ((SlytherClient.this.networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)))) == null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
 
         this.delta = 0;
         long previousTime = System.nanoTime();
@@ -207,9 +224,9 @@ public class SlytherClient {
                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
                 GL11.glScissor(0, 0, width, height);
                 GL11.glViewport(0, 0, width, height);
-                this.renderHandler.resetResolution();
-                this.mww2 = Display.getWidth() / 2.0F;
-                this.mhh2 = Display.getHeight() / 2.0F;
+                this.renderHandler.init();
+                this.mww2 = this.renderHandler.renderResolution.getWidth() / 2.0F;
+                this.mhh2 = this.renderHandler.renderResolution.getHeight() / 2.0F;
             }
 
             long currentTime = System.nanoTime();
@@ -218,6 +235,7 @@ public class SlytherClient {
 
             while (this.delta >= 1) {
                 this.update();
+                this.renderHandler.update();
                 this.delta--;
                 ups++;
             }
@@ -227,7 +245,7 @@ public class SlytherClient {
 
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 
-            this.renderHandler.render(this);
+            this.renderHandler.render();
 
             this.fps++;
 
@@ -297,13 +315,7 @@ public class SlytherClient {
     }
 
     public void update() {
-        if (this.networkManager == null) {
-            try {
-                while ((this.networkManager = ClientNetworkManager.create(this)) == null) ;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
+        if (this.networkManager != null) {
             long time = System.currentTimeMillis();
             float vfr;
             float vfrb;
@@ -424,32 +436,32 @@ public class SlytherClient {
                         this.networkManager.send(new MessageAccelerate(player.md));
                     }
                 }
-                int mouseX = Mouse.getX();
-                int mouseY = Mouse.getY();
-                if (mouseX != lastMouseX || mouseY != lastMouseY) {
-                    this.mouseMoved = true;
-                }
-                if (mouseMoved) {
-                    if (time - lastTurnTime > 100) {
-                        mouseMoved = false;
-                        lastTurnTime = time;
-                        lastMouseX = mouseX;
-                        lastMouseY = mouseY;
-                        int dist = mouseX * mouseX + mouseY * mouseY;
-                        float ang;
-                        if (dist > 256) {
-                            ang = (float) Math.atan2(mouseY, mouseX);
-                            player.eang = ang;
-                        } else {
-                            ang = player.wang;
-                        }
-                        ang %= PI_2;
-                        if (ang < 0) {
-                            ang += PI_2;
-                        }
-                        this.networkManager.send(new MessageSetAngle(ang));
-                    }
-                }
+//                int mouseX = Mouse.getX();
+//                int mouseY = Mouse.getY();
+//                if (mouseX != lastMouseX || mouseY != lastMouseY) {
+//                    this.mouseMoved = true;
+//                }
+//                if (mouseMoved) {
+//                    if (time - lastTurnTime > 100) {
+//                        mouseMoved = false;
+//                        lastTurnTime = time;
+//                        lastMouseX = mouseX;
+//                        lastMouseY = mouseY;
+//                        int dist = mouseX * mouseX + mouseY * mouseY;
+//                        float ang;
+//                        if (dist > 256) {
+//                            ang = (float) Math.atan2(mouseY, mouseX);
+//                            player.eang = ang;
+//                        } else {
+//                            ang = player.wang;
+//                        }
+//                        ang %= PI_2;
+//                        if (ang < 0) {
+//                            ang += PI_2;
+//                        }
+//                        this.networkManager.send(new MessageSetAngle(ang));
+//                    }
+//                }
                 for (Snake snake : new ArrayList<>(this.snakes)) {
                     snake.update(vfr, vfrb, vfrb2);
                 }
@@ -520,20 +532,11 @@ public class SlytherClient {
         return null;
     }
 
-    public class Deadpool {
-        private List<SnakePart> list = new ArrayList<>();
+    public void openGui(Gui gui) {
+        this.renderHandler.openGui(gui);
+    }
 
-        public void add(SnakePart part) {
-            this.list.add(part);
-        }
-
-        public SnakePart get() {
-            if (list.size() >= 1) {
-                SnakePart part = list.get(list.size() - 1);
-                list.remove(list.size() - 1);
-                return part;
-            }
-            return null;
-        }
+    public void closeGui(Gui gui) {
+        this.renderHandler.closeGui(gui);
     }
 }

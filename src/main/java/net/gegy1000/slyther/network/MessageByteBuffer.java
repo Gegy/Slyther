@@ -181,7 +181,7 @@ public class MessageByteBuffer {
     }
 
     public boolean hasNext(int count) {
-        return index + count < length;
+        return index + count <= length;
     }
 
     public int getBytesLeft() {
@@ -189,6 +189,14 @@ public class MessageByteBuffer {
     }
 
     public int length() {
+        return length;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public int getLength() {
         return length;
     }
 }

@@ -34,28 +34,21 @@ public class MessageUpdateSnakeParts extends SlytherServerMessageBase {
                 x = buffer.readShort();
                 y = buffer.readShort();
             } else {
-                x = head.posX + buffer.readByte() - 128;
-                y = head.posY + buffer.readByte() - 128;
+                x = head.posX + (buffer.readByte() - 128);
+                y = head.posY + (buffer.readByte() - 128);
             }
             if (alive) {
                 snake.fam = (float) buffer.readInt24() / 0xFFFFFF;
             }
-            SnakePart part = client.deadpool.get();
-            if (part == null) {
-                part = new SnakePart();
-            }
+            SnakePart part = new SnakePart();
             part.posX = x;
             part.posY = y;
             part.ebx = part.posX - head.posX;
             part.eby = part.posY - head.posY;
-            part.eiu = 0;
-            part.fx = 0;
-            part.fy = 0;
-            part.da = 0;
             snake.pts.add(part);
             if (snake.iiv) {
-                float fx = snake.posX + snake.fx - part.posX;
-                float fy = snake.posY + snake.fy - part.posY;
+                float fx = (snake.posX + snake.fx) - part.posX;
+                float fy = (snake.posY + snake.fy) - part.posY;
                 part.fx += fx;
                 part.fy += fy;
                 part.exs[part.eiu] = fx;
@@ -116,7 +109,7 @@ public class MessageUpdateSnakeParts extends SlytherServerMessageBase {
             float prevX = snake.posX;
             float prevY = snake.posY;
             snake.posX = (float) (x + Math.cos(snake.ang) * moveAmount);
-            snake.posY = (float) (y + Math.cos(snake.ang) * moveAmount);
+            snake.posY = (float) (y + Math.sin(snake.ang) * moveAmount);
             float moveX = snake.posX - prevX;
             float moveY = snake.posY - prevY;
             float chlDiff = snake.chl - prevChl;
