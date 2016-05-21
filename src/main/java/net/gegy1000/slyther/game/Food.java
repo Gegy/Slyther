@@ -1,6 +1,9 @@
 package net.gegy1000.slyther.game;
 
+import net.gegy1000.slyther.client.SlytherClient;
+
 public class Food {
+    public SlytherClient client;
     public int id;
     public float posX;
     public float posY;
@@ -20,10 +23,9 @@ public class Food {
     public Snake eater;
     public int sx; // Sector X?
     public int sy;
-    public float fw;
-    public float fh;
 
-    public Food(int id, float x, float y, float size, boolean u, Color color) {
+    public Food(SlytherClient client, int id, float x, float y, float size, boolean u, Color color) {
+        this.client = client;
         this.id = id;
         this.posX = x;
         this.posY = y;
@@ -31,7 +33,7 @@ public class Food {
         this.ry = y;
         this.rsp = u ? 2 : 1;
         this.cv = color;
-        this.rad = 0.00001F;
+        this.rad = 0.00001F; //rendering with rad not sz?
         this.sz = size;
         this.lrrad = this.rad;
         this.gfr = (int) (64.0F * Math.random());

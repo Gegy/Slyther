@@ -15,7 +15,7 @@ public class MessageUpdateFam extends SlytherServerMessageBase {
         int id = buffer.readShort();
         Snake snake = client.getSnake(id);
         if (snake != null) {
-            snake.fam = (float) buffer.readInt24() / 0xFFFFFF;
+            snake.fam = (double) buffer.readInt24() / 0xFFFFFF;
             snake.snl();
         }
     }

@@ -4,7 +4,7 @@ import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.ProfanityHandler;
 import net.gegy1000.slyther.game.Skin;
 import net.gegy1000.slyther.game.Snake;
-import net.gegy1000.slyther.game.SnakePart;
+import net.gegy1000.slyther.game.SnakePoint;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.server.SlytherServer;
 
@@ -24,7 +24,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             buffer.incrementIndex(1);
             float wang = (float) (2.0F * buffer.readInt24() * Math.PI / 0xFFFFFF);
             float sp = buffer.readShort() / 1000.0F;
-            float fam = buffer.readInt24() / 0xFFFFFF;
+            double fam = (double) buffer.readInt24() / 0xFFFFFF;
             Skin skin = Skin.values()[buffer.readByte()];
             float x = buffer.readInt24() / 5.0F;
             float y = buffer.readInt24() / 5.0F;
@@ -32,34 +32,34 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             for (int i = 0; i < buffer.readByte(); i++) {
                 name += (char) buffer.readByte();
             }
-            float prevPartY;
-            float prevPartX;
-            float partY = 0;
-            float partX = 0;
-            List<SnakePart> parts = new ArrayList<>();
+            float prevPointX;
+            float prevPointY;
+            float pointX = 0;
+            float pointY = 0;
+            List<SnakePoint> points = new ArrayList<>();
             while (buffer.hasNext(2)) {
-                prevPartX = partX;
-                prevPartY = partY;
-                if (parts.size() != 0) {
-                    partX += (buffer.readByte() - 127) / 2.0F;
-                    partY += (buffer.readByte() - 127) / 2.0F;
+                prevPointX = pointX;
+                prevPointY = pointY;
+                if (points.size() != 0) {
+                    pointX += (buffer.readByte() - 127) / 2.0F;
+                    pointY += (buffer.readByte() - 127) / 2.0F;
                 } else {
-                    partX = buffer.readInt24() / 5.0F;
-                    partY = buffer.readInt24() / 5.0F;
-                    prevPartX = partX;
-                    prevPartY = partY;
+                    pointX = buffer.readInt24() / 5.0F;
+                    pointY = buffer.readInt24() / 5.0F;
+                    prevPointX = pointX;
+                    prevPointY = pointY;
                 }
-                SnakePart part = new SnakePart();
-                part.posX = partX;
-                part.posY = partY;
-                part.ebx = partX - prevPartX;
-                part.eby = partY - prevPartY;
-                parts.add(part);
+                SnakePoint point = new SnakePoint();
+                point.posX = pointX;
+                point.posY = pointY;
+                point.ebx = pointX - prevPointX;
+                point.eby = pointY - prevPointY;
+                points.add(point);
             }
-            Snake snake = new Snake(client, id, x, y, skin, angle, parts);
+            Snake snake = new Snake(client, id, x, y, skin, angle, points);
             if (client.player == null) {
-                client.viewX = partX;
-                client.viewY = partY;
+                client.viewX = pointX;
+                client.viewY = pointY;
                 client.player = snake;
                 snake.md = false;
                 snake.wmd = false;

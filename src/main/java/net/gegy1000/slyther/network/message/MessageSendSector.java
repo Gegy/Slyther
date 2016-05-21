@@ -22,7 +22,7 @@ public class MessageSendSector extends SlytherServerMessageBase {
             int y = buffer.readShort();
             float size = buffer.readByte() / 5.0F;
             int id = y * client.GAME_RADIUS * 3 + x;
-            Food food = new Food(id, x, y, size, true, color);
+            Food food = new Food(client, id, x, y, size, true, color);
             if (!first) {
                 first = true;
                 sectorX = (int) Math.floor(x / client.SECTOR_SIZE);

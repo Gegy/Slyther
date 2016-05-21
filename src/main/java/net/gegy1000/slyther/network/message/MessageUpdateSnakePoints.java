@@ -2,11 +2,13 @@ package net.gegy1000.slyther.network.message;
 
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.Snake;
-import net.gegy1000.slyther.game.SnakePart;
+import net.gegy1000.slyther.game.SnakePoint;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.server.SlytherServer;
 
-public class MessageUpdateSnakeParts extends SlytherServerMessageBase {
+import java.util.Arrays;
+
+public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server) {
     }
@@ -20,68 +22,68 @@ public class MessageUpdateSnakeParts extends SlytherServerMessageBase {
             if (alive) {
                 snake.sct++;
             } else {
-                for (SnakePart part : snake.pts) {
-                    if (!part.dying) {
-                        part.dying = true;
+                for (SnakePoint point : snake.pts) {
+                    if (!point.dying) {
+                        point.dying = true;
                         break;
                     }
                 }
             }
-            SnakePart head = snake.pts.get(snake.pts.size() - 1);
+            SnakePoint head = snake.pts.get(snake.pts.size() - 1);
             float x;
             float y;
             if (this.messageId == 'g' || this.messageId == 'n') {
                 x = buffer.readShort();
                 y = buffer.readShort();
             } else {
-                x = head.posX + (buffer.readByte() - 128);
-                y = head.posY + (buffer.readByte() - 128);
+                x = head.posX + buffer.readByte() - 128;
+                y = head.posY + buffer.readByte() - 128;
             }
             if (alive) {
-                snake.fam = (float) buffer.readInt24() / 0xFFFFFF;
+                snake.fam = (double) buffer.readInt24() / 0xFFFFFF;
             }
-            SnakePart part = new SnakePart();
-            part.posX = x;
-            part.posY = y;
-            part.ebx = part.posX - head.posX;
-            part.eby = part.posY - head.posY;
-            snake.pts.add(part);
+            SnakePoint point = new SnakePoint();
+            point.posX = x;
+            point.posY = y;
+            point.ebx = point.posX - head.posX;
+            point.eby = point.posY - head.posY;
+            snake.pts.add(point);
             if (snake.iiv) {
-                float fx = (snake.posX + snake.fx) - part.posX;
-                float fy = (snake.posY + snake.fy) - part.posY;
-                part.fx += fx;
-                part.fy += fy;
-                part.exs[part.eiu] = fx;
-                part.eys[part.eiu] = fy;
-                part.efs[part.eiu] = 0;
-                part.ems[part.eiu] = 1.0F;
-                part.eiu++;
+                float fx = (snake.posX + snake.fx) - point.posX;
+                float fy = (snake.posY + snake.fy) - point.posY;
+                point.fx += fx;
+                point.fy += fy;
+                point.exs[point.eiu] = fx;
+                point.eys[point.eiu] = fy;
+                point.efs[point.eiu] = 0;
+                point.ems[point.eiu] = 1.0F;
+                point.eiu++;
             }
             if (snake.pts.size() - 3 >= 1) {
-                SnakePart prevPart = snake.pts.get(snake.pts.size() - 3);
+                SnakePoint prevPoint = snake.pts.get(snake.pts.size() - 3);
                 float distMultiplier = 0;
                 int i = 1;
-                for (int partIndex = snake.pts.size() - 4; partIndex >= 0; partIndex--) {
-                    part = snake.pts.get(partIndex);
-                    float fx = part.posX;
-                    float fy = part.posY;
+                for (int pointIndex = snake.pts.size() - 4; pointIndex >= 0; pointIndex--) {
+                    point = snake.pts.get(pointIndex);
+                    float fx = point.posX;
+                    float fy = point.posY;
                     if (i <= 4) {
                         distMultiplier = client.CST * i / 4.0F;
                     }
-                    part.posX += (prevPart.posX - part.posX) * distMultiplier;
-                    part.posY += (prevPart.posY - part.posY) * distMultiplier;
+                    point.posX += (prevPoint.posX - point.posX) * distMultiplier;
+                    point.posY += (prevPoint.posY - point.posY) * distMultiplier;
                     if (snake.iiv) {
-                        fx -= part.posX;
-                        fy -= part.posY;
-                        part.fx += fx;
-                        part.fy += fy;
-                        part.exs[part.eiu] = fx;
-                        part.eys[part.eiu] = fy;
-                        part.efs[part.eiu] = 0;
-                        part.ems[part.eiu] = 2.0F;
-                        part.eiu++;
+                        fx -= point.posX;
+                        fy -= point.posY;
+                        point.fx += fx;
+                        point.fy += fy;
+                        point.exs[point.eiu] = fx;
+                        point.eys[point.eiu] = fy;
+                        point.efs[point.eiu] = 0;
+                        point.ems[point.eiu] = 2.0F;
+                        point.eiu++;
                     }
-                    prevPart = part;
+                    prevPoint = point;
                     i++;
                 }
             }
@@ -97,7 +99,7 @@ public class MessageUpdateSnakeParts extends SlytherServerMessageBase {
             if (alive) {
                 snake.snl();
             }
-            snake.lnp = part;
+            snake.lnp = point;
             if (snake == client.player) {
                 client.ovxx = snake.posX + snake.fx;
                 client.ovyy = snake.posY + snake.fy;

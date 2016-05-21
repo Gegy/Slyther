@@ -10,10 +10,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class SlytherClient {
     public int GAME_RADIUS;
@@ -72,7 +69,6 @@ public class SlytherClient {
     public float keyDownRightFrb;
     public float gla = 1.0F;
     public float qsm = 1.0F;
-    public long locationUpdateTime;
     public long lastAccelerateUpdateTime;
 
     public int lastMouseX;
@@ -283,7 +279,7 @@ public class SlytherClient {
         this.PROTOCOL_VERSION = protocolVersion;
         this.setMSCPS(mscps);
 
-        if (PROTOCOL_VERSION < 6) {
+        if (PROTOCOL_VERSION < 8) {
             throw new RuntimeException("Unsupported protocol version (" + PROTOCOL_VERSION + ")" + "!");
         }
     }
@@ -291,16 +287,14 @@ public class SlytherClient {
     public void setMSCPS(int mscps) {
         if (this.MSCPS != mscps) {
             this.MSCPS = mscps;
-            this.fmlts = new float[mscps + 1];
+            this.fmlts = new float[mscps];
             this.fpsls = new float[mscps + 1];
             for (int i = 0; i <= mscps; i++) {
-                if (i >= mscps) {
-                    fmlts[i] = fmlts[i - 1];
-                } else {
-                    fmlts[i] = (float) Math.pow(1.0F - i / mscps, 2.25F);
+                if (i < mscps) {
+                    fmlts[i] = (float) Math.pow(1.0F - i / (float) mscps, 2.25F);
                 }
                 if (i != 0) {
-                    fpsls[i] = fpsls[i - 1] + 1 / fmlts[i - 1];
+                    fpsls[i] = fpsls[i - 1] + 1.0F / fmlts[i - 1];
                 }
             }
         }
@@ -416,16 +410,6 @@ public class SlytherClient {
                         lastPingTime = time;
                         networkManager.ping();
                         lastSendAngleTime = time;
-                    }
-                }
-                if (GAME_RADIUS != 2147483647) {
-                    if (time - locationUpdateTime > 1000) {
-                        locationUpdateTime = System.currentTimeMillis();
-                        /**
-                         * TODO
-                         * myloc.style.left = Math.round(52 + 40 * (snake.xx - grd) / grd - 7) + "px";
-                         * myloc.style.top = Math.round(52 + 40 * (snake.yy - grd) / grd - 7) + "px";
-                         */
                     }
                 }
                 etm *= Math.pow(0.993, vfrb);

@@ -39,7 +39,7 @@ public class RenderHandler {
             Keyboard.create();
             Mouse.create();
             try {
-                Font awtFont = Font.createFont(Font.TRUETYPE_FONT, SlytherClient.class.getResourceAsStream("/fonts/font.ttf"));
+                Font awtFont = new Font("Arial Rounded MT Bold", Font.PLAIN, 0);
                 this.font = new TrueTypeFont(awtFont.deriveFont(15.0F), true);
                 this.largeFont = new TrueTypeFont(awtFont.deriveFont(30.0F), true);
             } catch (Exception e) {

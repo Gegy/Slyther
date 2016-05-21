@@ -1,6 +1,6 @@
 package net.gegy1000.slyther.game;
 
-public class SnakePart {
+public class SnakePoint {
     public float posX;
     public float posY;
     public float wehang;

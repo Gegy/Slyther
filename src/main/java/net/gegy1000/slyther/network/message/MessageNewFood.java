@@ -19,7 +19,7 @@ public class MessageNewFood extends SlytherServerMessageBase {
             int y = buffer.readShort();
             int id = y * client.GAME_RADIUS * 3 + x;
             float size = buffer.readShort() / 5.0F;
-            Food food = new Food(id, x, y, size, messageId == 'b', color);
+            Food food = new Food(client, id, x, y, size, messageId == 'b', color);
             food.sx = (int) Math.floor(x / client.SECTOR_SIZE);
             food.sy = (int) Math.floor(y / client.SECTOR_SIZE);
             client.foods.add(food);

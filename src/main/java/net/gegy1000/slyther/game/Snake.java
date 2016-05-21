@@ -82,22 +82,22 @@ public class Snake {
     public float wehang;
     public int ehl;
     public int msl;
-    public float fam;
+    public double fam;
     public float ang;
     public float eang;
     public float wang;
     public float rex;
     public float rey;
     public float sp;
-    public SnakePart lnp; // Tail Part or Head Part (Last part entry)
-    public List<SnakePart> pts;
+    public SnakePoint lnp; // Tail point or Head point (Last point entry)
+    public List<SnakePoint> pts;
     public int sct;
     public int flpos;
     public float[] fls;
     public float fl;
     public int fltg;
-    public float tl;
-    public float cfl;
+    public double tl;
+    public double cfl;
     public float scang;
     public float spang;
     public float deadAmt;
@@ -111,7 +111,7 @@ public class Snake {
     public float wsep;
     public boolean iiv;
 
-    public Snake(SlytherClient client, int id, float x, float y, Skin skin, float angle, List<SnakePart> parts) {
+    public Snake(SlytherClient client, int id, float x, float y, Skin skin, float angle, List<SnakePoint> points) {
         this.client = client;
         this.id = id;
         this.posX = x;
@@ -141,11 +141,11 @@ public class Snake {
         this.wang = angle;
         this.sp = 2;
 
-        if (parts != null) {
-            this.lnp = parts.get(parts.size() - 1);
-            this.pts = parts;
-            this.sct = parts.size();
-            if (parts.get(0).dying) {
+        if (points != null) {
+            this.lnp = points.get(points.size() - 1);
+            this.pts = points;
+            this.sct = points.size();
+            if (points.get(0).dying) {
                 this.sct--;
             }
         } else {
@@ -251,12 +251,12 @@ public class Snake {
     }
 
     public void snl() {
-        float f = this.tl;
+        double d = this.tl;
         this.tl = this.sct + this.fam;
-        f = this.tl - f;
+        d = this.tl - d;
         int b = this.flpos;
         for (int i = 0; i < SlytherClient.LFC; i++) {
-            this.fls[b] -= f * SlytherClient.LFAS[i];
+            this.fls[b] -= d * SlytherClient.LFAS[i];
             b++;
             if (b >= SlytherClient.LFC) {
                 b = 0;
@@ -361,8 +361,8 @@ public class Snake {
                 this.ehl = 1;
             }
         }
-        SnakePart part = this.pts.get(this.pts.size() - 1);
-        part.wehang = (float) Math.atan2(this.posY + this.fy - part.posY - part.fy + part.eby * (1 - this.ehl), this.posX + this.fx - part.posX - part.fx + part.ebx * (1 - this.ehl));
+        SnakePoint point = this.pts.get(this.pts.size() - 1);
+        point.wehang = (float) Math.atan2(this.posY + this.fy - point.posY - point.fy + point.eby * (1 - this.ehl), this.posX + this.fx - point.posX - point.fx + point.ebx * (1 - this.ehl));
         if (!this.dead) {
             if (!(this.ehang == this.wehang)) {
                 float h = (float) ((this.wehang - this.ehang) % SlytherClient.PI_2);
@@ -426,38 +426,38 @@ public class Snake {
             this.chl += moveAmount / this.msl;
         }
         if (vfrb > 0) {
-            for (int partIndex = this.pts.size() - 1; partIndex >= 0; partIndex--) {
-                part = this.pts.get(partIndex);
-                if (part.dying) {
-                    part.da += 0.0015F * vfrb;
-                    if (part.da > 1) {
-                        this.pts.remove(partIndex);
-                        part.dying = false;
+            for (int pointIndex = this.pts.size() - 1; pointIndex >= 0; pointIndex--) {
+                point = this.pts.get(pointIndex);
+                if (point.dying) {
+                    point.da += 0.0015F * vfrb;
+                    if (point.da > 1) {
+                        this.pts.remove(pointIndex);
+                        point.dying = false;
                     }
                 }
-                if (part.eiu > 0) {
+                if (point.eiu > 0) {
                     int fx = 0;
                     int fy = 0;
-                    int cm = part.eiu - 1;
+                    int cm = point.eiu - 1;
                     for (int qq = cm; qq >= 0; qq--) {
-                        part.efs[qq] = (int) (part.ems[qq] == 2 ? part.efs[qq] + vfrb2 : part.efs[qq] + vfrb);
-                        int h = part.efs[qq];
+                        point.efs[qq] = (int) (point.ems[qq] == 2 ? point.efs[qq] + vfrb2 : point.efs[qq] + vfrb);
+                        int h = point.efs[qq];
                         if (h >= SlytherClient.HFC) {
                             if (qq != cm) {
-                                part.exs[qq] = part.exs[cm];
-                                part.eys[qq] = part.eys[cm];
-                                part.efs[qq] = part.efs[cm];
-                                part.ems[qq] = part.ems[cm];
+                                point.exs[qq] = point.exs[cm];
+                                point.eys[qq] = point.eys[cm];
+                                point.efs[qq] = point.efs[cm];
+                                point.ems[qq] = point.ems[cm];
                             }
-                            part.eiu--;
+                            point.eiu--;
                             cm--;
                         } else {
-                            fx += part.exs[qq] * SlytherClient.HFAS[h];
-                            fy += part.eys[qq] * SlytherClient.HFAS[h];
+                            fx += point.exs[qq] * SlytherClient.HFAS[h];
+                            fy += point.eys[qq] * SlytherClient.HFAS[h];
                         }
                     }
-                    part.fx = fx;
-                    part.fy = fy;
+                    point.fx = fx;
+                    point.fy = fy;
                 }
             }
         }

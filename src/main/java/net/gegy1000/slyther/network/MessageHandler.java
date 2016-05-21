@@ -18,11 +18,11 @@ public enum MessageHandler {
         this.registerServer(MessageNewFood.class);
         this.registerServer(MessageNewPrey.class);
         this.registerServer(MessageUpdateSnake.class);
-        this.registerServer(MessageUpdateSnakeParts.class);
+        this.registerServer(MessageUpdateSnakePoints.class);
         this.registerServer(MessagePreyPositionUpdate.class);
         this.registerServer(MessageUpdateFam.class);
         this.registerServer(MessageRemoveFood.class);
-        this.registerServer(MessageRemoveSnakePart.class);
+        this.registerServer(MessageRemoveSnakePoint.class);
         this.registerServer(MessageUpdateLeaderboard.class);
         this.registerServer(MessageUpdateLongestPlayer.class);
         this.registerServer(MessageAddSector.class);
