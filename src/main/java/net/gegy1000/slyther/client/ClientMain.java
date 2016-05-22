@@ -15,7 +15,5 @@ public class ClientMain {
         }
 
         new SlytherClient("Slyther");
-
-        while (true);
     }
 }

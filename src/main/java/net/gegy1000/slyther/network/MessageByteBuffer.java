@@ -53,17 +53,17 @@ public class MessageByteBuffer {
         writeBytes(ByteBuffer.allocate(3).order(BYTE_ORDER).putInt(i).array());
     }
 
-    public byte readByte() {
+    public int readByte() {
         byte b = bytes[index];
         incrementIndex(1);
-        return b;
+        return b & 0xFF;
     }
 
     public byte[] readBytes(int count) {
         byte[] bytes = new byte[count];
 
         for (int i = 0; i < count; i++) {
-            bytes[i] = readByte();
+            bytes[i] = (byte) readByte();
         }
 
         return bytes;
@@ -137,7 +137,7 @@ public class MessageByteBuffer {
     public String readNullStr8() {
         String str = "";
 
-        byte c;
+        int c;
 
         while ((c = readByte()) != 0) {
             str += (char) c;

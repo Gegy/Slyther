@@ -362,7 +362,9 @@ public class Snake {
             }
         }
         SnakePoint point = this.pts.get(this.pts.size() - 1);
-        point.wehang = (float) Math.atan2(this.posY + this.fy - point.posY - point.fy + point.eby * (1 - this.ehl), this.posX + this.fx - point.posX - point.fx + point.ebx * (1 - this.ehl));
+        if (point != null) {
+            point.wehang = (float) Math.atan2(this.posY + this.fy - point.posY - point.fy + point.eby * (1.0F - this.ehl), this.posX + this.fx - point.posX - point.fx + point.ebx * (1.0F - this.ehl));
+        }
         if (!this.dead) {
             if (!(this.ehang == this.wehang)) {
                 float h = (float) ((this.wehang - this.ehang) % SlytherClient.PI_2);

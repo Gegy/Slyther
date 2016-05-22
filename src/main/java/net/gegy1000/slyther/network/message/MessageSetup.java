@@ -34,7 +34,7 @@ public class MessageSetup extends SlytherServerMessageBase {
         float mamu = buffer.readShort() / 1000.0F;
         float manu2 = buffer.readShort() / 1000.0F;
         float cst = buffer.readShort() / 1000.0F;
-        byte protocolVersion = buffer.readByte();
+        int protocolVersion = buffer.readByte();
 
         client.setup(gameRadius, mscps, sectorSize, sectorCountAlongEdge, spangDV, nsp1, nsp2, nsp3, mamu, manu2, cst, protocolVersion);
     }

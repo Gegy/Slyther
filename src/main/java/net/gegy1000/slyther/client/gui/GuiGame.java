@@ -62,16 +62,16 @@ public class GuiGame extends Gui {
             client.viewY = player.posY + player.fy + client.fvy;
             client.viewAng = (float) Math.atan2(client.viewY - client.GAME_RADIUS, client.viewX - client.GAME_RADIUS);
             client.viewDist = (float) Math.sqrt((client.viewX - client.GAME_RADIUS) * (client.viewX - client.GAME_RADIUS) + (client.viewY - client.GAME_RADIUS) * (client.viewY - client.GAME_RADIUS));
-            client.bpx1 = client.viewX - (client.mww2 / client.gsc + 84);
-            client.bpy1 = client.viewY - (client.mhh2 / client.gsc + 84);
+            client.bpx1 = client.viewX - (client.mww2 / client.gsc - 84);
+            client.bpy1 = client.viewY - (client.mhh2 / client.gsc - 84);
             client.bpx2 = client.viewX + (client.mww2 / client.gsc + 84);
             client.bpy2 = client.viewY + (client.mhh2 / client.gsc + 84);
-            client.fpx1 = client.viewX - (client.mww2 / client.gsc + 24);
-            client.fpy1 = client.viewY - (client.mhh2 / client.gsc + 24);
+            client.fpx1 = client.viewX - (client.mww2 / client.gsc - 24);
+            client.fpy1 = client.viewY - (client.mhh2 / client.gsc - 24);
             client.fpx2 = client.viewX + (client.mww2 / client.gsc + 24);
             client.fpy2 = client.viewY + (client.mhh2 / client.gsc + 24);
-            client.apx1 = client.viewX - (client.mww2 / client.gsc + 210);
-            client.apy1 = client.viewY - (client.mhh2 / client.gsc + 210);
+            client.apx1 = client.viewX - (client.mww2 / client.gsc - 210);
+            client.apy1 = client.viewY - (client.mhh2 / client.gsc - 210);
             client.apx2 = client.viewX + (client.mww2 / client.gsc + 210);
             client.apy2 = client.viewY + (client.mhh2 / client.gsc + 210);
             GL11.glEnable(GL11.GL_BLEND);
@@ -86,17 +86,19 @@ public class GuiGame extends Gui {
             for (int i = 0; i < client.foods.size(); i++) {
                 Food food = client.foods.get(i);
                 if (food != null) {
-                    Color color = food.cv;
-                    float size = (food.sz / 5.0F) * food.rad * 0.5F;
-                    GL11.glPushMatrix();
-                    GL11.glTranslatef(client.mww2, client.mhh2, 0.0F);
-                    GL11.glScalef(scale, scale, 1.0F);
-                    GL11.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), globalAlpha * food.fr);
-                    GL11.glScalef(size, size, 1.0F);
-                    float x = ((food.rx - client.viewX) - 64.0F * size) / size / scale;
-                    float y = ((food.ry - client.viewY) - 64.0F * size) / size / scale;
-                    this.drawTexture(x, y, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
-                    GL11.glPopMatrix();
+                    if (food.rx >= client.bpx1 && food.rx <= client.bpx2 && food.ry >= client.bpy1 && food.ry <= client.bpy2) {
+                        Color color = food.cv;
+                        float size = (food.sz / 5.0F) * food.rad * 0.5F;
+                        GL11.glPushMatrix();
+                        GL11.glTranslatef(client.mww2, client.mhh2, 0.0F);
+                        GL11.glScalef(scale, scale, 1.0F);
+                        GL11.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), globalAlpha * food.fr);
+                        GL11.glScalef(size, size, 1.0F);
+                        float x = ((food.rx - client.viewX) - 64.0F * size) / size / scale;
+                        float y = ((food.ry - client.viewY) - 64.0F * size) / size / scale;
+                        this.drawTexture(x, y, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
+                        GL11.glPopMatrix();
+                    }
                 }
             }
             for (int i = 0; i < client.snakes.size(); i++) {

@@ -5,12 +5,17 @@ import net.gegy1000.slyther.client.render.RenderHandler;
 import net.gegy1000.slyther.game.*;
 import net.gegy1000.slyther.network.ServerListHandler;
 import net.gegy1000.slyther.network.message.MessageAccelerate;
+import net.gegy1000.slyther.network.message.MessageSetAngle;
 import net.gegy1000.slyther.network.message.MessageSetTurn;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class SlytherClient {
     public int GAME_RADIUS;
@@ -24,7 +29,7 @@ public class SlytherClient {
     public float MAMU; // Turn speed?
     public float MAMU2;
     public float CST;
-    public byte PROTOCOL_VERSION;
+    public int PROTOCOL_VERSION;
 
     public static final int RFC = 43; // C = Count?
     public static final int AFC = 26;
@@ -259,13 +264,14 @@ public class SlytherClient {
             }
 
             GL11.glPopMatrix();
+            Display.sync(60);
             Display.update();
         }
 
         System.exit(-1);
     }
 
-    public void setup(int gameRadius, short mscps, short sectorSize, short sectorCountAlongEdge, float spangDV, float nsp1, float nsp2, float nsp3, float mamu, float mamu2, float cst, byte protocolVersion) {
+    public void setup(int gameRadius, short mscps, short sectorSize, short sectorCountAlongEdge, float spangDV, float nsp1, float nsp2, float nsp3, float mamu, float mamu2, float cst, int protocolVersion) {
         this.GAME_RADIUS = gameRadius;
         this.SECTOR_SIZE = sectorSize;
         this.SECTORS_ALONG_EDGE = sectorCountAlongEdge;
@@ -420,32 +426,32 @@ public class SlytherClient {
                         this.networkManager.send(new MessageAccelerate(player.md));
                     }
                 }
-//                int mouseX = Mouse.getX();
-//                int mouseY = Mouse.getY();
-//                if (mouseX != lastMouseX || mouseY != lastMouseY) {
-//                    this.mouseMoved = true;
-//                }
-//                if (mouseMoved) {
-//                    if (time - lastTurnTime > 100) {
-//                        mouseMoved = false;
-//                        lastTurnTime = time;
-//                        lastMouseX = mouseX;
-//                        lastMouseY = mouseY;
-//                        int dist = mouseX * mouseX + mouseY * mouseY;
-//                        float ang;
-//                        if (dist > 256) {
-//                            ang = (float) Math.atan2(mouseY, mouseX);
-//                            player.eang = ang;
-//                        } else {
-//                            ang = player.wang;
-//                        }
-//                        ang %= PI_2;
-//                        if (ang < 0) {
-//                            ang += PI_2;
-//                        }
-//                        this.networkManager.send(new MessageSetAngle(ang));
-//                    }
-//                }
+                int mouseX = Mouse.getX() - (Display.getWidth() / 2);
+                int mouseY = Mouse.getY() - (Display.getHeight() / 2);
+                if (mouseX != lastMouseX || mouseY != lastMouseY) {
+                    this.mouseMoved = true;
+                }
+                if (mouseMoved) {
+                    if (time - lastTurnTime > 100) {
+                        mouseMoved = false;
+                        lastTurnTime = time;
+                        lastMouseX = mouseX;
+                        lastMouseY = mouseY;
+                        int dist = mouseX * mouseX + mouseY * mouseY;
+                        float ang;
+                        if (dist > 256) {
+                            ang = (float) Math.atan2(mouseY, mouseX);
+                            player.eang = ang;
+                        } else {
+                            ang = player.wang;
+                        }
+                        ang %= PI_2;
+                        if (ang < 0) {
+                            ang += PI_2;
+                        }
+                        this.networkManager.send(new MessageSetAngle(ang));
+                    }
+                }
                 for (Snake snake : new ArrayList<>(this.snakes)) {
                     snake.update(vfr, vfrb, vfrb2);
                 }
