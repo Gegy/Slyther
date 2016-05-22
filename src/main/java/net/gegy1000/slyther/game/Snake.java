@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.game;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class Snake {
     public float eca;
     public int ppa;
     public int ppc;
-    public boolean anntenna;
+    public boolean antenna;
     public boolean oneEye;
     public float swell;
     public int atba;
@@ -50,7 +51,8 @@ public class Snake {
     public int epih;
     public int episz;
     public SkinColor[] rbcs;
-    public SkinColor cv;
+    public SkinDetails skinDetails;
+    public SkinColor cv; // color value
     public int fnfr = 0;
     public int na;
     public float chl;
@@ -103,7 +105,7 @@ public class Snake {
     public float deadAmt;
     public float aliveAmt;
     public boolean md;
-    public boolean wmd;
+    public boolean prevMd;
     public boolean dead;
     public int dir;
     public int edir;
@@ -168,86 +170,52 @@ public class Snake {
         this.ec = 0xFFFFFF;
         this.eca = 0.75F;
         this.ppa = 1;
-        this.ppc = 0x000000;
-        this.anntenna = false;
-        this.oneEye = false;
-        this.swell = 0;
 
-        if (skin == Skin.ARCADE_GO) {
-            this.anntenna = true;
-            this.atba = 0;
-            this.atc1 = 0x00688C;
-            this.atc2 = 0x64C8E7;
-            this.atwg = true;
-            this.atia = 0.35F;
-            this.abrot = false;
-            int b = 8;
-            this.atx = new float[b];
-            this.aty = new float[b];
-            this.atvx = new float[b];
-            this.atvy = new float[b];
-            this.atax = new float[b];
-            this.atay = new float[b];
-            for (int i = 0; i < b; i++) {
+        SkinDetails details = SkinHandler.INSTANCE.getDetails(skin);
+
+        SkinColor[] pattern = new SkinColor[] { SkinColor.values()[skin.ordinal() % SkinColor.values().length] };
+
+        if (details != null) {
+            this.antenna = details.hasAntenna;
+            this.atc1 = details.antennaPrimaryColor;
+            this.atc2 = details.antennaSecondaryColor;
+            this.atwg = details.atwg;
+            this.atia = details.atia;
+            this.abrot = details.abrot;
+            int antennaLength = details.antennaLength;
+            this.atx = new float[antennaLength];
+            this.aty = new float[antennaLength];
+            this.atvx = new float[antennaLength];
+            this.atvy = new float[antennaLength];
+            this.atax = new float[antennaLength];
+            this.atay = new float[antennaLength];
+            for (int i = 0; i < antennaLength; i++) {
                 this.atx[i] = this.posX;
                 this.aty[i] = this.posY;
             }
-            this.blbx = -10;
-            this.blby = -10;
-            this.blbw = 20;
-            this.blbh = 20;
-            this.bsc = 1;
-            this.blba = 0.75F;
-        } else if (skin == Skin.ORANGE_BLUE_STRIPE_HEAD_TAIL) {
-            this.ec = 0xFF5609;
-            this.eca = 1;
-            this.anntenna = true;
-            this.atba = 0;
-            this.atc1 = 0x000000;
-            this.atc2 = 0x5630D7;
-            this.atia = 1;
-            this.abrot = true;
-            int b = 9;
-            this.atx = new float[b];
-            this.aty = new float[b];
-            this.atvx = new float[b];
-            this.atvy = new float[b];
-            this.atax = new float[b];
-            this.atay = new float[b];
-            for (int i = 0; i < b; i++) {
-                this.atx[i] = this.posX;
-                this.aty[i] = this.posY;
-            }
-            this.blbx = -5;
-            this.blby = -10;
-            this.blbw = 20;
-            this.blbh = 20;
-            this.bsc = 1.6F;
-            this.blba = 1;
-        } else if (skin == Skin.GREEN_EYEBALL) {
-            this.oneEye = true;
-//            this.ebi = jsebi;
-            this.ebiw = 64;
-            this.ebih = 64;
-            this.ebisz = 29;
-//            this.epi = jsepi;
-            this.epiw = 48;
-            this.epih = 48;
-            this.episz = 14;
-            this.pma = 4;
-            this.swell = 0.06F;
+            this.blbx = details.blbx;
+            this.blby = details.blby;
+            this.blbw = details.blbw;
+            this.blbh = details.blbh;
+            this.bsc = details.bsc;
+            this.blba = details.blba;
+            this.ec = details.eyeColor;
+            this.eca = details.eca;
+            this.oneEye = details.oneEye;
+            this.ebiw = details.ebiw;
+            this.ebih = details.ebih;
+            this.ebisz = details.ebisz;
+            this.epiw = details.epiw;
+            this.epih = details.epih;
+            this.episz = details.episz;
+            this.pma = details.pma;
+            this.swell = details.swell;
+
+            pattern = details.pattern;
         }
-
-        SkinColor[] pattern = SkinColorHandler.INSTANCE.getPattern(skin);
 
         this.rbcs = pattern;
-
-        if (pattern != null) {
-            this.cv = pattern[0];
-        } else {
-            this.cv = SkinColor.values()[skin.ordinal()];
-            this.rbcs = new SkinColor[] { this.cv };
-        }
+        this.cv = pattern[0];
     }
 
     public void snl() {
@@ -274,6 +242,13 @@ public class Snake {
         float moveAmount = this.sp * vfr / 4;
         if (moveAmount > this.msl) {
             moveAmount = this.msl;
+        }
+        if (this == this.client.player) {
+            boolean prev = this.md;
+            this.md = Mouse.isButtonDown(0) || Mouse.isButtonDown(1);
+            if (prev != this.md) {
+                this.prevMd = prev;
+            }
         }
         if (!this.dead) {
             if (this.tsp != this.sp) {

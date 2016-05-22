@@ -28,6 +28,7 @@ public enum MessageHandler {
         this.registerServer(MessageAddSector.class);
         this.registerServer(MessageRemoveSector.class);
         this.registerServer(MessagePlayerDeath.class);
+        this.registerServer(MessageUpdateMap.class);
     }
 
     public void registerServer(Class<? extends SlytherServerMessageBase> message) {

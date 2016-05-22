@@ -20,16 +20,17 @@ public class MessageNewSnake extends SlytherServerMessageBase {
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         int id = buffer.readShort();
         if (buffer.hasNext(4)) {
-            float angle = (float) (2.0F * buffer.readInt24() * Math.PI / 0xFFFFFF);
+            float angle = (float) (2.0F * buffer.readInt24() * Math.PI / (float) 0xFFFFFF);
             buffer.incrementIndex(1);
-            float wang = (float) (2.0F * buffer.readInt24() * Math.PI / 0xFFFFFF);
-            float sp = buffer.readShort() / 1000.0F;
+            float wang = (float) (2.0F * buffer.readInt24() * Math.PI / (float) 0xFFFFFF);
+            float sp = (float) buffer.readShort() / 1000.0F;
             double fam = (double) buffer.readInt24() / 0xFFFFFF;
             Skin skin = Skin.values()[buffer.readByte()];
             float x = buffer.readInt24() / 5.0F;
             float y = buffer.readInt24() / 5.0F;
             String name = "";
-            for (int i = 0; i < buffer.readByte(); i++) {
+            int nameLength = buffer.readByte();
+            for (int i = 0; i < nameLength; i++) {
                 name += (char) buffer.readByte();
             }
             float prevPointX;
@@ -62,7 +63,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                 client.viewY = pointY;
                 client.player = snake;
                 snake.md = false;
-                snake.wmd = false;
+                snake.prevMd = false;
                 snake.name = client.nickname;
             } else {
                 snake.name = name;

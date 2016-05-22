@@ -1,5 +1,7 @@
 package net.gegy1000.slyther.network;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.gegy1000.slyther.util.SystemUtils;
 
 import java.io.*;
@@ -14,12 +16,47 @@ public enum ServerListHandler {
     private List<Server> serverList;
     private String encodedServerList;
 
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
     public List<Server> getServerList() throws IOException {
         if (serverList == null) {
-            serverList = new ArrayList<>();
-            Map<String, List<String>> rawServers = this.decodeServerList(this.getEncodedServerList());
-            for (Map.Entry<String, List<String>> entry : rawServers.entrySet()) {
-                serverList.add(new Server(entry.getKey(), entry.getValue()));
+            File cache = new File(SystemUtils.getGameFolder(), "server_list.json");
+            try {
+                serverList = new ArrayList<>();
+                Map<String, List<String>> rawServers = this.decodeServerList(this.getEncodedServerList());
+                for (Map.Entry<String, List<String>> entry : rawServers.entrySet()) {
+                    serverList.add(new Server(entry.getKey(), entry.getValue()));
+                }
+            } catch (Exception e) {
+                System.err.println("Could not access server list, using cache.");
+                e.printStackTrace();
+                if (cache.exists()) {
+                    try {
+                        ClusterListContainer clusters = GSON.fromJson(new FileReader(cache), ClusterListContainer.class);
+                        for (ClusterJsonContainer container : clusters.clusters) {
+                            serverList.add(new Server(container.ip, container.ports));
+                        }
+                    } catch (Exception cacheError) {
+                        System.err.println("Could not load server list cache file!");
+                        cacheError.printStackTrace();
+                    }
+                }
+            }
+            try {
+                cache.createNewFile();
+                PrintWriter out = new PrintWriter(new FileWriter(cache));
+                List<ClusterJsonContainer> clusterContainers = new ArrayList<>();
+                for (Server server : serverList) {
+                    ClusterJsonContainer container = new ClusterJsonContainer();
+                    container.ip = server.getClusterIp();
+                    container.ports = server.ports;
+                    clusterContainers.add(container);
+                }
+                ClusterListContainer clusterListContainer = new ClusterListContainer();
+                clusterListContainer.clusters = clusterContainers;
+                out.print(GSON.toJson(clusterListContainer));
+                out.close();
+            } catch (IOException e) {
             }
             System.out.println("Found " + serverList.size() + " official server clusters.");
         }
@@ -89,45 +126,18 @@ public enum ServerListHandler {
         return decoded;
     }
 
-    private String getEncodedServerList() {
+    private String getEncodedServerList() throws IOException {
         if (encodedServerList == null) {
-            File cache = new File(SystemUtils.getGameFolder(), "server_list.txt");
-            try {
-                URL url = new URL("http://slither.io/i49526.txt");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", "Slyther");
-                Scanner scanner = new Scanner(connection.getInputStream());
-                encodedServerList = "";
-                while (scanner.hasNextLine()) {
-                    encodedServerList += scanner.nextLine();
-                }
-                scanner.close();
-            } catch (Exception e) {
-                System.err.println("Could not access server list file, using cache.");
-                e.printStackTrace();
-                if (cache.exists()) {
-                    try {
-                        BufferedReader in = new BufferedReader(new FileReader(cache));
-                        encodedServerList = "";
-                        String line;
-                        while ((line = in.readLine()) != null) {
-                            encodedServerList += line;
-                        }
-                        in.close();
-                    } catch (Exception cacheError) {
-                        System.err.println("Could not load server list cache file!");
-                        cacheError.printStackTrace();
-                    }
-                }
+            URL url = new URL("http://slither.io/i49526.txt");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("User-Agent", "Slyther");
+            Scanner scanner = new Scanner(connection.getInputStream());
+            encodedServerList = "";
+            while (scanner.hasNextLine()) {
+                encodedServerList += scanner.nextLine();
             }
-            try {
-                cache.createNewFile();
-                PrintWriter out = new PrintWriter(new FileWriter(cache));
-                out.print(encodedServerList);
-                out.close();
-            } catch (IOException e) {
-            }
+            scanner.close();
         }
         return encodedServerList;
     }
@@ -175,5 +185,14 @@ public enum ServerListHandler {
         public int compareTo(Server server) {
             return Long.compare(this.ping != -1 ? this.ping : Long.MAX_VALUE, server.ping != -1 ? server.ping : Long.MAX_VALUE);
         }
+    }
+
+    private class ClusterListContainer {
+        public List<ClusterJsonContainer> clusters;
+    }
+
+    private class ClusterJsonContainer {
+        public String ip;
+        public List<String> ports;
     }
 }

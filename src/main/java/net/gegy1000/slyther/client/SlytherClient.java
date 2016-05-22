@@ -148,6 +148,8 @@ public class SlytherClient {
     public float apx2;
     public float apy2;
 
+    public boolean[][] map = new boolean[80][80];
+
     static {
         for (int i = 0; i < LFC; i++) {
             LFAS[i] = (float) (0.5F * (1.0F - Math.cos(Math.PI * (LFC - 1.0F - i) / (LFC - 1.0F))));
@@ -420,14 +422,14 @@ public class SlytherClient {
                 }
                 etm *= Math.pow(0.993, vfrb);
                 if (time - lastAccelerateUpdateTime > 150) {
-                    if (player.md != player.wmd) {
-                        player.md = player.wmd;
+                    if (player.md != player.prevMd) {
                         this.lastAccelerateUpdateTime = time;
                         this.networkManager.send(new MessageAccelerate(player.md));
+                        player.prevMd = player.md;
                     }
                 }
                 int mouseX = Mouse.getX() - (Display.getWidth() / 2);
-                int mouseY = Mouse.getY() - (Display.getHeight() / 2);
+                int mouseY = (Display.getHeight() - Mouse.getY()) - (Display.getHeight() / 2);
                 if (mouseX != lastMouseX || mouseY != lastMouseY) {
                     this.mouseMoved = true;
                 }
@@ -496,7 +498,7 @@ public class SlytherClient {
     }
 
     public Snake getSnake(int id) {
-        for (Snake snake : this.snakes) {
+        for (Snake snake : new ArrayList<>(this.snakes)) {
             if (snake.id == id) {
                 return snake;
             }
@@ -505,7 +507,7 @@ public class SlytherClient {
     }
 
     public Prey getPrey(int id) {
-        for (Prey prey : this.preys) {
+        for (Prey prey : new ArrayList<>(this.preys)) {
             if (prey.id == id) {
                 return prey;
             }
@@ -514,7 +516,7 @@ public class SlytherClient {
     }
 
     public Food getFood(int id) {
-        for (Food food : this.foods) {
+        for (Food food : new ArrayList<>(this.foods)) {
             if (food.id == id) {
                 return food;
             }

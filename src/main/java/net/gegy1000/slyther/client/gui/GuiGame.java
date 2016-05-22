@@ -159,6 +159,9 @@ public class GuiGame extends Gui {
                         float K = 0;
                         float O = snake.sep * client.qsm;
                         SkinColor[] pattern = snake.rbcs;
+                        if (snake == client.player && snake.pts.size() == 0) {
+                            System.out.println(snake.fam);
+                        }
                         for (int pointIndex = snake.pts.size() - 1; pointIndex >= 1; pointIndex--) {
                             SnakePoint point = snake.pts.get(pointIndex);
                             if (G > -0.25F) {
@@ -254,7 +257,7 @@ public class GuiGame extends Gui {
 
             this.drawLargeString("Leaderboard:", renderResolution.getWidth() - largeFont.getWidth("Leaderboard:") - 10.0F, 2.0F, 1.0F, 0xFFFFFF);
 
-            int y = largeFont.getHeight() + 4;
+            int leaderboardY = largeFont.getHeight() + 4;
 
             List<LeaderboardEntry> leaderboard = new ArrayList<>(client.leaderboard);
 
@@ -264,11 +267,23 @@ public class GuiGame extends Gui {
             for (int i = 1; i <= leaderboard.size(); i++) {
                 LeaderboardEntry leaderboardEntry = leaderboard.get(i - 1);
                 String text = i + ". " + leaderboardEntry.toString();
-                this.drawString(text, renderResolution.getWidth() - font.getWidth(text) - 8.0F, y, 1.0F, leaderboardEntry.color.toHex() | alpha << 24);
+                this.drawString(text, renderResolution.getWidth() - font.getWidth(text) - 8.0F, leaderboardY, 1.0F, leaderboardEntry.color.toHex() | alpha << 24);
 
-                y += font.getHeight() + 2;
+                leaderboardY += font.getHeight() + 2;
                 alpha -= alphaChange;
             }
+
+            for (int x = 0; x < 80; x++) {
+                for (int y = 0; y < 80; y++) {
+                    if (client.map[x][y]) {
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    } else {
+                        GL11.glColor4f(0.5F, 0.5F, 0.5F, 0.5F);
+                    }
+                    this.drawRect((renderResolution.getWidth() - 100.0F) + x, (renderResolution.getHeight() - 100.0F) + y, 1.0F, 1.0F);
+                }
+            }
+            this.drawCircle((renderResolution.getWidth() - 100.0F) + Math.round((client.player.posX - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7), (renderResolution.getHeight() - 100.0F) + Math.round((client.player.posY - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7), 0.25F, 0xFFFFFF);
         }
     }
 
