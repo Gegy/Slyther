@@ -276,9 +276,9 @@ public class GuiGame extends Gui {
             for (int x = 0; x < 80; x++) {
                 for (int y = 0; y < 80; y++) {
                     if (client.map[x][y]) {
-                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                        GL11.glColor4f(0.8F, 0.8F, 0.8F, 1.0F);
                     } else {
-                        GL11.glColor4f(0.5F, 0.5F, 0.5F, 0.5F);
+                        GL11.glColor4f(0.25F, 0.25F, 0.25F, 1.0F);
                     }
                     this.drawRect((renderResolution.getWidth() - 100.0F) + x, (renderResolution.getHeight() - 100.0F) + y, 1.0F, 1.0F);
                 }
