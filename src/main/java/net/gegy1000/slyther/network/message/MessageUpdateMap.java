@@ -17,17 +17,14 @@ public class MessageUpdateMap extends SlytherServerMessageBase {
             }
         }
         int mapSize = 80 * 80;
-        outer:
-        for (int i = 0; i < mapSize && buffer.hasNext(); i++) {
+        for (int i = 0; i < mapSize && buffer.hasNext();) {
             int value = buffer.readByte();
-            if (value >= 128) {
-                i += (value - 128);
+            if (value > 127) {
+                i += value - 128;
             } else {
-                for (int bit = 64; (value & bit) <= 0; bit /= 2) {
-                    client.map[i % 80][i / 80] = true;
-                    i++;
-                    if (i >= mapSize || !(buffer.hasNext())) {
-                        break outer;
+                for (int bit = 64; bit > 0 && i < mapSize; bit /= 2, i++) {
+                    if ((value & bit) > 0) {
+                        client.map[i % 80][i / 80] = true;
                     }
                 }
             }
