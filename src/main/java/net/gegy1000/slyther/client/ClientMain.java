@@ -14,6 +14,6 @@ public class ClientMain {
             e.printStackTrace();
         }
 
-        new SlytherClient("Slyther");
+        new SlytherClient();
     }
 }

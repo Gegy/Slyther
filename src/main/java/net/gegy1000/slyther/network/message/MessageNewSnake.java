@@ -64,7 +64,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                 client.player = snake;
                 snake.md = false;
                 snake.prevMd = false;
-                snake.name = client.nickname;
+                snake.name = client.configuration.nickname;
             } else {
                 snake.name = name;
                 if (!ProfanityHandler.INSTANCE.isClean(name)) {

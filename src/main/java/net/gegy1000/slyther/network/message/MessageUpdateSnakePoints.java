@@ -36,8 +36,8 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
                 x = buffer.readShort();
                 y = buffer.readShort();
             } else {
-                x = head.posX + buffer.readByte() - 128;
-                y = head.posY + buffer.readByte() - 128;
+                x = head.posX + (buffer.readByte() - 128);
+                y = head.posY + (buffer.readByte() - 128);
             }
             if (alive) {
                 snake.fam = (double) buffer.readInt24() / 0xFFFFFF;

@@ -159,9 +159,6 @@ public class GuiGame extends Gui {
                         float K = 0;
                         float O = snake.sep * client.qsm;
                         SkinColor[] pattern = snake.rbcs;
-                        if (snake == client.player && snake.pts.size() == 0) {
-                            System.out.println(snake.fam);
-                        }
                         for (int pointIndex = snake.pts.size() - 1; pointIndex >= 1; pointIndex--) {
                             SnakePoint point = snake.pts.get(pointIndex);
                             if (G > -0.25F) {

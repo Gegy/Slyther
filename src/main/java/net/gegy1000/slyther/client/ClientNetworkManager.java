@@ -44,7 +44,10 @@ public class ClientNetworkManager extends WebSocketClient {
     }
 
     public static ClientNetworkManager create(SlytherClient client, ServerListHandler.Server server) throws Exception {
-        String ip = server.getIp();
+        return create(client, server.getIp());
+    }
+
+    public static ClientNetworkManager create(SlytherClient client, String ip) throws Exception {
         System.out.println("Connecting to server " + ip);
         Map<String, String> headers = new HashMap<>(HEADERS);
         headers.put("Host", ip);
@@ -54,7 +57,7 @@ public class ClientNetworkManager extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
         this.isOpen = true;
-        this.send(new MessageSetUsername(client.nickname, Skin.RAINBOW));
+        this.send(new MessageSetUsername(client.configuration.nickname, client.configuration.skin));
         this.ping();
         System.out.println("Connected to " + ip);
     }

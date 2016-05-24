@@ -103,8 +103,6 @@ public class SlytherClient {
     public List<Food> foods = new ArrayList<>();
     public List<Sector> sectors = new ArrayList<>();
 
-    public String nickname;
-
     public int fvpos;
     public float fvx;
     public float fvy;
@@ -150,6 +148,8 @@ public class SlytherClient {
 
     public boolean[][] map = new boolean[80][80];
 
+    public ClientConfig configuration;
+
     static {
         for (int i = 0; i < LFC; i++) {
             LFAS[i] = (float) (0.5F * (1.0F - Math.cos(Math.PI * (LFC - 1.0F - i) / (LFC - 1.0F))));
@@ -175,12 +175,18 @@ public class SlytherClient {
         }
     }
 
-    public SlytherClient(String nickname) throws Exception {
-        this.nickname = nickname;
+    public SlytherClient() throws Exception {
         this.setup();
     }
 
     private void setup() {
+        try {
+            this.configuration = ConfigHandler.INSTANCE.readConfig(ClientConfig.class);
+            ConfigHandler.INSTANCE.saveConfig(this.configuration);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         this.renderHandler = new RenderHandler(this);
         this.renderHandler.setup();
 
@@ -191,10 +197,14 @@ public class SlytherClient {
         }
         new Thread(() -> {
             try {
-                while (ServerListHandler.INSTANCE.getPingedCount() < 5);
-                List<ServerListHandler.Server> servers = ServerListHandler.INSTANCE.getServerList();
-                Collections.sort(servers);
-                while ((SlytherClient.this.networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)))) == null);
+                if (configuration.server == null) {
+                    while (ServerListHandler.INSTANCE.getPingedCount() < 5) ;
+                    List<ServerListHandler.Server> servers = ServerListHandler.INSTANCE.getServerList();
+                    Collections.sort(servers);
+                    while ((SlytherClient.this.networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)))) == null);
+                } else {
+                    SlytherClient.this.networkManager = ClientNetworkManager.create(SlytherClient.this, configuration.server);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
