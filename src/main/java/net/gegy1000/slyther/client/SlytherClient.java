@@ -283,7 +283,7 @@ public class SlytherClient {
         System.exit(-1);
     }
 
-    public void setup(int gameRadius, short mscps, short sectorSize, short sectorCountAlongEdge, float spangDV, float nsp1, float nsp2, float nsp3, float mamu, float mamu2, float cst, int protocolVersion) {
+    public void setup(int gameRadius, int mscps, int sectorSize, int sectorCountAlongEdge, float spangDV, float nsp1, float nsp2, float nsp3, float mamu, float mamu2, float cst, int protocolVersion) {
         this.GAME_RADIUS = gameRadius;
         this.SECTOR_SIZE = sectorSize;
         this.SECTORS_ALONG_EDGE = sectorCountAlongEdge;
@@ -508,7 +508,7 @@ public class SlytherClient {
     }
 
     public Snake getSnake(int id) {
-        for (Snake snake : new ArrayList<>(this.snakes)) {
+        for (Snake snake : this.snakes) {
             if (snake.id == id) {
                 return snake;
             }
@@ -517,7 +517,7 @@ public class SlytherClient {
     }
 
     public Prey getPrey(int id) {
-        for (Prey prey : new ArrayList<>(this.preys)) {
+        for (Prey prey : this.preys) {
             if (prey.id == id) {
                 return prey;
             }
@@ -526,7 +526,7 @@ public class SlytherClient {
     }
 
     public Food getFood(int id) {
-        for (Food food : new ArrayList<>(this.foods)) {
+        for (Food food : this.foods) {
             if (food.id == id) {
                 return food;
             }

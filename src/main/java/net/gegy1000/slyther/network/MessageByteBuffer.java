@@ -103,8 +103,8 @@ public class MessageByteBuffer {
         return ByteBuffer.wrap(readBytes(8)).order(BYTE_ORDER).getDouble();
     }
 
-    public short readShort() {
-        return ByteBuffer.wrap(readBytes(2)).order(BYTE_ORDER).getShort();
+    public int readShort() {
+        return ByteBuffer.wrap(readBytes(2)).order(BYTE_ORDER).getShort() & 0xFFFF;
     }
 
     public int readInt24() {
@@ -115,7 +115,7 @@ public class MessageByteBuffer {
     public String readNullStr16() {
         String str = "";
 
-        short c;
+        int c;
 
         while ((c = readShort()) != 0) {
             str += (char) c;

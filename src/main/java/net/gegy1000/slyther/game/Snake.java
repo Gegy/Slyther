@@ -291,7 +291,7 @@ public class Snake {
         }
         if (this.dir == 1) {
             this.ang -= c;
-            if (this.ang < 0 || this.ang > SlytherClient.PI_2) {
+            if (this.ang < 0 || this.ang >= SlytherClient.PI_2) {
                 this.ang %= SlytherClient.PI_2;
             }
             if (this.ang < 0) {
@@ -310,7 +310,7 @@ public class Snake {
             }
         } else if (this.dir == 2) {
             this.ang += c;
-            if (this.ang < 0 || this.ang > SlytherClient.PI_2) {
+            if (this.ang < 0 || this.ang >= SlytherClient.PI_2) {
                 this.ang %= SlytherClient.PI_2;
             }
             if (this.ang < 0) {
@@ -338,10 +338,10 @@ public class Snake {
         }
         SnakePoint point = this.pts.get(this.pts.size() - 1);
         if (point != null) {
-            point.wehang = (float) Math.atan2(this.posY + this.fy - point.posY - point.fy + point.eby * (1.0F - this.ehl), this.posX + this.fx - point.posX - point.fx + point.ebx * (1.0F - this.ehl));
+            wehang = (float) Math.atan2(this.posY + this.fy - point.posY - point.fy + point.eby * (1.0F - this.ehl), this.posX + this.fx - point.posX - point.fx + point.ebx * (1.0F - this.ehl));
         }
         if (!this.dead) {
-            if (!(this.ehang == this.wehang)) {
+            if (this.ehang != this.wehang) {
                 float h = (float) ((this.wehang - this.ehang) % SlytherClient.PI_2);
                 if (h < 0) {
                     h += SlytherClient.PI_2;
@@ -454,13 +454,13 @@ public class Snake {
         }
         if (this.rex > ex) {
             this.rex -= vfr / 6;
-            if (this.rex <= ex) {
+            if (this.rex < ex) {
                 this.rex = ex;
             }
         }
         if (this.rey > ey) {
             this.rey -= vfr / 6;
-            if (this.rey <= ey) {
+            if (this.rey < ey) {
                 this.rey = ey;
             }
         }
@@ -483,13 +483,11 @@ public class Snake {
                         this.fpos = 0;
                     }
                 }
-            } else {
-                if (this.ftg == 0) {
-                    this.ftg = -1;
-                    this.fx = 0;
-                    this.fy = 0;
-                    this.fchl = 0;
-                }
+            } else if (this.ftg == 0) {
+                this.ftg = -1;
+                this.fx = 0;
+                this.fy = 0;
+                this.fchl = 0;
             }
             if (this.fatg > 0) {
                 float h = vfrb;
@@ -505,11 +503,9 @@ public class Snake {
                         this.fapos = 0;
                     }
                 }
-            } else {
-                if (this.fatg == 0) {
-                    this.fatg = -1;
-                    this.fa = 0;
-                }
+            } else if (this.fatg == 0) {
+                this.fatg = -1;
+                this.fa = 0;
             }
         }
         if (this.dead) {
@@ -520,7 +516,7 @@ public class Snake {
         } else {
             if (this.aliveAmt != 1) {
                 this.aliveAmt += 0.015F * vfr;
-                if (this.aliveAmt >= 1.0F) {
+                if (this.aliveAmt > 1.0F) {
                     this.aliveAmt = 1.0F;
                 }
             }

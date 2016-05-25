@@ -9,7 +9,7 @@ import net.gegy1000.slyther.server.SlytherServer;
  */
 public abstract class SlytherServerMessageBase {
     public byte messageId;
-    public short serverTimeDelta;
+    public int serverTimeDelta;
 
     public final void writeBase(MessageByteBuffer buffer, SlytherServer server) {
 //        buffer.writeShort((short) 0); //TODO serverTimeDelta

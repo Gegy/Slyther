@@ -20,12 +20,13 @@ public class MessageNewSnake extends SlytherServerMessageBase {
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         int id = buffer.readShort();
         if (buffer.hasNext(4)) {
-            float angle = (float) (2.0F * buffer.readInt24() * Math.PI / (float) 0xFFFFFF);
+            float angle = (float) (buffer.readInt24() * (2 * Math.PI / 0xFFFFFF));
             buffer.incrementIndex(1);
-            float wang = (float) (2.0F * buffer.readInt24() * Math.PI / (float) 0xFFFFFF);
+            float wang = (float) (buffer.readInt24() * (2 * Math.PI / 0xFFFFFF));
             float sp = (float) buffer.readShort() / 1000.0F;
             double fam = (double) buffer.readInt24() / 0xFFFFFF;
-            Skin skin = Skin.values()[buffer.readByte()];
+            int ski = buffer.readByte();
+            Skin skin = Skin.values()[ski < Skin.values().length ? ski : 0];
             float x = buffer.readInt24() / 5.0F;
             float y = buffer.readInt24() / 5.0F;
             String name = "";
@@ -41,14 +42,14 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             while (buffer.hasNext(2)) {
                 prevPointX = pointX;
                 prevPointY = pointY;
-                if (points.size() != 0) {
-                    pointX += (buffer.readByte() - 127) / 2.0F;
-                    pointY += (buffer.readByte() - 127) / 2.0F;
-                } else {
+                if (points.isEmpty()) {
                     pointX = buffer.readInt24() / 5.0F;
                     pointY = buffer.readInt24() / 5.0F;
                     prevPointX = pointX;
                     prevPointY = pointY;
+                } else {
+                    pointX += (buffer.readByte() - 127) / 2.0F;
+                    pointY += (buffer.readByte() - 127) / 2.0F;
                 }
                 SnakePoint point = new SnakePoint();
                 point.posX = pointX;

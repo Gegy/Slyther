@@ -35,13 +35,13 @@ public class GuiGame extends Gui {
             float newScale = 0.4F / Math.max(1.0F, (player.sct + 16.0F) / 36.0F) + 0.5F;
             if (client.gsc != newScale) {
                 if (client.gsc < newScale) {
-                    client.gsc += 0.0002F;
-                    if (client.gsc >= newScale) {
+                    client.gsc += 1e-4F;
+                    if (client.gsc > newScale) {
                         client.gsc = newScale;
                     }
                 } else if (client.gsc > newScale) {
-                    client.gsc -= 0.0002F;
-                    if (client.gsc <= newScale) {
+                    client.gsc -= 1e-4F;
+                    if (client.gsc < newScale) {
                         client.gsc = newScale;
                     }
                 }
@@ -86,7 +86,7 @@ public class GuiGame extends Gui {
             for (int i = 0; i < client.foods.size(); i++) {
                 Food food = client.foods.get(i);
                 if (food != null) {
-                    if (food.rx >= client.bpx1 && food.rx <= client.bpx2 && food.ry >= client.bpy1 && food.ry <= client.bpy2) {
+                    if (food.rx >= client.fpx1 && food.rx <= client.fpx2 && food.ry >= client.fpy1 && food.ry <= client.fpy2) {
                         Color color = food.cv;
                         float size = (food.sz / 5.0F) * food.rad * 0.5F;
                         GL11.glPushMatrix();
@@ -103,8 +103,8 @@ public class GuiGame extends Gui {
             }
             for (int i = 0; i < client.snakes.size(); i++) {
                 Snake snake = client.snakes.get(i);
-                snake.iiv = false;
-                for (int t = snake.pts.size() - 1; t >= 0; t--) {
+                snake.iiv = true;
+                /*for (int t = snake.pts.size() - 1; t >= 0; t--) {
                     SnakePoint point = snake.pts.get(t);
                     float pointX = point.posX + point.fx;
                     float pointY = point.posY + point.fy;
@@ -112,7 +112,7 @@ public class GuiGame extends Gui {
                         snake.iiv = true;
                         break;
                     }
-                }
+                }*/
             }
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             for (int i = 0; i < client.snakes.size(); i++) {
@@ -159,13 +159,13 @@ public class GuiGame extends Gui {
                         float K = 0;
                         float O = snake.sep * client.qsm;
                         SkinColor[] pattern = snake.rbcs;
-                        for (int pointIndex = snake.pts.size() - 1; pointIndex >= 1; pointIndex--) {
+                        for (int pointIndex = snake.pts.size() - 1; pointIndex >= 0; pointIndex--) {
                             SnakePoint point = snake.pts.get(pointIndex);
+                            lastX = x;
+                            lastY = y;
+                            x = point.posX + point.fx;
+                            y = point.posY + point.fy;
                             if (G > -0.25F) {
-                                lastX = x;
-                                lastY = y;
-                                x = point.posX + point.fx;
-                                y = point.posY + point.fy;
                                 lastAverageX = averageX;
                                 lastAverageY = averageY;
                                 averageX = (x + lastX) / 2.0F;
@@ -181,8 +181,8 @@ public class GuiGame extends Gui {
                                     ax = e + (J - e) * E;
                                     ay = w + (M - w) * E;
                                     if (G < 0) {
-                                        ax += -(lax - ax) * G / 0.25;
-                                        ay += -(lay - ay) * G / 0.25;
+                                        ax += -(lax - ax) * G / 0.25F;
+                                        ay += -(lay - ay) * G / 0.25F;
                                     }
                                     float partDistance = (float) Math.sqrt(Math.pow(ax - lax, 2) + Math.pow(ay - lay, 2));
                                     if (K + partDistance < O) {
@@ -193,7 +193,7 @@ public class GuiGame extends Gui {
                                             K += O;
                                             float pax = lax + (ax - lax) * K / partDistance;
                                             float pay = lay + (ay - lay) * K / partDistance;
-                                            if (pax >= client.bpx1 && pax <= client.bpx2 && pay >= client.bpy1 && pay <= client.bpy2) {
+                                            if (true || pax >= client.bpx1 && pax <= client.bpx2 && pay >= client.bpy1 && pay <= client.bpy2) {
                                                 xs.add(pax);
                                                 ys.add(pay);
                                             }
@@ -212,40 +212,48 @@ public class GuiGame extends Gui {
                                 }
                             }
                         }
+                        if (true || ax >= client.bpx1 && ax <= client.bpx2 && ay >= client.bpy1 && ay <= client.bpy2) {
+                        	xs.add(ax);
+                            ys.add(ay);
+                        }
                         GL11.glPushMatrix();
                         this.textureManager.bindTexture("/textures/snake_point.png");
                         scale = client.gsc * 0.25F * (snake.sc);
                         GL11.glTranslatef(client.mww2, client.mhh2, 0.0F);
-                        GL11.glScalef(scale, scale, 1.0F);
+                        GL11.glScalef(client.gsc, client.gsc, 1.0F);
                         for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
                             float pointX = (xs.get(pointIndex)) - client.viewX;
                             float pointY = (ys.get(pointIndex)) - client.viewY;
                             SkinColor color = pattern[(pointIndex / 2) % pattern.length];
                             GL11.glColor4f(color.red, color.green, color.blue, 1.0F);
-                            this.drawTexture(pointX, pointY, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
-                        }
-                        GL11.glPopMatrix();
-                        if (!snake.oneEye) {
                             GL11.glPushMatrix();
-                            float t = 6.0F;
-                            float a = 6.0F;
-                            scale = client.gsc * 0.125F * (snake.sc);
-                            GL11.glTranslatef(client.mww2, client.mhh2, 0.0F);
-                            GL11.glScalef(scale, scale, 1.0F);
-                            float eyeOffsetX = (float) (Math.cos(ehang) * t + Math.cos(ehang - Math.PI / 2.0F) * (a + 0.5F));
-                            float eyeOffsetY = (float) (Math.sin(ehang) * t + Math.sin(ehang - Math.PI / 2.0F) * (a + 0.5F));
-                            this.drawCircle((client.viewX - (eyeOffsetX + originX)) / scale, (client.viewY - (eyeOffsetY + originY)) / scale, snake.er * sc * client.gsc, snake.ec);
-                            eyeOffsetX = (float) (Math.cos(ehang) * t + Math.cos(ehang + Math.PI / 2.0F) * (a + 0.5F));
-                            eyeOffsetY = (float) (Math.sin(ehang) * t + Math.sin(ehang + Math.PI / 2.0F) * (a + 0.5F));
-                            this.drawCircle((client.viewX - (eyeOffsetX + originX)) / scale, (client.viewY - (eyeOffsetY + originY)) / scale, snake.er * sc * client.gsc, snake.ec);
-                            eyeOffsetX = (float) (Math.cos(ehang) * (t + 0.5F) + snake.rex * sc + Math.cos(ehang + Math.PI / 2.0F) * a);
-                            eyeOffsetY = (float) (Math.sin(ehang) * (t + 0.5F) + snake.rey * sc + Math.sin(ehang + Math.PI / 2.0F) * a);
-                            this.drawCircle((client.viewX - (eyeOffsetX + originX)) / scale, (client.viewY - (eyeOffsetY + originY)) / scale, 3.5F * sc * client.gsc, snake.ppc);
-                            eyeOffsetX = (float) (Math.cos(ehang) * (t + 0.5F) + snake.rex * sc + Math.cos(ehang - Math.PI / 2.0F) * a);
-                            eyeOffsetY = (float) (Math.sin(ehang) * (t + 0.5F) + snake.rey * sc + Math.sin(ehang - Math.PI / 2.0F) * a);
-                            this.drawCircle((client.viewX - (eyeOffsetX + originX)) / scale, (client.viewY - (eyeOffsetY + originY)) / scale, 3.5F * sc * client.gsc, snake.ppc);
+                            GL11.glTranslatef(pointX, pointY, 0);
+                            GL11.glScalef(snake.sc * 0.25F, snake.sc * 0.25F, 1);
+                            this.drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
                             GL11.glPopMatrix();
                         }
+                        if (!snake.oneEye) {
+                            GL11.glPushMatrix();
+                            GL11.glTranslated(-client.viewX, -client.viewY, 0);
+                            float t = 6.0F * sc;
+                            float a = 6.0F * sc;
+                            scale = client.gsc * 0.125F * (snake.sc);
+                            float eyeScale = 0.1F;
+                            float eyeOffsetX = (float) (Math.cos(ehang) * t + Math.cos(ehang - Math.PI / 2.0F) * (a + 0.5F));
+                            float eyeOffsetY = (float) (Math.sin(ehang) * t + Math.sin(ehang - Math.PI / 2.0F) * (a + 0.5F));
+                            this.drawCircle(eyeOffsetX + originX, eyeOffsetY + originY, snake.er * sc * eyeScale, snake.ec);
+                            eyeOffsetX = (float) (Math.cos(ehang) * t + Math.cos(ehang + Math.PI / 2.0F) * (a + 0.5F));
+                            eyeOffsetY = (float) (Math.sin(ehang) * t + Math.sin(ehang + Math.PI / 2.0F) * (a + 0.5F));
+                            this.drawCircle(eyeOffsetX + originX, eyeOffsetY + originY, snake.er * sc * eyeScale, snake.ec);
+                            eyeOffsetX = (float) (Math.cos(ehang) * (t + 0.5F) + snake.rex * sc + Math.cos(ehang + Math.PI / 2.0F) * a);
+                            eyeOffsetY = (float) (Math.sin(ehang) * (t + 0.5F) + snake.rey * sc + Math.sin(ehang + Math.PI / 2.0F) * a);
+                            this.drawCircle(eyeOffsetX + originX, eyeOffsetY + originY, 3.5F * sc * eyeScale, snake.ppc);
+                            eyeOffsetX = (float) (Math.cos(ehang) * (t + 0.5F) + snake.rex * sc + Math.cos(ehang - Math.PI / 2.0F) * a);
+                            eyeOffsetY = (float) (Math.sin(ehang) * (t + 0.5F) + snake.rey * sc + Math.sin(ehang - Math.PI / 2.0F) * a);
+                            this.drawCircle(eyeOffsetX + originX, eyeOffsetY + originY, 3.5F * sc * eyeScale, snake.ppc);
+                            GL11.glPopMatrix();
+                        }
+                        GL11.glPopMatrix();
                     }
                 }
             }

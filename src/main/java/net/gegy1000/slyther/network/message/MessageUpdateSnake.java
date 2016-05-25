@@ -19,32 +19,32 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
         float sp = -1;
         if (buffer.hasNext(3)) {
             dir = this.messageId == 'e' ? 1 : 2;
-            ang = (float) (2.0F * Math.PI / 256.0F);
-            wang = (float) (2.0F * Math.PI / 256.0F);
+            ang = (float) (buffer.readByte() * (2.0F * Math.PI / 256.0F));
+            wang = (float) (buffer.readByte() * (2.0F * Math.PI / 256.0F));
             sp = buffer.readByte() / 18.0F;
         } else if (buffer.hasNext(2)) {
             if (this.messageId == 'e') {
-                ang = (float) (2.0F * Math.PI / 256.0F);
+                ang = (float) (buffer.readByte() * (2.0F * Math.PI / 256.0F));
                 sp = buffer.readByte() / 18.0F;
             } else if (this.messageId == 'E') {
                 dir = 1;
-                wang = (float) (2.0F * Math.PI / 256.0F);
+                wang = (float) (buffer.readByte() * (2.0F * Math.PI / 256.0F));
                 sp = buffer.readByte() / 18.0F;
             } else if (this.messageId == '4') {
                 dir = 2;
-                wang = (float) (2.0F * Math.PI / 256.0F);
+                wang = (float) (buffer.readByte() * (2.0F * Math.PI / 256.0F));
                 sp = buffer.readByte() / 18.0F;
             } else if (this.messageId == '5') {
                 dir = 2;
-                ang = (float) (2.0F * Math.PI / 256.0F);
-                wang = (float) (2.0F * Math.PI / 256.0F);
+                ang = (float) (buffer.readByte() * (2.0F * Math.PI / 256.0F));
+                wang = (float) (buffer.readByte() * (2.0F * Math.PI / 256.0F));
             }
         } else if (buffer.hasNext()) {
             if (this.messageId == 'e') {
-                ang = (float) (2.0F * Math.PI / 256.0F);
+                ang = (float) (buffer.readByte() * (2.0F * Math.PI / 256.0F));
             } else if (this.messageId == 'E') {
                 dir = 1;
-                wang = (float) (2.0F * Math.PI / 256.0F);
+                wang = (float) (buffer.readByte() * (2.0F * Math.PI / 256.0F));
             } else if (this.messageId == '3') {
                 sp = buffer.readByte() / 18.0F;
             }

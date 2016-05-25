@@ -24,9 +24,9 @@ public class MessageSetup extends SlytherServerMessageBase {
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         int gameRadius = buffer.readInt24();
-        short mscps = buffer.readShort();
-        short sectorSize = buffer.readShort();
-        short sectorCountAlongEdge = buffer.readShort();
+        int mscps = buffer.readShort();
+        int sectorSize = buffer.readShort();
+        int sectorCountAlongEdge = buffer.readShort();
         float spangDV = buffer.readByte() / 10.0F;
         float nsp1 = buffer.readShort() / 100.0F;
         float nsp2 = buffer.readShort() / 100.0F;

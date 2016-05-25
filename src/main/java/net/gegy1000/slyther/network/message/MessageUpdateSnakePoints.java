@@ -89,7 +89,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
             }
             snake.sc = Math.min(6.0F, (snake.sct - 2.0F) / 106.0F + 1.0F);
             snake.scang = (float) (Math.pow((7.0F - snake.sc) / 6.0F, 2.0F) * 0.87F + 0.13F);
-            snake.ssp = client.NSP1 + client.NSP2 * snake.sp;
+            snake.ssp = client.NSP1 + client.NSP2 * snake.sc;
             snake.fsp = snake.ssp + 0.1F;
             snake.wsep = snake.sc * 6.0F;
             float min = SlytherClient.NSEP / client.gsc;
