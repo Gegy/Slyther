@@ -59,6 +59,37 @@ public abstract class Gui {
 
     public abstract void mouseClicked(float mouseX, float mouseY, int button);
 
+    public void drawLine(float x1, float y1, float x2, float y2, float width, int color) {
+        GL11.glPushMatrix();
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glColor4f((color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 1.0F);
+        GL11.glLineWidth(width * renderResolution.getScale());
+        GL11.glBegin(GL11.GL_LINES);
+        GL11.glVertex2f(x1, y1);
+        GL11.glVertex2f(x2, y2);
+        GL11.glEnd();
+        GL11.glPopMatrix();
+    }
+
+    public void beginConnectedLines(float width, int color) {
+        GL11.glPushMatrix();
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glColor4f((color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 1.0F);
+        GL11.glLineWidth(width * renderResolution.getScale());
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glBegin(GL11.GL_LINES);
+    }
+
+    public void drawConnectedLine(float x1, float y1, float x2, float y2) {
+        GL11.glVertex2f(x1, y1);
+        GL11.glVertex2f(x2, y2);
+    }
+
+    public void endConnectedLines() {
+        GL11.glEnd();
+        GL11.glPopMatrix();
+    }
+
     public void drawCircle(float centerX, float centerY, float radius, int color) {
         GL11.glPushMatrix();
         GL11.glColor4f((color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 1.0F);

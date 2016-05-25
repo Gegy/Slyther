@@ -24,7 +24,7 @@ public class Snake {
     public boolean antenna;
     public boolean oneEye;
     public float swell;
-    public int atba;
+    public float atba;
     public int atc1;
     public int atc2;
     public boolean atwg;
@@ -112,6 +112,8 @@ public class Snake {
     public float sep;
     public float wsep;
     public boolean iiv;
+    public boolean antennaShown;
+    public String antennaTexture;
 
     public Snake(SlytherClient client, int id, float x, float y, Skin skin, float angle, List<SnakePoint> points) {
         this.client = client;
@@ -210,8 +212,10 @@ public class Snake {
             this.episz = details.episz;
             this.pma = details.pma;
             this.swell = details.swell;
+            this.antennaTexture = details.antennaTexture;
 
             pattern = details.pattern;
+            this.skinDetails = details;
         }
 
         this.rbcs = pattern;

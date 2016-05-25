@@ -26,12 +26,13 @@ public class SkinDetails {
     public int episz;
     public float pma = 2.3F;
     public float swell;
+    public String antennaTexture;
 
     public SkinDetails(SkinColor[] pattern) {
         this.pattern = pattern;
     }
 
-    public SkinDetails(SkinColor[] pattern, boolean hasAntenna, int antennaLength, int antennaPrimaryColor, int antennaSecondaryColor, float eca, int eyeColor, boolean abrot, float atia, boolean atwg, int blbx, int blby, int blbw, int blbh, float blba, float bsc, boolean oneEye, int ebiw, int ebih, int ebisz, int epiw, int epih, int episz, float pma, float swell) {
+    public SkinDetails(SkinColor[] pattern, boolean hasAntenna, int antennaLength, int antennaPrimaryColor, int antennaSecondaryColor, float eca, int eyeColor, boolean abrot, float atia, boolean atwg, int blbx, int blby, int blbw, int blbh, float blba, float bsc, boolean oneEye, int ebiw, int ebih, int ebisz, int epiw, int epih, int episz, float pma, float swell, String antennaTexture) {
         this.pattern = pattern;
         this.hasAntenna = hasAntenna;
         this.antennaLength = antennaLength;
@@ -57,5 +58,6 @@ public class SkinDetails {
         this.episz = episz;
         this.pma = pma;
         this.swell = swell;
+        this.antennaTexture = antennaTexture;
     }
 }
