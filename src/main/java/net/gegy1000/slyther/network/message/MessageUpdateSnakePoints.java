@@ -6,8 +6,6 @@ import net.gegy1000.slyther.game.SnakePoint;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.server.SlytherServer;
 
-import java.util.Arrays;
-
 public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server) {

@@ -213,7 +213,7 @@ public class GuiGame extends Gui {
                             }
                         }
                         if (true || ax >= client.bpx1 && ax <= client.bpx2 && ay >= client.bpy1 && ay <= client.bpy2) {
-                        	xs.add(ax);
+                            xs.add(ax);
                             ys.add(ay);
                         }
                         GL11.glPushMatrix();

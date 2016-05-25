@@ -6,9 +6,7 @@ import net.gegy1000.slyther.network.ServerListHandler;
 import net.gegy1000.slyther.network.message.MessageSetUsername;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
-import net.gegy1000.slyther.game.Skin;
 import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_10;
 import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
 

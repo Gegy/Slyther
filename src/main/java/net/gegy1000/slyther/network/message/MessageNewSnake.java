@@ -23,7 +23,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             float angle = (float) (buffer.readInt24() * (2 * Math.PI / 0xFFFFFF));
             buffer.incrementIndex(1);
             float wang = (float) (buffer.readInt24() * (2 * Math.PI / 0xFFFFFF));
-            float sp = (float) buffer.readShort() / 1000.0F;
+            float sp = buffer.readShort() / 1000.0F;
             double fam = (double) buffer.readInt24() / 0xFFFFFF;
             int ski = buffer.readByte();
             Skin skin = Skin.values()[ski < Skin.values().length ? ski : 0];
