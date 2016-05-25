@@ -182,6 +182,9 @@ public class SlytherClient {
         }
     }
 
+    public float vfr;
+    public int ticks;
+
     public SlytherClient() throws Exception {
         this.setup();
     }
@@ -337,7 +340,7 @@ public class SlytherClient {
         if (this.networkManager != null) {
             runTasks();
             long time = System.currentTimeMillis();
-            float vfr;
+            vfr = 0;
             float vfrb;
             float avfr = vfr = (time - ltm) / 8;
             this.ltm = time;
@@ -478,7 +481,6 @@ public class SlytherClient {
                 for (Prey prey : new ArrayList<>(this.preys)) {
                     prey.update(vfr, vfrb);
                 }
-
                 for (int i = this.foods.size() - 1; i >= 0; i--) {
                     Food food = this.foods.get(i);
                     food.gfr += vfr * food.gr;
@@ -513,6 +515,7 @@ public class SlytherClient {
                 }
             }
         }
+        this.ticks++;
     }
 
     public void scheduleTask(Callable<?> callable) {
@@ -528,6 +531,21 @@ public class SlytherClient {
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    public void moveTo(float x, float y) {
+        long time = System.currentTimeMillis();
+        if (time - lastTurnTime > 100) {
+            mouseMoved = false;
+            lastTurnTime = time;
+            float ang = (float) Math.atan2(y - player.posY, x - player.posX);
+            player.eang = ang;
+            ang %= PI_2;
+            if (ang < 0) {
+                ang += PI_2;
+            }
+            this.networkManager.send(new MessageSetAngle(ang));
         }
     }
 

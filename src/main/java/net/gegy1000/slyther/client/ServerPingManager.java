@@ -27,24 +27,32 @@ public class ServerPingManager extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake handshake) {
-        this.pingSendTime = System.currentTimeMillis();
-        this.send(new byte[] { 'p' });
+        if (ServerListHandler.INSTANCE.getPingedCount() < 10) {
+            this.pingSendTime = System.currentTimeMillis();
+            this.send(new byte[] { 'p' });
+        } else {
+            this.close();
+        }
     }
 
     @Override
     public void onMessage(ByteBuffer buffer) {
-        if (buffer.get() == 'p') {
-            if (this.pingCount < 4) {
-                long currentTime = System.currentTimeMillis();
-                this.pings[pingCount] = currentTime - this.pingSendTime;
-                this.pingSendTime = currentTime;
-                this.send(new byte[] { 'p' });
-                this.pingCount++;
-            } else {
-                server.setPing(this.pings);
-                System.out.println(this.server.getClusterIp() + " has a ping time of " + server.getPing());
-                this.close();
+        if (ServerListHandler.INSTANCE.getPingedCount() < 10) {
+            if (buffer.get() == 'p') {
+                if (this.pingCount < 4) {
+                    long currentTime = System.currentTimeMillis();
+                    this.pings[pingCount] = currentTime - this.pingSendTime;
+                    this.pingSendTime = currentTime;
+                    this.send(new byte[] { 'p' });
+                    this.pingCount++;
+                } else {
+                    server.setPing(this.pings);
+                    System.out.println(this.server.getClusterIp() + " has a ping time of " + server.getPing());
+                    this.close();
+                }
             }
+        } else {
+            this.close();
         }
     }
 

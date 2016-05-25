@@ -66,7 +66,7 @@ public class Snake {
     public int csw;
     public float sc;
     public float ssp;
-    public float fsp;
+    public float fsp; // Fast speed?
     public float msp;
     public float[] fxs;
     public float[] fys;

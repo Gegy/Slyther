@@ -219,7 +219,15 @@ public class GuiGame extends Gui {
                             float pointX = (xs.get(pointIndex)) - client.viewX;
                             float pointY = (ys.get(pointIndex)) - client.viewY;
                             SkinColor color = pattern[pointIndex % pattern.length];
-                            GL11.glColor4f(color.red, color.green, color.blue, 1.0F);
+                            float colorMultipler = 1.0F;
+                            if (snake.sp > snake.fsp) {
+                                float offset = (((pointIndex + client.ticks + client.vfr) / 2.0F) % 20.0F);
+                                if (offset > 10.0F) {
+                                    offset = 10.0F - (offset - 10.0F);
+                                }
+                                colorMultipler += offset / 10.0F;
+                            }
+                            GL11.glColor4f(color.red * colorMultipler, color.green * colorMultipler, color.blue * colorMultipler, 1.0F);
                             GL11.glPushMatrix();
                             GL11.glTranslatef(pointX, pointY, 0);
                             GL11.glScalef(snake.sc * 0.25F, snake.sc * 0.25F, 1);
