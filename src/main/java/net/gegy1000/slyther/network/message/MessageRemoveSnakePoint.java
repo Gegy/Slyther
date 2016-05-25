@@ -13,10 +13,10 @@ public class MessageRemoveSnakePoint extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        Snake snake = client.getSnake(buffer.readShort());
+        Snake snake = client.getSnake(buffer.readUInt16());
         if (snake != null) {
             if (buffer.hasRemaining(3)) {
-                snake.fam = (double) buffer.readInt24() / 0xFFFFFF;
+                snake.fam = (double) buffer.readUInt24() / 0xFFFFFF;
             }
             for (SnakePoint point : snake.pts) {
                 if (!point.dying) {

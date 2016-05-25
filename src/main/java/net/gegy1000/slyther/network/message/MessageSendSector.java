@@ -17,10 +17,10 @@ public class MessageSendSector extends SlytherServerMessageBase {
         int sectorX = 0;
         int sectorY = 0;
         while (buffer.hasRemaining()) {
-            Color color = Color.values()[buffer.read()];
-            int x = buffer.readShort();
-            int y = buffer.readShort();
-            float size = buffer.read() / 5.0F;
+            Color color = Color.values()[buffer.readUInt8()];
+            int x = buffer.readUInt16();
+            int y = buffer.readUInt16();
+            float size = buffer.readUInt8() / 5.0F;
             int id = y * client.GAME_RADIUS * 3 + x;
             Food food = new Food(client, id, x, y, size, true, color);
             if (!first) {

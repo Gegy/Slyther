@@ -18,7 +18,7 @@ public class MessageUpdateMap extends SlytherServerMessageBase {
         }
         int mapSize = 80 * 80;
         for (int i = 0; i < mapSize && buffer.hasRemaining();) {
-            int value = buffer.read();
+            int value = buffer.readUInt8();
             if (value > 127) {
                 i += value - 128;
             } else {

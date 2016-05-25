@@ -13,8 +13,8 @@ public class MessageRemoveSector extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        int sx = buffer.read();
-        int sy = buffer.read();
+        int sx = buffer.readUInt8();
+        int sy = buffer.readUInt8();
         for (int i = 0; i < client.foods.size(); i++) {
             Food food = client.foods.get(i);
             if (food.sx == sx && food.sy == sy) {

@@ -14,11 +14,11 @@ public class MessageNewFood extends SlytherServerMessageBase {
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         if (buffer.hasRemaining(5)) {
-            Color color = Color.values()[buffer.read()];
-            int x = buffer.readShort();
-            int y = buffer.readShort();
+            Color color = Color.values()[buffer.readUInt8()];
+            int x = buffer.readUInt16();
+            int y = buffer.readUInt16();
             int id = y * client.GAME_RADIUS * 3 + x;
-            float size = buffer.read() / 5.0F;
+            float size = buffer.readUInt8() / 5.0F;
             Food food = new Food(client, id, x, y, size, messageId == 'b', color);
             food.sx = (int) Math.floor(x / client.SECTOR_SIZE);
             food.sy = (int) Math.floor(y / client.SECTOR_SIZE);

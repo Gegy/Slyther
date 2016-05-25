@@ -16,8 +16,8 @@ public class MessageSetTurn extends SlytherClientMessageBase {
 
     @Override
     public void write(MessageByteBuffer buffer, SlytherClient client) {
-        buffer.write((byte) 252);
-        buffer.write(direction);
+        buffer.writeUInt8(252);
+        buffer.writeUInt8(direction);
     }
 
     @Override

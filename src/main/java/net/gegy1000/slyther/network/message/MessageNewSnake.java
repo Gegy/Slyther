@@ -18,21 +18,21 @@ public class MessageNewSnake extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        int id = buffer.readShort();
+        int id = buffer.readUInt16();
         if (buffer.hasRemaining(4)) {
-            float angle = (float) (buffer.readInt24() * (2 * Math.PI / 0xFFFFFF));
+            float angle = (float) (buffer.readUInt24() * (2 * Math.PI / 0xFFFFFF));
             buffer.skipBytes(1);
-            float wang = (float) (buffer.readInt24() * (2 * Math.PI / 0xFFFFFF));
-            float sp = buffer.readShort() / 1000.0F;
-            double fam = (double) buffer.readInt24() / 0xFFFFFF;
-            int ski = buffer.read();
+            float wang = (float) (buffer.readUInt24() * (2 * Math.PI / 0xFFFFFF));
+            float sp = buffer.readUInt16() / 1000.0F;
+            double fam = (double) buffer.readUInt24() / 0xFFFFFF;
+            int ski = buffer.readUInt8();
             Skin skin = Skin.values()[ski < Skin.values().length ? ski : 0];
-            float x = buffer.readInt24() / 5.0F;
-            float y = buffer.readInt24() / 5.0F;
+            float x = buffer.readUInt24() / 5.0F;
+            float y = buffer.readUInt24() / 5.0F;
             String name = "";
-            int nameLength = buffer.read();
+            int nameLength = buffer.readUInt8();
             for (int i = 0; i < nameLength; i++) {
-                name += (char) buffer.read();
+                name += (char) buffer.readUInt8();
             }
             float prevPointX;
             float prevPointY;
@@ -43,13 +43,13 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                 prevPointX = pointX;
                 prevPointY = pointY;
                 if (points.isEmpty()) {
-                    pointX = buffer.readInt24() / 5.0F;
-                    pointY = buffer.readInt24() / 5.0F;
+                    pointX = buffer.readUInt24() / 5.0F;
+                    pointY = buffer.readUInt24() / 5.0F;
                     prevPointX = pointX;
                     prevPointY = pointY;
                 } else {
-                    pointX += (buffer.read() - 127) / 2.0F;
-                    pointY += (buffer.read() - 127) / 2.0F;
+                    pointX += (buffer.readUInt8() - 127) / 2.0F;
+                    pointY += (buffer.readUInt8() - 127) / 2.0F;
                 }
                 SnakePoint point = new SnakePoint();
                 point.posX = pointX;
@@ -95,7 +95,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
 
             snake.snl();
         } else {
-            boolean dead = buffer.read() == 1;
+            boolean dead = buffer.readUInt8() == 1;
             Snake snake = client.getSnake(id);
             if (snake != null) {
                 snake.id = -1234;

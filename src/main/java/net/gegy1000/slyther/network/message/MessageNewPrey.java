@@ -13,14 +13,14 @@ public class MessageNewPrey extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        int id = buffer.readShort();
+        int id = buffer.readUInt16();
         if (!buffer.hasRemaining()) {
             Prey prey = client.getPrey(id);
             client.preys.remove(prey);
         } else if (buffer.hasRemaining(2)) {
             Prey prey = client.getPrey(id);
             if (prey != null) {
-                Snake eater = client.getSnake(buffer.readShort());
+                Snake eater = client.getSnake(buffer.readUInt16());
                 prey.eaten = true;
                 prey.eater = eater;
                 if (eater != null) {
@@ -30,14 +30,14 @@ public class MessageNewPrey extends SlytherServerMessageBase {
                 }
             }
         } else if (buffer.hasRemaining(17)) {
-            int cv = buffer.read();
-            float x = buffer.readInt24() / 5.0F;
-            float y = buffer.readInt24() / 5.0F;
-            float size = buffer.read() / 5.0F;
-            int dir = buffer.read() - 48;
-            float wang = (float) (2.0F * buffer.readInt24() * Math.PI / 0xFFFFFF);
-            float ang = (float) (2.0F * buffer.readInt24() * Math.PI / 0xFFFFFF);
-            float sp = buffer.readShort() / 1000.0F;
+            int cv = buffer.readUInt8();
+            float x = buffer.readUInt24() / 5.0F;
+            float y = buffer.readUInt24() / 5.0F;
+            float size = buffer.readUInt8() / 5.0F;
+            int dir = buffer.readUInt8() - 48;
+            float wang = (float) (2.0F * buffer.readUInt24() * Math.PI / 0xFFFFFF);
+            float ang = (float) (2.0F * buffer.readUInt24() * Math.PI / 0xFFFFFF);
+            float sp = buffer.readUInt16() / 1000.0F;
             Prey prey = new Prey(client, id, x, y, size, cv, dir, wang, ang, sp);
             client.preys.add(prey);
         }

@@ -79,8 +79,8 @@ public class ClientNetworkManager extends WebSocketClient {
             bytesPerSecond += buffer.limit();
             client.lastPacketTime = client.currentPacketTime;
             client.currentPacketTime = System.currentTimeMillis();
-            int serverTimeDelta = buffer.readShort();
-            byte messageId = (byte) buffer.read();
+            int serverTimeDelta = buffer.readUInt16();
+            byte messageId = (byte) buffer.readUInt8();
             long timeDelta = client.currentPacketTime - client.lastPacketTime;
             if (client.lastPacketTime == 0) {
                 timeDelta = 0;

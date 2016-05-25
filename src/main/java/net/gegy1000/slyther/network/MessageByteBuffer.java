@@ -5,12 +5,14 @@ import java.nio.ByteBuffer;
 import org.apache.commons.io.Charsets;
 
 public class MessageByteBuffer {
+	private static final int DEFAULT_CAPACITY = 16384;
+
     private ByteBuffer buf;
 
     private byte[] work = new byte[8];
 
     public MessageByteBuffer() {
-        buf = ByteBuffer.allocate(16384);
+        buf = ByteBuffer.allocate(DEFAULT_CAPACITY);
     }
 
     public MessageByteBuffer(byte[] array) {
@@ -24,72 +26,74 @@ public class MessageByteBuffer {
         this.buf = buf;
     }
 
-    public void write(byte b) {
-        buf.put(b);
+    public void writeUInt8(int value) {
+    	if (value < 0 || value > 0xFF) {
+    		throw new IllegalArgumentException("Outside of range: " + value);
+    	}
+        buf.put((byte) value);
     }
 
-    public void write(byte[] src) {
-        buf.put(src);
-    }
-
-    public void writeInt(int value) {
-        buf.putInt(value);
-    }
-
-    public void writeShort(int value) {
+    public void writeUInt16(int value) {
+    	if (value < 0 || value > 0xFFFF) {
+    		throw new IllegalArgumentException("Outside of range: " + value);
+    	}
         buf.putShort((short) (value & 0xFFFF));
     }
 
-    public void writeInt24(int value) {
+    public void writeUInt24(int value) {
+    	if (value < 0 || value > 0xFFFFFF) {
+    		throw new IllegalArgumentException("Outside of range: " + value);
+    	}
         work[0] = (byte) (value >> 16 & 0xFF);
         work[1] = (byte) (value >> 8 & 0xFF);
         work[2] = (byte) (value & 0xFF);
         buf.put(work, 0, 3);
     }
 
+    public void writeInt32(int value) {
+        buf.putInt(value);
+    }
+
+    public void writeBytes(byte[] src) {
+        buf.put(src);
+    }
+
     public void writeASCIIBytes(String str) {
         buf.put(str.getBytes(Charsets.US_ASCII));
     }
 
-    public int read() {
+    public int readUInt8() {
         return buf.get() & 0xFF;
     }
-
-    public byte[] read(int count) {
-        byte[] dst = new byte[count];
-        buf.get(dst);
-        return dst;
-    }
-
-    public int readInt() {
-        return buf.getInt();
-    }
-
-    public int readShort() {
+    public int readUInt16() {
         return buf.getShort() & 0xFFFF;
     }
 
-    public int readInt24() {
+    public int readUInt24() {
         buf.get(work, 0, 3);
         return (work[0] & 0xFF) << 16 | (work[1] & 0xFF) << 8 | (work[2] & 0xFF);
+    }
+
+    public int readInt32() {
+        return buf.getInt();
+    }
+
+    public byte[] readBytes(int length) {
+        byte[] dst = new byte[length];
+        buf.get(dst);
+        return dst;
     }
 
     public void skipBytes(int n) {
         buf.position(buf.position() + n);
     }
 
-    public byte[] array() {
-        byte[] array = new byte[buf.position()];
-        System.arraycopy(buf.array(), buf.arrayOffset(), array, 0, array.length);
-        return array;
+    public boolean hasRemaining(int n) {
+        return buf.position() + n <= buf.limit();
     }
 
     public boolean hasRemaining() {
         return buf.hasRemaining();
-    }
-
-    public boolean hasRemaining(int n) {
-        return buf.position() + n <= buf.limit();
     }
 
     public int remaining() {
@@ -102,5 +106,11 @@ public class MessageByteBuffer {
 
     public int position() {
         return buf.position();
+    }
+
+    public byte[] array() {
+        byte[] array = new byte[buf.position()];
+        System.arraycopy(buf.array(), buf.arrayOffset(), array, 0, array.length);
+        return array;
     }
 }
