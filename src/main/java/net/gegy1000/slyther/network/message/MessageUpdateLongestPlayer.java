@@ -19,14 +19,14 @@ public class MessageUpdateLongestPlayer extends SlytherServerMessageBase {
         for (int i = 0; i < buffer.read(); i++) {
             name += (char) buffer.read();
         }
-        if (!ProfanityHandler.INSTANCE.isClean(name)) {
+        if (!ProfanityHandler.isClean(name)) {
             name = "";
         }
         String message = "";
         while (buffer.hasRemaining()) {
             message += (char) buffer.read();
         }
-        if (!ProfanityHandler.INSTANCE.isClean(message)) {
+        if (!ProfanityHandler.isClean(message)) {
             message = "";
         }
         client.longestPlayerName = name;

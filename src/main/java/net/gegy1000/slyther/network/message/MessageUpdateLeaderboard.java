@@ -33,7 +33,7 @@ public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
                 name += (char) buffer.read();
             }
             if (index != playerIndex) {
-                if (!ProfanityHandler.INSTANCE.isClean(name)) {
+                if (!ProfanityHandler.isClean(name)) {
                     name = "";
                 }
             }
