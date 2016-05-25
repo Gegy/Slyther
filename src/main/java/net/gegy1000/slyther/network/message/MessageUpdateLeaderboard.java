@@ -15,7 +15,7 @@ public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         client.wumsts = true;
-        int playerIndex = buffer.readByte();
+        int playerIndex = buffer.read();
         client.rank = buffer.readShort();
         if (client.rank < client.bestRank) {
             client.bestRank = client.rank;
@@ -23,14 +23,14 @@ public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
         client.snakeCount = buffer.readShort();
         client.leaderboard.clear();
         int index = 1;
-        while (buffer.hasNext()) {
+        while (buffer.hasRemaining()) {
             int length = buffer.readShort();
             float fam = (float) buffer.readInt24() / 0xFFFFFF;
-            Color color = Color.values()[buffer.readByte() % 9];
+            Color color = Color.values()[buffer.read() % 9];
             String name = "";
-            int nameLength = buffer.readByte();
+            int nameLength = buffer.read();
             for (int i = 0; i < nameLength; i++) {
-                name += (char) buffer.readByte();
+                name += (char) buffer.read();
             }
             if (index != playerIndex) {
                 if (!ProfanityHandler.INSTANCE.isClean(name)) {

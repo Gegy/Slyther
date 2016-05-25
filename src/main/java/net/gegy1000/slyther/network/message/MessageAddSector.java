@@ -12,8 +12,8 @@ public class MessageAddSector extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        int x = buffer.readByte();
-        int y = buffer.readByte();
+        int x = buffer.read();
+        int y = buffer.read();
         client.sectors.add(new Sector(x, y));
     }
 

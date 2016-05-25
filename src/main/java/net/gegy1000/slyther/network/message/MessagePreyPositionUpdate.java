@@ -20,28 +20,28 @@ public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
             float moveAmount = (client.etm / 8.0F * prey.sp / 4.0F) * client.lagMultiplier;
             float prevX = prey.posX;
             float prevY = prey.posY;
-            if (buffer.hasNext(9)) {
-                prey.dir = buffer.readByte() - 48;
+            if (buffer.hasRemaining(9)) {
+                prey.dir = buffer.read() - 48;
                 prey.ang = (float) (buffer.readInt24() * Math.PI * 2.0F / 0xFFFFFF);
                 prey.wang = (float) (buffer.readInt24() * Math.PI * 2.0F / 0xFFFFFF);
                 prey.sp = buffer.readShort() / 1000.0F;
-            } else if (buffer.hasNext(5)) {
+            } else if (buffer.hasRemaining(5)) {
                 prey.ang = (float) (buffer.readInt24() * Math.PI * 2.0F / 0xFFFFFF);
                 prey.sp = buffer.readShort() / 1000.0F;
-            } else if (buffer.hasNext(6)) {
-                prey.dir = buffer.readByte() - 48;
+            } else if (buffer.hasRemaining(6)) {
+                prey.dir = buffer.read() - 48;
                 prey.wang = (float) (buffer.readInt24() * Math.PI * 2.0F / 0xFFFFFF);
                 prey.sp = buffer.readShort() / 1000.0F;
-            } else if (buffer.hasNext(7)) {
-                prey.dir = buffer.readByte() - 48;
+            } else if (buffer.hasRemaining(7)) {
+                prey.dir = buffer.read() - 48;
                 prey.ang = (float) (buffer.readInt24() * Math.PI * 2.0F / 0xFFFFFF);
                 prey.wang = (float) (buffer.readInt24() * Math.PI * 2.0F / 0xFFFFFF);
-            } else if (buffer.hasNext(3)) {
+            } else if (buffer.hasRemaining(3)) {
                 prey.ang = (float) (buffer.readInt24() * Math.PI * 2.0F / 0xFFFFFF);
-            } else if (buffer.hasNext(4)) {
-                prey.dir = buffer.readByte() - 48;
+            } else if (buffer.hasRemaining(4)) {
+                prey.dir = buffer.read() - 48;
                 prey.wang = (float) (buffer.readInt24() * Math.PI * 2.0F / 0xFFFFFF);
-            } else if (buffer.hasNext(2)) {
+            } else if (buffer.hasRemaining(2)) {
                 prey.sp = buffer.readShort() / 1000.0F;
             }
             prey.posX = (float) (x + Math.cos(prey.ang) * moveAmount);

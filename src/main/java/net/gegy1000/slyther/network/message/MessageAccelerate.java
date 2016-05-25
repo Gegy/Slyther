@@ -17,10 +17,10 @@ public class MessageAccelerate extends SlytherClientMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherClient client) {
         if (client.PROTOCOL_VERSION >= 5) {
-            buffer.writeByte((byte) (accelerating ? 253 : 254));
+            buffer.write((byte) (accelerating ? 253 : 254));
         } else {
-            buffer.writeByte((byte) 109);
-            buffer.writeByte((byte) (accelerating ? 1 : 0));
+            buffer.write((byte) 109);
+            buffer.write((byte) (accelerating ? 1 : 0));
         }
     }
 

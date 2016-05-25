@@ -1,202 +1,106 @@
 package net.gegy1000.slyther.network;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+
+import org.apache.commons.io.Charsets;
 
 public class MessageByteBuffer {
-    private byte[] bytes;
-    private int index;
-    private int length;
+    private ByteBuffer buf;
 
-    public static final ByteOrder BYTE_ORDER = ByteOrder.BIG_ENDIAN;
+    private byte[] work = new byte[8];
 
     public MessageByteBuffer() {
-        this.bytes = new byte[16384];
-        resetIndex();
+        buf = ByteBuffer.allocate(16384);
     }
 
-    public MessageByteBuffer(byte[] bytes) {
-        this.resetIndex();
-        this.bytes = new byte[bytes.length];
-        this.length = bytes.length;
-        System.arraycopy(bytes, 0, this.bytes, 0, bytes.length);
+    public MessageByteBuffer(byte[] array) {
+        buf = ByteBuffer.wrap(array);
     }
 
-    public void writeByte(byte b) {
-        bytes[index] = b;
-        incrementIndex(1);
-    }
-
-    public void writeBytes(byte[] b) {
-        for (byte by : b) {
-            writeByte(by);
+    public MessageByteBuffer(ByteBuffer buf) {
+        if (!buf.hasArray()) {
+            throw new IllegalArgumentException("Buffer must be backed by an array");
         }
+        this.buf = buf;
     }
 
-    public void writeInteger(int i) {
-        writeBytes(ByteBuffer.allocate(4).order(BYTE_ORDER).putInt(i).array());
+    public void write(byte b) {
+        buf.put(b);
     }
 
-    public void writeFloat(float f) {
-        writeBytes(ByteBuffer.allocate(4).order(BYTE_ORDER).putFloat(f).array());
+    public void write(byte[] src) {
+        buf.put(src);
     }
 
-    public void writeDouble(double d) {
-        writeBytes(ByteBuffer.allocate(8).order(BYTE_ORDER).putDouble(d).array());
+    public void writeInt(int value) {
+        buf.putInt(value);
     }
 
-    public void writeShort(short s) {
-        writeBytes(ByteBuffer.allocate(2).order(BYTE_ORDER).putShort(s).array());
+    public void writeShort(int value) {
+        buf.putShort((short) (value & 0xFFFF));
     }
 
-    public void writeInt24(int i) {
-        writeBytes(ByteBuffer.allocate(3).order(BYTE_ORDER).putInt(i).array());
+    public void writeInt24(int value) {
+        work[0] = (byte) (value >> 16 & 0xFF);
+        work[1] = (byte) (value >> 8 & 0xFF);
+        work[2] = (byte) (value & 0xFF);
+        buf.put(work, 0, 3);
     }
 
-    public int readByte() {
-        byte b = bytes[index];
-        incrementIndex(1);
-        return b & 0xFF;
+    public void writeASCIIBytes(String str) {
+        buf.put(str.getBytes(Charsets.US_ASCII));
     }
 
-    public byte[] readBytes(int count) {
-        byte[] bytes = new byte[count];
-
-        for (int i = 0; i < count; i++) {
-            bytes[i] = (byte) readByte();
-        }
-
-        return bytes;
+    public int read() {
+        return buf.get() & 0xFF;
     }
 
-    public void writeNullStr16(String str) {
-        writeEndStr16(str);
-        writeShort((short) 0);
+    public byte[] read(int count) {
+        byte[] dst = new byte[count];
+        buf.get(dst);
+        return dst;
     }
 
-    public void writeEndStr16(String str) {
-        for (char c : str.toCharArray()) {
-            writeShort((short) c);
-        }
-    }
-
-    public void writeNullStr8(String str) {
-        writeEndStr8(str);
-        writeByte((byte) 0);
-    }
-
-    public void writeEndStr8(String str) {
-        for (char c : str.toCharArray()) {
-            writeByte((byte) c);
-        }
-    }
-
-    public int readInteger() {
-        return ByteBuffer.wrap(readBytes(4)).order(BYTE_ORDER).getInt();
-    }
-
-    public float readFloat() {
-        return ByteBuffer.wrap(readBytes(4)).order(BYTE_ORDER).getFloat();
-    }
-
-    public double readDouble() {
-        return ByteBuffer.wrap(readBytes(8)).order(BYTE_ORDER).getDouble();
+    public int readInt() {
+        return buf.getInt();
     }
 
     public int readShort() {
-        return ByteBuffer.wrap(readBytes(2)).order(BYTE_ORDER).getShort() & 0xFFFF;
+        return buf.getShort() & 0xFFFF;
     }
 
     public int readInt24() {
-        byte[] bytes = readBytes(3);
-        return ByteBuffer.wrap(new byte[] { 0, bytes[0], bytes[1], bytes[2] }).order(BYTE_ORDER).getInt();
+        buf.get(work, 0, 3);
+        return (work[0] & 0xFF) << 16 | (work[1] & 0xFF) << 8 | (work[2] & 0xFF);
     }
 
-    public String readNullStr16() {
-        String str = "";
-
-        int c;
-
-        while ((c = readShort()) != 0) {
-            str += (char) c;
-        }
-
-        return str;
+    public void skipBytes(int n) {
+        buf.position(buf.position() + n);
     }
 
-    public String readEndStr16() {
-        String str = "";
-
-        while (hasNext(2)) {
-            str += (char) readShort();
-        }
-
-        return str;
+    public byte[] array() {
+        byte[] array = new byte[buf.position()];
+        System.arraycopy(buf.array(), buf.arrayOffset(), array, 0, array.length);
+        return array;
     }
 
-    public String readNullStr8() {
-        String str = "";
-
-        int c;
-
-        while ((c = readByte()) != 0) {
-            str += (char) c;
-        }
-
-        return str;
+    public boolean hasRemaining() {
+        return buf.hasRemaining();
     }
 
-    public String readEndStr8() {
-        String str = "";
-
-        while (hasNext(1)) {
-            str += (char) readByte();
-        }
-
-        return str;
+    public boolean hasRemaining(int n) {
+        return buf.position() + n <= buf.limit();
     }
 
-    public void resetIndex() {
-        index = 0;
+    public int remaining() {
+        return buf.remaining();
     }
 
-    public void incrementIndex(int amount) {
-        index += amount;
-
-        if (index > length) {
-            length = index;
-        }
+    public int limit() {
+        return buf.limit();
     }
 
-    public byte[] toBytes() {
-        byte[] returnBytes = new byte[length];
-
-        System.arraycopy(bytes, 0, returnBytes, 0, length);
-
-        return returnBytes;
-    }
-
-    public boolean hasNext() {
-        return hasNext(1);
-    }
-
-    public boolean hasNext(int count) {
-        return index + count <= length;
-    }
-
-    public int getBytesLeft() {
-        return bytes.length - index;
-    }
-
-    public int length() {
-        return length;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public int getLength() {
-        return length;
+    public int position() {
+        return buf.position();
     }
 }

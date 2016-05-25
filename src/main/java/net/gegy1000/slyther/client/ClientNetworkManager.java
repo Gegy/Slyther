@@ -74,13 +74,13 @@ public class ClientNetworkManager extends WebSocketClient {
 
     @Override
     public void onMessage(ByteBuffer byteBuffer) {
-        MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer.order(MessageByteBuffer.BYTE_ORDER).array());
-        if (buffer.length() >= 2) {
-            bytesPerSecond += buffer.length();
+        MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer);
+        if (buffer.limit() >= 2) {
+            bytesPerSecond += buffer.limit();
             client.lastPacketTime = client.currentPacketTime;
             client.currentPacketTime = System.currentTimeMillis();
             int serverTimeDelta = buffer.readShort();
-            byte messageId = (byte) buffer.readByte();
+            byte messageId = (byte) buffer.read();
             long timeDelta = client.currentPacketTime - client.lastPacketTime;
             if (client.lastPacketTime == 0) {
                 timeDelta = 0;
@@ -125,7 +125,7 @@ public class ClientNetworkManager extends WebSocketClient {
             try {
                 MessageByteBuffer buffer = new MessageByteBuffer();
                 message.write(buffer, client);
-                this.send(buffer.toBytes());
+                this.send(buffer.array());
             } catch (Exception e) {
                 System.err.println("An error occurred while sending message " + message.getClass().getName());
                 e.printStackTrace();

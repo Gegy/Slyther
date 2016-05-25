@@ -23,10 +23,10 @@ public class MessageSetUsername extends SlytherClientMessageBase {
 
     @Override
     public void write(MessageByteBuffer buffer, SlytherClient client) {
-        buffer.writeByte((byte) 's');
-        buffer.writeByte((byte) 8);
-        buffer.writeByte((byte) skin.ordinal());
-        buffer.writeEndStr8(username);
+        buffer.write((byte) 's');
+        buffer.write((byte) 8);
+        buffer.write((byte) skin.ordinal());
+        buffer.writeASCIIBytes(username);
     }
 
     @Override

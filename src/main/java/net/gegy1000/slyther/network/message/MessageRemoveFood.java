@@ -18,7 +18,7 @@ public class MessageRemoveFood extends SlytherServerMessageBase {
         Food food = client.getFood(id);
         if (food != null) {
             food.eaten = true;
-            if (buffer.hasNext(2)) {
+            if (buffer.hasRemaining(2)) {
                 food.eater = client.getSnake(buffer.readShort());
                 food.eatenFr = 0;
             } else {

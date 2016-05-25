@@ -16,15 +16,15 @@ public class MessageUpdateLongestPlayer extends SlytherServerMessageBase {
         float fam = (float) buffer.readInt24() / 0xFFFFFF;
         int score = (int) Math.floor(15.0F * (client.getFPSL(length) + fam / client.getFMLT(length) - 1.0F) - 5.0F);
         String name = "";
-        for (int i = 0; i < buffer.readByte(); i++) {
-            name += (char) buffer.readByte();
+        for (int i = 0; i < buffer.read(); i++) {
+            name += (char) buffer.read();
         }
         if (!ProfanityHandler.INSTANCE.isClean(name)) {
             name = "";
         }
         String message = "";
-        while (buffer.hasNext()) {
-            message += (char) buffer.readByte();
+        while (buffer.hasRemaining()) {
+            message += (char) buffer.read();
         }
         if (!ProfanityHandler.INSTANCE.isClean(message)) {
             message = "";
