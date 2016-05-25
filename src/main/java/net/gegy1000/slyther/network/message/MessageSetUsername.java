@@ -16,7 +16,7 @@ public class MessageSetUsername extends SlytherClientMessageBase {
         if (this.username.length() > 24) {
             this.username = this.username.substring(0, 24);
         }
-        if (!ProfanityHandler.INSTANCE.isClean(this.username)) {
+        if (!ProfanityHandler.isClean(this.username)) {
             this.username = "";
         }
     }
