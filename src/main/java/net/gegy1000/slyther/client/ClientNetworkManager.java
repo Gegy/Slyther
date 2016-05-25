@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 public class ClientNetworkManager extends WebSocketClient {
     private SlytherClient client;
@@ -92,7 +93,10 @@ public class ClientNetworkManager extends WebSocketClient {
                     SlytherServerMessageBase message = messageType.getConstructor().newInstance();
                     message.messageId = messageId;
                     message.serverTimeDelta = serverTimeDelta;
-                    message.readBase(buffer, this.client);
+                    client.scheduleTask((Callable<Void>) () -> {
+                        message.readBase(buffer, this.client);
+                        return null;
+                    });
                 } catch (Exception e) {
                     System.err.println("Error while receiving message " + messageId + "!" + " (" + (char) messageId + ")");
                     e.printStackTrace();

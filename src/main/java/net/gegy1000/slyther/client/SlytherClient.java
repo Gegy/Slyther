@@ -15,7 +15,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class SlytherClient {
     public int GAME_RADIUS;
@@ -53,6 +58,8 @@ public class SlytherClient {
     public RenderHandler renderHandler;
 
     public ClientNetworkManager networkManager;
+
+    private Queue<FutureTask<?>> tasks = new LinkedBlockingDeque<>();
 
     public boolean wumsts;
     public Snake player;
@@ -328,6 +335,7 @@ public class SlytherClient {
 
     public void update() {
         if (this.networkManager != null) {
+            runTasks();
             long time = System.currentTimeMillis();
             float vfr;
             float vfrb;
@@ -503,6 +511,22 @@ public class SlytherClient {
                         food.ry = (int) (food.posY + 6.0F * Math.sin(food.wsp * food.gfr));
                     }
                 }
+            }
+        }
+    }
+
+    public void scheduleTask(Callable<?> callable) {
+        tasks.add(new FutureTask<>(callable));
+    }
+
+    private void runTasks() {
+        while (tasks.size() > 0) {
+            FutureTask<?> task = tasks.poll();
+            try {
+                task.run();
+                task.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
             }
         }
     }
