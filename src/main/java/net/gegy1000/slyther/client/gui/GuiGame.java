@@ -329,26 +329,28 @@ public class GuiGame extends Gui {
                                 }
                             }
                             this.endConnectedLines();
-                            GL11.glTranslatef(snake.atx[fj - 1], snake.aty[fj - 1], 0.0F);
-                            if (snake.abrot) {
-                                float vang = (float) (Math.atan2(snake.aty[fj - 1] - snake.aty[fj - 2], snake.atx[fj - 1] - snake.atx[fj - 2]) - snake.atba);
-                                if (vang < 0 || vang >= SlytherClient.PI_2) {
-                                    vang %= SlytherClient.PI_2;
-                                }
-                                if (vang < -Math.PI) {
-                                    vang += SlytherClient.PI_2;
-                                } else {
-                                    if (vang > Math.PI) {
-                                        vang -= SlytherClient.PI_2;
+                            if (snake.antennaTexture != null) {
+                                GL11.glTranslatef(snake.atx[fj - 1], snake.aty[fj - 1], 0.0F);
+                                if (snake.abrot) {
+                                    float vang = (float) (Math.atan2(snake.aty[fj - 1] - snake.aty[fj - 2], snake.atx[fj - 1] - snake.atx[fj - 2]) - snake.atba);
+                                    if (vang < 0 || vang >= SlytherClient.PI_2) {
+                                        vang %= SlytherClient.PI_2;
                                     }
+                                    if (vang < -Math.PI) {
+                                        vang += SlytherClient.PI_2;
+                                    } else {
+                                        if (vang > Math.PI) {
+                                            vang -= SlytherClient.PI_2;
+                                        }
+                                    }
+                                    snake.atba = (float) ((snake.atba + 0.15F * vang) % SlytherClient.PI_2);
+                                    GL11.glRotatef((float) Math.toDegrees(snake.atba), 0.0F, 0.0F, 1.0F);
                                 }
-                                snake.atba = (float) ((snake.atba + 0.15F * vang) % SlytherClient.PI_2);
-                                GL11.glRotatef((float) Math.toDegrees(snake.atba), 0.0F, 0.0F, 1.0F);
+                                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                                GL11.glScalef(snake.sc * 0.25F, snake.sc * 0.25F, 1.0F);
+                                textureManager.bindTexture("/textures/" + snake.antennaTexture + ".png");
+                                this.drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                             }
-                            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                            GL11.glScalef(snake.sc * 0.25F, snake.sc * 0.25F, 1.0F);
-                            textureManager.bindTexture("/textures/" + snake.antennaTexture + ".png");
-                            this.drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                             GL11.glPopMatrix();
                         }
                     }
