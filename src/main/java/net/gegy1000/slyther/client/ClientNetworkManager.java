@@ -13,7 +13,9 @@ import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class ClientNetworkManager extends WebSocketClient {
@@ -102,7 +104,7 @@ public class ClientNetworkManager extends WebSocketClient {
                     e.printStackTrace();
                 }
             } else {
-                System.err.println("Received unknown message " + messageId + "!" + " (" + (char) messageId + ")");
+                System.err.println("Received unknown message " + messageId + "!" + " (" + (char) messageId + ") " + Arrays.toString(buffer.array()));
             }
         }
     }

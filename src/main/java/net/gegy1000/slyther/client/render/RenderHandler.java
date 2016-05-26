@@ -3,6 +3,7 @@ package net.gegy1000.slyther.client.render;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.gui.Gui;
 import net.gegy1000.slyther.client.gui.GuiGame;
+import net.gegy1000.slyther.client.gui.GuiMainMenu;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -46,7 +47,7 @@ public class RenderHandler {
                 e.printStackTrace();
             }
             this.init();
-            this.openGui(new GuiGame());
+            this.openGui(new GuiMainMenu());
         } catch (LWJGLException e) {
             e.printStackTrace();
         }

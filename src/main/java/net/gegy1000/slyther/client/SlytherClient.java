@@ -205,20 +205,6 @@ public class SlytherClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        new Thread(() -> {
-            try {
-                if (configuration.server == null) {
-                    while (ServerListHandler.INSTANCE.getPingedCount() < 5) ;
-                    List<ServerListHandler.Server> servers = ServerListHandler.INSTANCE.getServerList();
-                    Collections.sort(servers);
-                    while ((SlytherClient.this.networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)))) == null);
-                } else {
-                    SlytherClient.this.networkManager = ClientNetworkManager.create(SlytherClient.this, configuration.server);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
 
         this.delta = 0;
         long previousTime = System.nanoTime();
@@ -291,6 +277,23 @@ public class SlytherClient {
         }
 
         System.exit(-1);
+    }
+
+    public void connect() {
+        new Thread(() -> {
+            try {
+                if (configuration.server == null) {
+                    while (ServerListHandler.INSTANCE.getPingedCount() < 5) ;
+                    List<ServerListHandler.Server> servers = ServerListHandler.INSTANCE.getServerList();
+                    Collections.sort(servers);
+                    while ((SlytherClient.this.networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)))) == null);
+                } else {
+                    SlytherClient.this.networkManager = ClientNetworkManager.create(SlytherClient.this, configuration.server);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public void setup(int gameRadius, int mscps, int sectorSize, int sectorCountAlongEdge, float spangDV, float nsp1, float nsp2, float nsp3, float mamu, float mamu2, float cst, int protocolVersion) {

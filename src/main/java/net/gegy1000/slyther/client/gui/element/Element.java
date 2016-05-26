@@ -22,6 +22,6 @@ public abstract class Element {
     public abstract boolean mouseClicked(float mouseX, float mouseY, int button);
 
     public boolean isSelected(float mouseX, float mouseY) {
-        return mouseX >= posX && mouseX <= posX + width && mouseY >= posY && mouseX <= posY + width;
+        return mouseX >= posX && mouseX <= posX + width && mouseY >= posY && mouseY <= posY + height;
     }
 }

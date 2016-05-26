@@ -118,9 +118,7 @@ public abstract class Gui {
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glScalef(scale, scale, 1.0F);
-        x -= font.getWidth(text) / 2.0F;
-        y -= font.getHeight() / 2.0F;
-        font.drawString(x / scale, y / scale, text, new org.newdawn.slick.Color(color));
+        font.drawString(x / scale - font.getWidth(text) / 2.0F, y / scale - font.getHeight() / 2.0F, text, new org.newdawn.slick.Color(color));
         GL11.glPopMatrix();
     }
 
@@ -146,6 +144,7 @@ public abstract class Gui {
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBegin(GL11.GL_QUADS);
+        GL11.glShadeModel(GL11.GL_FLAT);
 
         this.drawVertex(x, y + height, u, v + height, uMultiplier, vMultiplier);
         this.drawVertex(x + width, y + height, u + width, v + height, uMultiplier, vMultiplier);
@@ -155,7 +154,29 @@ public abstract class Gui {
         GL11.glEnd();
     }
 
+    public void drawTexture(float x, float y, float u, float v, float width, float height, float actualWidth, float actualHeight, float textureWidth, float textureHeight) {
+        float uMultiplier = 1.0F / textureWidth;
+        float vMultiplier = 1.0F / textureHeight;
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glShadeModel(GL11.GL_FLAT);
+
+        this.drawVertex(x, y, u, v, uMultiplier, vMultiplier);
+        this.drawVertex(x + actualWidth, y, u + width, v, uMultiplier, vMultiplier);
+        this.drawVertex(x + actualWidth, y + actualHeight, u + width, v + height, uMultiplier, vMultiplier);
+        this.drawVertex(x, y + actualHeight, u, v + height, uMultiplier, vMultiplier);
+
+        GL11.glEnd();
+    }
+
     public void drawRect(float x, float y, float width, float height) {
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glRectf(x, y, x + width, y + height);
+    }
+
+    public void drawRect(float x, float y, float width, float height, int color) {
+        GL11.glColor4f((color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 1.0F);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glRectf(x, y, x + width, y + height);
     }
@@ -165,7 +186,7 @@ public abstract class Gui {
         GL11.glVertex2f(x, y);
     }
 
-    public final void close() {
+    public final void closeGui() {
         this.renderHandler.closeGui(this);
     }
 }
