@@ -40,7 +40,7 @@ public class RenderHandler {
             Mouse.create();
             try {
                 Font awtFont = new Font("Arial Rounded MT Bold", Font.PLAIN, 0);
-                this.font = new TrueTypeFont(awtFont.deriveFont(15.0F), true);
+                this.font = new TrueTypeFont(awtFont.deriveFont(14.0F), true);
                 this.largeFont = new TrueTypeFont(awtFont.deriveFont(30.0F), true);
             } catch (Exception e) {
                 e.printStackTrace();

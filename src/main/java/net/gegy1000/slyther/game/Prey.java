@@ -10,7 +10,7 @@ public class Prey {
     public float posY;
     public float rad;
     public float sz;
-    public int cv;
+    public Color cv;
     public int dir;
     public float wang;
     public float ang;
@@ -32,7 +32,7 @@ public class Prey {
     public Snake eater;
     public float gr;
 
-    public Prey(SlytherClient client, int id, float x, float y, float size, int cv, int dir, float wang, float ang, float sp) {
+    public Prey(SlytherClient client, int id, float x, float y, float size, Color cv, int dir, float wang, float ang, float sp) {
         this.client = client;
         this.id = id;
         this.posX = x;
@@ -45,7 +45,7 @@ public class Prey {
         this.ang = ang;
         this.sp = sp;
         this.gfr = (int) (64 * Math.random());
-        SkinColor color = SkinColor.values()[this.cv];
+        SkinColor color = SkinColor.values()[this.cv.ordinal()];
         this.rr = (int) Math.min(255, color.red + Math.floor(20.0F * Math.random()));
         this.gg = (int) Math.min(255, color.green + Math.floor(20.0F * Math.random()));
         this.bb = (int) Math.min(255, color.blue + Math.floor(20.0F * Math.random()));

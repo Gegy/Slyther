@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.network.message;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.Prey;
 import net.gegy1000.slyther.game.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
@@ -30,7 +31,7 @@ public class MessageNewPrey extends SlytherServerMessageBase {
                 }
             }
         } else if (buffer.hasRemaining(17)) {
-            int cv = buffer.readUInt8();
+            Color cv = Color.values()[buffer.readUInt8()];
             float x = buffer.readUInt24() / 5.0F;
             float y = buffer.readUInt24() / 5.0F;
             float size = buffer.readUInt8() / 5.0F;

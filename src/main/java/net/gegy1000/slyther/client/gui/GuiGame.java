@@ -94,6 +94,22 @@ public class GuiGame extends Gui {
                     }
                 }
             }
+            for (int i = 0; i < client.preys.size(); i++) {
+                Prey prey = client.preys.get(i);
+                if (prey != null) {
+                    if (prey.posX >= client.fpx1 && prey.posX <= client.fpx2 && prey.posY >= client.fpy1 && prey.posY <= client.fpy2) {
+                        Color color = prey.cv;
+                        float size = (prey.sz / 5.0F) * prey.rad * 0.25F;
+                        GL11.glPushMatrix();
+                        GL11.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), globalAlpha * prey.fr);
+                        GL11.glScalef(size, size, 1.0F);
+                        float x = prey.posX / size;
+                        float y = prey.posY / size;
+                        this.drawTexture(x - 64.0F, y - 64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
+                        GL11.glPopMatrix();
+                    }
+                }
+            }
             for (int i = 0; i < client.snakes.size(); i++) {
                 Snake snake = client.snakes.get(i);
                 snake.iiv = true;
@@ -362,17 +378,22 @@ public class GuiGame extends Gui {
                 alpha -= alphaChange;
             }
 
+            float mapX = renderResolution.getWidth() - 100.0F + 40.0F;
+            float mapY = renderResolution.getHeight() - 100.0F + 40.0F;
+            this.drawCircle(mapX, mapY, 42.5F, 0x222222);
+            this.drawCircle(mapX, mapY, 40.0F, 0x555555);
+            GL11.glColor4f(0.8F, 0.8F, 0.8F, 1.0F);
             for (int x = 0; x < 80; x++) {
                 for (int y = 0; y < 80; y++) {
                     if (client.map[x][y]) {
-                        GL11.glColor4f(0.8F, 0.8F, 0.8F, 1.0F);
-                    } else {
-                        GL11.glColor4f(0.25F, 0.25F, 0.25F, 1.0F);
+                        this.drawRect((renderResolution.getWidth() - 100.0F) + x, (renderResolution.getHeight() - 100.0F) + y, 1.0F, 1.0F);
                     }
-                    this.drawRect((renderResolution.getWidth() - 100.0F) + x, (renderResolution.getHeight() - 100.0F) + y, 1.0F, 1.0F);
                 }
             }
-            this.drawCircle((renderResolution.getWidth() - 100.0F) + Math.round((client.player.posX - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7), (renderResolution.getHeight() - 100.0F) + Math.round((client.player.posY - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7), 2.0F, 0xFFFFFF);
+            float locationMarkerX = (renderResolution.getWidth() - 100.0F) + Math.round((client.player.posX - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7);
+            float locationMarkerY = (renderResolution.getHeight() - 100.0F) + Math.round((client.player.posY - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7);
+            this.drawCircle(locationMarkerX, locationMarkerY, 3.0F, 0x202020);
+            this.drawCircle(locationMarkerX, locationMarkerY, 2.0F, 0xFFFFFF);
         } else {
             GL11.glPopMatrix();
             this.drawCenteredLargeString("Connecting to server...", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F, 2.0F, 0xFFFFFF);
