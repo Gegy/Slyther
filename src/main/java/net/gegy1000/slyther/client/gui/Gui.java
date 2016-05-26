@@ -91,14 +91,18 @@ public abstract class Gui {
     }
 
     public void drawCircle(float centerX, float centerY, float radius, int color) {
-        GL11.glPushMatrix();
         GL11.glColor4f((color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 1.0F);
-        this.textureManager.bindTexture("/textures/circle.png");
-        centerX -= radius / 2.0F;
-        centerY -= radius / 2.0F;
-        float scale = radius / 3.0F;
-        GL11.glScalef(scale, scale, 1.0F);
-        this.drawTexture(centerX / scale, centerY / scale, 0.0F, 0.0F, 64.0F, 64.0F, 64.0F, 64.0F);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(centerX - (radius / 2.0F), centerY - (radius / 2.0F), 0.0F);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBegin(GL11.GL_POLYGON);
+        GL11.glEnable(GL11.GL_POLYGON_SMOOTH);
+        GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_NICEST);
+        for (int i = 0; i < 360; i++) {
+            double angle = Math.toRadians(i);
+            GL11.glVertex2d(radius * Math.cos(angle), radius * Math.sin(angle));
+        }
+        GL11.glEnd();
         GL11.glPopMatrix();
     }
 

@@ -14,7 +14,7 @@ public enum MessageHandler {
         this.registerServer(MessagePing.class);
         this.registerServer(MessageSetup.class);
         this.registerServer(MessageNewSnake.class);
-        this.registerServer(MessageSendSector.class);
+        this.registerServer(MessageUpdateSectorFoods.class);
         this.registerServer(MessageNewFood.class);
         this.registerServer(MessageNewPrey.class);
         this.registerServer(MessageUpdateSnake.class);

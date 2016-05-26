@@ -17,25 +17,26 @@ public class GuiGame extends Gui {
     @Override
     public void render(float mouseX, float mouseY) {
         boolean loading = client.networkManager == null || client.player == null;
-        textureManager.bindTexture("/textures/background.png");
         GL11.glPushMatrix();
+        textureManager.bindTexture("/textures/background.png");
+        GL11.glScalef(client.gsc, client.gsc, 1.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.drawTexture(0.0F, 0.0F, loading ? backgroundX : client.viewX, client.viewY, renderResolution.getWidth(), renderResolution.getHeight(), 599, 519);
-        GL11.glPopMatrix();
-        if (loading) {
-            this.drawCenteredLargeString("Connecting to server...", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F, 2.0F, 0xFFFFFF);
+        this.drawTexture(0.0F, 0.0F, loading ? backgroundX : client.viewX, client.viewY, renderResolution.getWidth() / client.gsc, renderResolution.getHeight() / client.gsc, 599, 519);
+        GL11.glTranslatef(-client.viewX, -client.viewY, 0.0F);
+        if (!loading) {
+            GL11.glTranslatef(client.mww2 / client.gsc, client.mhh2 / client.gsc, 0.0F);
         }
         Snake player = client.player;
-        if (player != null) {
+        if (!loading) {
             float newScale = 0.4F / Math.max(1.0F, (player.sct + 16.0F) / 36.0F) + 0.5F;
             if (client.gsc != newScale) {
                 if (client.gsc < newScale) {
-                    client.gsc += 1e-4F;
+                    client.gsc += 0.0001F;
                     if (client.gsc > newScale) {
                         client.gsc = newScale;
                     }
                 } else if (client.gsc > newScale) {
-                    client.gsc -= 1e-4F;
+                    client.gsc -= 0.0001F;
                     if (client.gsc < newScale) {
                         client.gsc = newScale;
                     }
@@ -77,20 +78,17 @@ public class GuiGame extends Gui {
             if (client.gla != 1.0F) {
                 globalAlpha = 1.75F * client.gla;
             }
-            float scale = client.gsc * 0.5F;
             for (int i = 0; i < client.foods.size(); i++) {
                 Food food = client.foods.get(i);
                 if (food != null) {
                     if (food.rx >= client.fpx1 && food.rx <= client.fpx2 && food.ry >= client.fpy1 && food.ry <= client.fpy2) {
                         Color color = food.cv;
-                        float size = (food.sz / 5.0F) * food.rad * 0.5F;
+                        float size = (food.sz / 5.0F) * food.rad * 0.25F;
                         GL11.glPushMatrix();
-                        GL11.glTranslatef(client.mww2, client.mhh2, 0.0F);
-                        GL11.glScalef(scale, scale, 1.0F);
                         GL11.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), globalAlpha * food.fr);
                         GL11.glScalef(size, size, 1.0F);
-                        float x = ((food.rx - client.viewX)) / size / scale;
-                        float y = ((food.ry - client.viewY)) / size / scale;
+                        float x = food.rx / size;
+                        float y = food.ry / size;
                         this.drawTexture(x - 64.0F, y - 64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                         GL11.glPopMatrix();
                     }
@@ -211,13 +209,10 @@ public class GuiGame extends Gui {
                             xs.add(ax);
                             ys.add(ay);
                         }
-                        GL11.glPushMatrix();
                         this.textureManager.bindTexture("/textures/snake_point.png");
-                        GL11.glTranslatef(client.mww2, client.mhh2, 0.0F);
-                        GL11.glScalef(client.gsc, client.gsc, 1.0F);
                         for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
-                            float pointX = (xs.get(pointIndex)) - client.viewX;
-                            float pointY = (ys.get(pointIndex)) - client.viewY;
+                            float pointX = (xs.get(pointIndex));
+                            float pointY = (ys.get(pointIndex));
                             SkinColor color = pattern[pointIndex % pattern.length];
                             float colorMultipler = 1.0F;
                             if (snake.sp > snake.fsp) {
@@ -236,27 +231,25 @@ public class GuiGame extends Gui {
                         }
                         if (!snake.oneEye) {
                             GL11.glPushMatrix();
-                            GL11.glTranslated(-client.viewX, -client.viewY, 0);
-                            float t = 6.0F * sc;
-                            float a = 6.0F * sc;
-                            float eyeScale = 0.1F;
-                            float eyeOffsetX = (float) (Math.cos(ehang) * t + Math.cos(ehang - Math.PI / 2.0F) * (a + 0.5F));
-                            float eyeOffsetY = (float) (Math.sin(ehang) * t + Math.sin(ehang - Math.PI / 2.0F) * (a + 0.5F));
-                            this.drawCircle(eyeOffsetX + originX, eyeOffsetY + originY, snake.er * sc * eyeScale, snake.ec);
-                            eyeOffsetX = (float) (Math.cos(ehang) * t + Math.cos(ehang + Math.PI / 2.0F) * (a + 0.5F));
-                            eyeOffsetY = (float) (Math.sin(ehang) * t + Math.sin(ehang + Math.PI / 2.0F) * (a + 0.5F));
-                            this.drawCircle(eyeOffsetX + originX, eyeOffsetY + originY, snake.er * sc * eyeScale, snake.ec);
-                            eyeOffsetX = (float) (Math.cos(ehang) * (t + 0.5F) + snake.rex * sc + Math.cos(ehang + Math.PI / 2.0F) * a);
-                            eyeOffsetY = (float) (Math.sin(ehang) * (t + 0.5F) + snake.rey * sc + Math.sin(ehang + Math.PI / 2.0F) * a);
-                            this.drawCircle(eyeOffsetX + originX, eyeOffsetY + originY, 3.5F * sc * eyeScale, snake.ppc);
-                            eyeOffsetX = (float) (Math.cos(ehang) * (t + 0.5F) + snake.rex * sc + Math.cos(ehang - Math.PI / 2.0F) * a);
-                            eyeOffsetY = (float) (Math.sin(ehang) * (t + 0.5F) + snake.rey * sc + Math.sin(ehang - Math.PI / 2.0F) * a);
-                            this.drawCircle(eyeOffsetX + originX, eyeOffsetY + originY, 3.5F * sc * eyeScale, snake.ppc);
+                            float eyeForward = 2.0F * sc;
+                            float eyeSideDistance = 6.0F * sc;
+                            GL11.glTranslatef(originX, originY, 0.0F);
+                            float eyeOffsetX = (float) (Math.cos(ehang) * eyeForward + Math.cos(ehang - Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
+                            float eyeOffsetY = (float) (Math.sin(ehang) * eyeForward + Math.sin(ehang - Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
+                            this.drawCircle(eyeOffsetX, eyeOffsetY, snake.er * sc, snake.ec);
+                            eyeOffsetX = (float) (Math.cos(ehang) * eyeForward + Math.cos(ehang + Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
+                            eyeOffsetY = (float) (Math.sin(ehang) * eyeForward + Math.sin(ehang + Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
+                            this.drawCircle(eyeOffsetX, eyeOffsetY, snake.er * sc, snake.ec);
+                            eyeOffsetX = (float) (Math.cos(ehang) * (eyeForward + 0.5F) + snake.rex * sc + Math.cos(ehang + Math.PI / 2.0F) * eyeSideDistance);
+                            eyeOffsetY = (float) (Math.sin(ehang) * (eyeForward + 0.5F) + snake.rey * sc + Math.sin(ehang + Math.PI / 2.0F) * eyeSideDistance);
+                            this.drawCircle(eyeOffsetX, eyeOffsetY, 3.5F * sc, snake.ppc);
+                            eyeOffsetX = (float) (Math.cos(ehang) * (eyeForward + 0.5F) + snake.rex * sc + Math.cos(ehang - Math.PI / 2.0F) * eyeSideDistance);
+                            eyeOffsetY = (float) (Math.sin(ehang) * (eyeForward + 0.5F) + snake.rey * sc + Math.sin(ehang - Math.PI / 2.0F) * eyeSideDistance);
+                            this.drawCircle(eyeOffsetX, eyeOffsetY, 3.5F * sc, snake.ppc);
                             GL11.glPopMatrix();
                         }
                         if (snake.antenna) {
                             GL11.glPushMatrix();
-                            GL11.glTranslated(-client.viewX, -client.viewY, 0);
                             float e = (float) Math.cos(snake.ang);
                             float w = (float) Math.sin(snake.ang);
                             ax = originX - 8 * e * snake.sc;
@@ -342,10 +335,12 @@ public class GuiGame extends Gui {
                             this.drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                             GL11.glPopMatrix();
                         }
-                        GL11.glPopMatrix();
                     }
                 }
             }
+
+            GL11.glPopMatrix();
+
             this.drawString("Your length: " + (int) Math.floor(15.0 * (client.getFPSL(player.sct) + player.fam / client.getFMLT(player.sct) - 1.0) - 5.0), 3.0F, renderResolution.getHeight() - 35.0F, 1.0F, 0xFFFFFF);
             this.drawString("Rank " + client.rank + "/" + client.snakeCount, 3.0F, renderResolution.getHeight() - 18.0F, 1.0F, 0xAAAAAA);
 
@@ -377,7 +372,10 @@ public class GuiGame extends Gui {
                     this.drawRect((renderResolution.getWidth() - 100.0F) + x, (renderResolution.getHeight() - 100.0F) + y, 1.0F, 1.0F);
                 }
             }
-            this.drawCircle((renderResolution.getWidth() - 100.0F) + Math.round((client.player.posX - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7), (renderResolution.getHeight() - 100.0F) + Math.round((client.player.posY - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7), 0.25F, 0xFFFFFF);
+            this.drawCircle((renderResolution.getWidth() - 100.0F) + Math.round((client.player.posX - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7), (renderResolution.getHeight() - 100.0F) + Math.round((client.player.posY - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7), 2.0F, 0xFFFFFF);
+        } else {
+            GL11.glPopMatrix();
+            this.drawCenteredLargeString("Connecting to server...", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F, 2.0F, 0xFFFFFF);
         }
     }
 

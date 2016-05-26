@@ -6,7 +6,7 @@ import net.gegy1000.slyther.game.Food;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.server.SlytherServer;
 
-public class MessageSendSector extends SlytherServerMessageBase {
+public class MessageUpdateSectorFoods extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server) {
     }
@@ -30,7 +30,9 @@ public class MessageSendSector extends SlytherServerMessageBase {
             }
             food.sx = sectorX;
             food.sy = sectorY;
-            client.foods.add(food);
+            if (!client.foods.contains(food)) {
+                client.foods.add(food);
+            }
         }
     }
 

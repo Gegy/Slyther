@@ -22,7 +22,9 @@ public class MessageNewFood extends SlytherServerMessageBase {
             Food food = new Food(client, id, x, y, size, messageId == 'b', color);
             food.sx = (int) Math.floor(x / client.SECTOR_SIZE);
             food.sy = (int) Math.floor(y / client.SECTOR_SIZE);
-            client.foods.add(food);
+            if (!client.foods.contains(food)) {
+                client.foods.add(food);
+            }
         }
     }
 

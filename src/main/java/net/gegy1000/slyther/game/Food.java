@@ -43,13 +43,6 @@ public class Food {
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof Integer) {
-            return this.id == (Integer) object;
-        } else if (object instanceof Short) {
-            return this.id == (Short) object;
-        } else if (object instanceof Food) {
-            return this.id == ((Food) object).id;
-        }
-        return false;
+        return object instanceof Food && this.id == ((Food) object).id;
     }
 }
