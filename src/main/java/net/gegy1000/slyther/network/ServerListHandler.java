@@ -146,6 +146,10 @@ public enum ServerListHandler {
         return pingedCount;
     }
 
+    public void resetPingedServerCount() {
+        this.pingedCount = 0;
+    }
+
     public class Server implements Comparable<Server> {
         private String ip;
         private List<String> ports;

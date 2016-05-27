@@ -92,6 +92,10 @@ public class MessageByteBuffer {
         return buf.position() + n <= buf.limit();
     }
 
+    public boolean hasExactlyRemaining(int n) {
+        return buf.position() + n == buf.limit();
+    }
+
     public boolean hasRemaining() {
         return buf.hasRemaining();
     }

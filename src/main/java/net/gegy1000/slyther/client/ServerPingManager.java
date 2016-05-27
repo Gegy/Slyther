@@ -71,6 +71,7 @@ public class ServerPingManager extends WebSocketClient {
     }
 
     public static void pingServers() throws IOException {
+        ServerListHandler.INSTANCE.resetPingedServerCount();
         List<ServerListHandler.Server> servers = ServerListHandler.INSTANCE.getServerList();
         List<ServerPingManager> pingers = new ArrayList<>();
         if (servers != null && servers.size() > 0) {

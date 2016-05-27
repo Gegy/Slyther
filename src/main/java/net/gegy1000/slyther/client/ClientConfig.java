@@ -6,4 +6,5 @@ public class ClientConfig {
     public String nickname = "Slyther";
     public Skin skin = Skin.RAINBOW;
     public String server;
+    public boolean shouldRecord = true;
 }

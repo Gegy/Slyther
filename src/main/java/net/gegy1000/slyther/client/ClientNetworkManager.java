@@ -1,6 +1,5 @@
 package net.gegy1000.slyther.client;
 
-import net.gegy1000.slyther.client.gui.GuiMainMenu;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
 import net.gegy1000.slyther.network.ServerListHandler;
@@ -11,13 +10,13 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class ClientNetworkManager extends WebSocketClient {
     private SlytherClient client;
@@ -29,6 +28,10 @@ public class ClientNetworkManager extends WebSocketClient {
 
     public int bytesPerSecond;
 
+    public boolean isReplaying;
+    public GameRecorder recorder;
+    public GameReplayer replayer;
+
     static {
         HEADERS.put("Origin", "http://slither.io");
         HEADERS.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
@@ -38,22 +41,44 @@ public class ClientNetworkManager extends WebSocketClient {
         HEADERS.put("Pragma", "no-cache");
     }
 
-    public ClientNetworkManager(SlytherClient client, String ip, Map<String, String> headers) throws URISyntaxException {
+    public ClientNetworkManager(SlytherClient client, String ip, Map<String, String> headers, boolean shouldRecord, boolean isReplaying) throws URISyntaxException, IOException {
         super(new URI("ws://" + ip + "/slither"), new Draft_17(), headers, 0);
         this.ip = ip;
         this.client = client;
-        this.connect();
+        this.isReplaying = isReplaying;
+        if (this.isReplaying) {
+            if (!SlytherClient.RECORD_FILE.exists()) {
+                SlytherClient.RECORD_FILE.createNewFile();
+            }
+            this.replayer = new GameReplayer(SlytherClient.RECORD_FILE, this);
+        } else {
+            if (!SlytherClient.RECORD_FILE.delete()) {
+                SlytherClient.RECORD_FILE.createNewFile();
+            }
+        }
+        if (!isReplaying) {
+            this.connect();
+            if (shouldRecord) {
+                this.recorder = new GameRecorder(SlytherClient.RECORD_FILE);
+            }
+        } else {
+            this.isOpen = true;
+        }
     }
 
-    public static ClientNetworkManager create(SlytherClient client, ServerListHandler.Server server) throws Exception {
-        return create(client, server.getIp());
+    public static ClientNetworkManager create(SlytherClient client, ServerListHandler.Server server, boolean shouldRecord) throws Exception {
+        return create(client, server.getIp(), shouldRecord);
     }
 
-    public static ClientNetworkManager create(SlytherClient client, String ip) throws Exception {
+    public static ClientNetworkManager create(SlytherClient client, String ip, boolean shouldRecord) throws Exception {
         System.out.println("Connecting to server " + ip);
         Map<String, String> headers = new HashMap<>(HEADERS);
         headers.put("Host", ip);
-        return new ClientNetworkManager(client, ip, headers);
+        return new ClientNetworkManager(client, ip, headers, shouldRecord, false);
+    }
+
+    public static ClientNetworkManager create(SlytherClient client) throws IOException, URISyntaxException {
+        return new ClientNetworkManager(client, "", null, false, true);
     }
 
     @Override
@@ -65,7 +90,7 @@ public class ClientNetworkManager extends WebSocketClient {
     }
 
     public void ping() {
-        if (this.isOpen) {
+        if (this.isOpen && !this.isReplaying) {
             if (!client.wfpr) {
                 this.send(new byte[] { (byte) 251 });
                 this.client.wfpr = true;
@@ -80,6 +105,15 @@ public class ClientNetworkManager extends WebSocketClient {
     @Override
     public void onMessage(ByteBuffer byteBuffer) {
         MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer);
+        if (this.recorder != null) {
+            client.scheduleTask(() -> {
+                try {
+                    this.recorder.onMessage(byteBuffer.array());
+                } catch (IOException e) {
+                }
+                return null;
+            });
+        }
         if (buffer.limit() >= 2) {
             bytesPerSecond += buffer.limit();
             client.lastPacketTime = client.currentPacketTime;
@@ -98,7 +132,7 @@ public class ClientNetworkManager extends WebSocketClient {
                     SlytherServerMessageBase message = messageType.getConstructor().newInstance();
                     message.messageId = messageId;
                     message.serverTimeDelta = serverTimeDelta;
-                    client.scheduleTask((Callable<Void>) () -> {
+                    client.scheduleTask(() -> {
                         message.readBase(buffer, this.client);
                         return null;
                     });
@@ -127,13 +161,25 @@ public class ClientNetworkManager extends WebSocketClient {
     }
 
     public void send(SlytherClientMessageBase message) {
-        if (this.isOpen) {
+        if (this.isOpen && !this.isReplaying) {
             try {
                 MessageByteBuffer buffer = new MessageByteBuffer();
                 message.write(buffer, client);
                 this.send(buffer.array());
             } catch (Exception e) {
                 System.err.println("An error occurred while sending message " + message.getClass().getName());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void tick() {
+        if (this.isReplaying) {
+            try {
+                if (!this.replayer.tick()) {
+                    this.onClose(0, "Finished Playback", false);
+                }
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

@@ -60,16 +60,16 @@ public class GuiGame extends Gui {
             client.viewDist = (float) Math.sqrt((client.viewX - client.GAME_RADIUS) * (client.viewX - client.GAME_RADIUS) + (client.viewY - client.GAME_RADIUS) * (client.viewY - client.GAME_RADIUS));
             client.bpx1 = client.viewX - (client.mww2 / client.gsc - 84);
             client.bpy1 = client.viewY - (client.mhh2 / client.gsc - 84);
-            client.bpx2 = client.viewX + (client.mww2 / client.gsc + 84);
-            client.bpy2 = client.viewY + (client.mhh2 / client.gsc + 84);
+            client.bpx2 = client.viewX + (client.mww2 / client.gsc - 84);
+            client.bpy2 = client.viewY + (client.mhh2 / client.gsc - 84);
             client.fpx1 = client.viewX - (client.mww2 / client.gsc - 24);
             client.fpy1 = client.viewY - (client.mhh2 / client.gsc - 24);
-            client.fpx2 = client.viewX + (client.mww2 / client.gsc + 24);
-            client.fpy2 = client.viewY + (client.mhh2 / client.gsc + 24);
+            client.fpx2 = client.viewX + (client.mww2 / client.gsc - 24);
+            client.fpy2 = client.viewY + (client.mhh2 / client.gsc - 24);
             client.apx1 = client.viewX - (client.mww2 / client.gsc - 210);
             client.apy1 = client.viewY - (client.mhh2 / client.gsc - 210);
-            client.apx2 = client.viewX + (client.mww2 / client.gsc + 210);
-            client.apy2 = client.viewY + (client.mhh2 / client.gsc + 210);
+            client.apx2 = client.viewX + (client.mww2 / client.gsc - 210);
+            client.apy2 = client.viewY + (client.mhh2 / client.gsc - 210);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
@@ -97,14 +97,17 @@ public class GuiGame extends Gui {
             for (int i = 0; i < client.preys.size(); i++) {
                 Prey prey = client.preys.get(i);
                 if (prey != null) {
-                    if (prey.posX >= client.fpx1 && prey.posX <= client.fpx2 && prey.posY >= client.fpy1 && prey.posY <= client.fpy2) {
+                    float posX = prey.posX + prey.fx;
+                    float posY = prey.posY + prey.fy;
+                    if (posX >= client.fpx1 && posX <= client.fpx2 && posY >= client.fpy1 && posY <= client.fpy2) {
+                        System.out.println("Prey");
                         Color color = prey.cv;
-                        float size = (prey.sz / 5.0F) * prey.rad * 0.25F;
+                        float size = (prey.sz / 10.0F) * prey.rad;
                         GL11.glPushMatrix();
                         GL11.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), globalAlpha * prey.fr);
                         GL11.glScalef(size, size, 1.0F);
-                        float x = prey.posX / size;
-                        float y = prey.posY / size;
+                        float x = posX / size;
+                        float y = posY / size;
                         this.drawTexture(x - 64.0F, y - 64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                         GL11.glPopMatrix();
                     }

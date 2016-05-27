@@ -247,11 +247,13 @@ public class Snake {
         if (moveAmount > this.msl) {
             moveAmount = this.msl;
         }
-        if (this == this.client.player) {
-            boolean prev = this.md;
-            this.md = Mouse.isButtonDown(0) || Mouse.isButtonDown(1);
-            if (prev != this.md) {
-                this.prevMd = prev;
+        if (client.allowUserInput) {
+            if (this == this.client.player) {
+                boolean prev = this.md;
+                this.md = Mouse.isButtonDown(0) || Mouse.isButtonDown(1);
+                if (prev != this.md) {
+                    this.prevMd = prev;
+                }
             }
         }
         if (!this.dead) {

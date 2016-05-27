@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.client.gui;
 
 import com.google.gson.GsonBuilder;
+import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.gui.element.ButtonElement;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -38,12 +39,20 @@ public class GuiMainMenu extends Gui {
     @Override
     public void init() {
         elements.clear();
-        elements.add(new ButtonElement(this, "Play", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F, 100.0F, 40.0F, (button) -> {
+        elements.add(new ButtonElement(this, "Play", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F, 150.0F, 40.0F, (button) -> {
             closeGui();
             client.connect();
             renderHandler.openGui(new GuiGame());
             return true;
         }));
+        if (SlytherClient.RECORD_FILE.exists()) {
+            elements.add(new ButtonElement(this, "Replay Last Game", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F + 50.0F, 150.0F, 40.0F, (button) -> {
+                closeGui();
+                client.replay();
+                renderHandler.openGui(new GuiGame());
+                return true;
+            }));
+        }
     }
 
     @Override

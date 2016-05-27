@@ -18,7 +18,7 @@ public class MessageNewPrey extends SlytherServerMessageBase {
         if (!buffer.hasRemaining()) {
             Prey prey = client.getPrey(id);
             client.preys.remove(prey);
-        } else if (buffer.hasRemaining(2)) {
+        } else if (buffer.hasExactlyRemaining(2)) {
             Prey prey = client.getPrey(id);
             if (prey != null) {
                 Snake eater = client.getSnake(buffer.readUInt16());
@@ -30,7 +30,7 @@ public class MessageNewPrey extends SlytherServerMessageBase {
                     client.preys.remove(prey);
                 }
             }
-        } else if (buffer.hasRemaining(17)) {
+        } else {
             Color cv = Color.values()[buffer.readUInt8()];
             float x = buffer.readUInt24() / 5.0F;
             float y = buffer.readUInt24() / 5.0F;
