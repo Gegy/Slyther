@@ -2,6 +2,7 @@ package net.gegy1000.slyther.client.gui;
 
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.*;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -19,12 +20,13 @@ public class GuiGame extends Gui {
         boolean loading = client.networkManager == null || client.player == null;
         GL11.glPushMatrix();
         textureManager.bindTexture("/textures/background.png");
-        GL11.glScalef(client.gsc, client.gsc, 1.0F);
+        float gsc = client.gsc + client.zoomOffset;
+        GL11.glScalef(gsc, gsc, 1.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        drawTexture(0.0F, 0.0F, loading ? backgroundX : client.viewX, client.viewY, renderResolution.getWidth() / client.gsc, renderResolution.getHeight() / client.gsc, 599, 519);
+        drawTexture(0.0F, 0.0F, loading ? backgroundX : client.viewX, client.viewY, renderResolution.getWidth() / gsc, renderResolution.getHeight() / gsc, 599, 519);
         GL11.glTranslatef(-client.viewX, -client.viewY, 0.0F);
         if (!loading) {
-            GL11.glTranslatef(client.mww2 / client.gsc, client.mhh2 / client.gsc, 0.0F);
+            GL11.glTranslatef(client.mww2 /  gsc, client.mhh2 / gsc, 0.0F);
         }
         Snake player = client.player;
         if (!loading) {
@@ -42,8 +44,6 @@ public class GuiGame extends Gui {
                     }
                 }
             }
-            float prevViewX = client.viewX;
-            float prevviewY = client.viewY;
             if (client.fvtg > 0) {
                 client.fvtg--;
                 client.fvx = client.fvxs[client.fvpos];
@@ -58,18 +58,18 @@ public class GuiGame extends Gui {
             client.viewY = player.posY + player.fy + client.fvy;
             client.viewAng = (float) Math.atan2(client.viewY - client.GAME_RADIUS, client.viewX - client.GAME_RADIUS);
             client.viewDist = (float) Math.sqrt((client.viewX - client.GAME_RADIUS) * (client.viewX - client.GAME_RADIUS) + (client.viewY - client.GAME_RADIUS) * (client.viewY - client.GAME_RADIUS));
-            client.bpx1 = client.viewX - (client.mww2 / client.gsc - 84);
-            client.bpy1 = client.viewY - (client.mhh2 / client.gsc - 84);
-            client.bpx2 = client.viewX + (client.mww2 / client.gsc - 84);
-            client.bpy2 = client.viewY + (client.mhh2 / client.gsc - 84);
-            client.fpx1 = client.viewX - (client.mww2 / client.gsc - 24);
-            client.fpy1 = client.viewY - (client.mhh2 / client.gsc - 24);
-            client.fpx2 = client.viewX + (client.mww2 / client.gsc - 24);
-            client.fpy2 = client.viewY + (client.mhh2 / client.gsc - 24);
-            client.apx1 = client.viewX - (client.mww2 / client.gsc - 210);
-            client.apy1 = client.viewY - (client.mhh2 / client.gsc - 210);
-            client.apx2 = client.viewX + (client.mww2 / client.gsc - 210);
-            client.apy2 = client.viewY + (client.mhh2 / client.gsc - 210);
+            client.bpx1 = client.viewX - (client.mww2 / gsc - 84);
+            client.bpy1 = client.viewY - (client.mhh2 / gsc - 84);
+            client.bpx2 = client.viewX + (client.mww2 / gsc - 84);
+            client.bpy2 = client.viewY + (client.mhh2 / gsc - 84);
+            client.fpx1 = client.viewX - (client.mww2 / gsc - 24);
+            client.fpy1 = client.viewY - (client.mhh2 / gsc - 24);
+            client.fpx2 = client.viewX + (client.mww2 / gsc - 24);
+            client.fpy2 = client.viewY + (client.mhh2 / gsc - 24);
+            client.apx1 = client.viewX - (client.mww2 / gsc - 210);
+            client.apy1 = client.viewY - (client.mhh2 / gsc - 210);
+            client.apx2 = client.viewX + (client.mww2 / gsc - 210);
+            client.apy2 = client.viewY + (client.mhh2 / gsc - 210);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
@@ -274,7 +274,7 @@ public class GuiGame extends Gui {
                             ay = originY - 8 * w * snake.sc;
                             snake.atx[0] = ax;
                             snake.aty[0] = ay;
-                            float E = snake.sc * client.gsc;
+                            float E = snake.sc * gsc;
                             int fj = snake.atx.length - 1;
                             if (!snake.antennaShown) {
                                 snake.antennaShown = true;
@@ -407,6 +407,12 @@ public class GuiGame extends Gui {
     @Override
     public void update() {
         backgroundX++;
+        client.zoomOffset += Mouse.getDWheel() * 0.0005F;
+        if (client.zoomOffset > 1.0F) {
+            client.zoomOffset = 1.0F;
+        } else if (client.zoomOffset < -0.75F) {
+            client.zoomOffset = -0.75F;
+        }
     }
 
     @Override

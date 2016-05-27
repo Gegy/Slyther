@@ -187,6 +187,8 @@ public class SlytherClient {
     public boolean tickLoopInitialized;
     public boolean allowUserInput = true;
 
+    public float zoomOffset;
+
     public SlytherClient() throws Exception {
         setup();
     }
@@ -296,6 +298,10 @@ public class SlytherClient {
                 GL11.glPopMatrix();
                 Display.sync(60);
                 Display.update();
+            }
+            try {
+                ConfigHandler.INSTANCE.saveConfig(configuration);
+            } catch (Exception e) {
             }
             System.exit(1);
         }
