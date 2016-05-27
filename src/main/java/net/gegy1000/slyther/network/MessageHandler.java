@@ -43,6 +43,27 @@ public enum MessageHandler {
         }
     }
 
+    public SlytherClientMessageBase getClientMessage(MessageByteBuffer buffer) {
+        if (buffer.limit() == 1) {
+            int type = buffer.readUInt8();
+            if (type == 251) {
+                return new MessageClientPing();
+            } else if (type == 253 || type == 254) {
+                return new MessageAccelerate(type == 253);
+            } else {
+                return new MessageSetAngle();
+            }
+        } else if (buffer.limit() > 1) {
+            int type = buffer.readUInt8();
+            if (type == 's') {
+                return new MessageSetUsername();
+            } else if (type == 252) {
+                return new MessageSetTurn();
+            }
+        }
+        return null;
+    }
+
     public Class<? extends SlytherServerMessageBase> getServerMessage(byte id) {
         return SERVER_MESSAGES.get(id);
     }

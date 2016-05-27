@@ -3,6 +3,7 @@ package net.gegy1000.slyther.client;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
 import net.gegy1000.slyther.network.ServerHandler;
+import net.gegy1000.slyther.network.message.MessageClientPing;
 import net.gegy1000.slyther.network.message.MessageSetUsername;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -82,7 +83,7 @@ public class ClientNetworkManager extends WebSocketClient {
     public void ping() {
         if (isOpen && !isReplaying) {
             if (!client.wfpr) {
-                send(new byte[] { (byte) 251 });
+                send(new MessageClientPing());
                 client.wfpr = true;
             }
         }
@@ -96,7 +97,7 @@ public class ClientNetworkManager extends WebSocketClient {
     public void onMessage(ByteBuffer byteBuffer) {
         MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer);
         if (recorder != null) {
-            this.recorder.onMessage(byteBuffer.array());
+            recorder.onMessage(byteBuffer.array());
         }
         if (buffer.limit() >= 2) {
             bytesPerSecond += buffer.limit();
@@ -117,7 +118,7 @@ public class ClientNetworkManager extends WebSocketClient {
                     message.messageId = messageId;
                     message.serverTimeDelta = serverTimeDelta;
                     client.scheduleTask(() -> {
-                        message.readBase(buffer, client);
+                        message.read(buffer, client);
                         return null;
                     });
                 } catch (Exception e) {
@@ -125,7 +126,7 @@ public class ClientNetworkManager extends WebSocketClient {
                     e.printStackTrace();
                 }
             } else {
-                System.err.println("Received unknown message " + messageId + "!" + " (" + (char) messageId + ") " + Arrays.toString(buffer.bytes()));
+                System.err.println("Received unknown message " + messageId + "!" + " (" + (char) messageId + ") " + Arrays.toString(buffer.array()));
             }
         }
     }

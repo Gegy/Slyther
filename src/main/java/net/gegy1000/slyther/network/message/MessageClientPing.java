@@ -5,25 +5,14 @@ import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
-public class MessageSetAngle extends SlytherClientMessageBase {
-    public float ang;
-
-    public MessageSetAngle() {
-    }
-
-    public MessageSetAngle(float ang) {
-        this.ang = ang;
-    }
-
+public class MessageClientPing extends SlytherClientMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherClient client) {
-        int sendAngle = (int) Math.floor(251 * ang / SlytherClient.PI_2);
-        client.lastSendAngle = sendAngle;
-        buffer.writeUInt8(sendAngle & 0xFF);
-        client.lastSendAngleTime = System.currentTimeMillis();
+        buffer.writeUInt8(252);
     }
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
+
     }
 }

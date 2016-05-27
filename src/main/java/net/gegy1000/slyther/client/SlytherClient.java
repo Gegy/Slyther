@@ -189,6 +189,8 @@ public class SlytherClient {
 
     public float zoomOffset;
 
+    private static final File CONFIGURATION_FILE = new File(SystemUtils.getGameFolder(), "config.json");
+
     public SlytherClient() throws Exception {
         setup();
     }
@@ -196,8 +198,8 @@ public class SlytherClient {
     private void setup() {
         if (configuration == null) {
             try {
-                configuration = ConfigHandler.INSTANCE.readConfig(ClientConfig.class);
-                ConfigHandler.INSTANCE.saveConfig(configuration);
+                configuration = ConfigHandler.INSTANCE.readConfig(CONFIGURATION_FILE, ClientConfig.class);
+                ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -300,7 +302,7 @@ public class SlytherClient {
                 Display.update();
             }
             try {
-                ConfigHandler.INSTANCE.saveConfig(configuration);
+                ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
             } catch (Exception e) {
             }
             System.exit(1);

@@ -7,6 +7,7 @@ import net.gegy1000.slyther.server.SlytherServer;
 public class MessagePing extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server) {
+        buffer.writeUInt8('p');
     }
 
     @Override

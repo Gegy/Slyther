@@ -12,21 +12,21 @@ import java.io.PrintWriter;
 public enum ConfigHandler {
     INSTANCE;
 
-    private static final File CONFIGURATION_FILE = new File(SystemUtils.getGameFolder(), "config.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public <T> void saveConfig(T configuration) throws Exception {
-        if (!CONFIGURATION_FILE.exists()) {
-            CONFIGURATION_FILE.createNewFile();
+    public <T> void saveConfig(File file, T configuration) throws Exception {
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
         }
-        PrintWriter out = new PrintWriter(new FileWriter(CONFIGURATION_FILE));
+        PrintWriter out = new PrintWriter(new FileWriter(file));
         out.print(GSON.toJson(configuration));
         out.close();
     }
 
-    public <T> T readConfig(Class<T> configClass) throws Exception {
-        if (CONFIGURATION_FILE.exists()) {
-            return GSON.fromJson(new FileReader(CONFIGURATION_FILE), configClass);
+    public <T> T readConfig(File file, Class<T> configClass) throws Exception {
+        if (file.exists()) {
+            return GSON.fromJson(new FileReader(file), configClass);
         }
         return configClass.getDeclaredConstructor().newInstance();
     }

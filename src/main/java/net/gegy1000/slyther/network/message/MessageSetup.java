@@ -7,18 +7,18 @@ import net.gegy1000.slyther.server.SlytherServer;
 public class MessageSetup extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server) {
-        buffer.writeUInt24(SlytherServer.GAME_RADIUS);
-        buffer.writeUInt16(SlytherServer.MSCPS);
-        buffer.writeUInt16(SlytherServer.SECTOR_SIZE);
-        buffer.writeUInt16(SlytherServer.SECTORS_ALONG_EDGE);
-        buffer.writeUInt8((int) (SlytherServer.SPANG_DV * 10));
-        buffer.writeUInt16((int) (SlytherServer.NSP_1 * 100));
-        buffer.writeUInt16((int) (SlytherServer.NSP_2 * 100));
-        buffer.writeUInt16((int) (SlytherServer.NSP_3 * 100));
-        buffer.writeUInt16((int) (SlytherServer.MAMU * 1000));
-        buffer.writeUInt16((int) (SlytherServer.MANU_2 * 1000));
-        buffer.writeUInt16((int) (SlytherServer.CST * 1000));
-        buffer.writeUInt8(SlytherServer.PROTOCOL_VERSION);
+        buffer.writeUInt24(server.configuration.GAME_RADIUS);
+        buffer.writeUInt16(server.configuration.MSCPS);
+        buffer.writeUInt16(server.configuration.SECTOR_SIZE);
+        buffer.writeUInt16(server.configuration.SECTORS_ALONG_EDGE);
+        buffer.writeUInt8((int) (server.configuration.SPANG_DV * 10));
+        buffer.writeUInt16((int) (server.configuration.NSP_1 * 100));
+        buffer.writeUInt16((int) (server.configuration.NSP_2 * 100));
+        buffer.writeUInt16((int) (server.configuration.NSP_3 * 100));
+        buffer.writeUInt16((int) (server.configuration.MAMU * 1000));
+        buffer.writeUInt16((int) (server.configuration.MANU_2 * 1000));
+        buffer.writeUInt16((int) (server.configuration.CST * 1000));
+        buffer.writeUInt8(server.configuration.PROTOCOL_VERSION);
     }
 
     @Override

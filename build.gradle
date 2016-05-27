@@ -9,7 +9,7 @@ plugins {
 version = "0.0.0"
 group = "net.gegy1000"
 archivesBaseName = "slyther"
-mainClassName = "net.gegy1000.slyther.client.ClientMain"
+mainClassName = "net.gegy1000.slyther.client.ServerMain"
 sourceCompatibility = targetCompatibility = "1.8"
 
 repositories {

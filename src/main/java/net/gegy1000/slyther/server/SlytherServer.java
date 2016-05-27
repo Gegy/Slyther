@@ -1,16 +1,50 @@
 package net.gegy1000.slyther.server;
 
+import net.gegy1000.slyther.game.ConfigHandler;
+import net.gegy1000.slyther.util.SystemUtils;
+import org.java_websocket.WebSocket;
+
+import java.io.File;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SlytherServer {
-    public static final int GAME_RADIUS = 21600;
-    public static final short MSCPS = 411;
-    public static final short SECTOR_SIZE = 480;
-    public static final short SECTORS_ALONG_EDGE = 130;
-    public static final float SPANG_DV = 4.8F;
-    public static final float NSP_1 = 4.25F;
-    public static final float NSP_2 = 0.5F;
-    public static final float NSP_3 = 12.0F;
-    public static final float MAMU = 0.033F;
-    public static final float MANU_2 = 0.028F;
-    public static final float CST = 0.43F;
-    public static final byte PROTOCOL_VERSION = 0; //TODO
+    public ServerConfig configuration;
+
+    public ServerNetworkManager networkManager;
+
+    private static final File CONFIGURATION_FILE = new File(SystemUtils.getGameFolder(), "server/config.json");
+    public List<ConnectedClient> clients = new ArrayList<>();
+
+    public SlytherServer() {
+        try {
+            configuration = ConfigHandler.INSTANCE.readConfig(CONFIGURATION_FILE, ServerConfig.class);
+            ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            networkManager = new ServerNetworkManager(this, configuration.serverPort);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeClient(WebSocket socket) {
+        ConnectedClient connectedClient = getConnectedClient(socket);
+        clients.remove(connectedClient);
+        if (connectedClient != null) {
+            System.out.println(connectedClient.name + " disconnected.");
+        }
+    }
+
+    public ConnectedClient getConnectedClient(WebSocket socket) {
+        for (ConnectedClient client : clients) {
+            if (client.socket.equals(socket)) {
+                return client;
+            }
+        }
+        return null;
+    }
 }
