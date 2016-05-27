@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.client;
 
 import net.gegy1000.slyther.client.gui.Gui;
+import net.gegy1000.slyther.client.gui.GuiMainMenu;
 import net.gegy1000.slyther.client.render.RenderHandler;
 import net.gegy1000.slyther.game.*;
 import net.gegy1000.slyther.network.ServerListHandler;
@@ -120,25 +121,20 @@ public class SlytherClient {
     private float[] fpsls;
     private float[] fmlts;
 
-    public int rank = -1;
-    public int bestRank = -1;
+    public int rank;
+    public int bestRank;
     public int snakeCount;
 
     public List<LeaderboardEntry> leaderboard = new ArrayList<>();
 
     public String longestPlayerName;
-    public int longestPlayerScore = -1;
+    public int longestPlayerScore;
     public String longestPlayerMessage;
 
     public long lastPingTime;
 
     public float mww2;
     public float mhh2;
-
-    public float[] pbx = new float[32767];
-    public float[] pby = new float[32767];
-    public float[] pba = new float[32767];
-    public int[] pbu = new int[32767];
 
     public float bpx1;
     public float bpy1;
@@ -184,21 +180,37 @@ public class SlytherClient {
 
     public float vfr;
     public int ticks;
+    public boolean tickLoopInitialized;
 
     public SlytherClient() throws Exception {
         this.setup();
     }
 
     private void setup() {
-        try {
-            this.configuration = ConfigHandler.INSTANCE.readConfig(ClientConfig.class);
-            ConfigHandler.INSTANCE.saveConfig(this.configuration);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (this.configuration == null) {
+            try {
+                this.configuration = ConfigHandler.INSTANCE.readConfig(ClientConfig.class);
+                ConfigHandler.INSTANCE.saveConfig(this.configuration);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
-        this.renderHandler = new RenderHandler(this);
-        this.renderHandler.setup();
+        if (this.renderHandler == null) {
+            this.renderHandler = new RenderHandler(this);
+            this.renderHandler.setup();
+        }
+
+        this.snakes.clear();
+        this.foods.clear();
+        this.preys.clear();
+        this.sectors.clear();
+        this.ticks = 0;
+        this.vfr = 0;
+        this.player = null;
+        this.lagging = false;
+        this.wfpr = false;
+        this.gsc = INITIAL_GSC;
 
         try {
             ServerPingManager.pingServers();
@@ -206,77 +218,80 @@ public class SlytherClient {
             e.printStackTrace();
         }
 
-        this.delta = 0;
-        long previousTime = System.nanoTime();
-        long timer = System.currentTimeMillis();
-        int ups = 0;
-        double nanoUpdates = 1000000000.0 / 60.0;
+        if (!this.tickLoopInitialized) {
+            this.tickLoopInitialized = true;
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_LIGHTING);
+            this.delta = 0;
+            long previousTime = System.nanoTime();
+            long timer = System.currentTimeMillis();
+            int ups = 0;
+            double nanoUpdates = 1000000000.0 / 60.0;
 
-        GL11.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-        GL11.glClearDepth(1);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glShadeModel(GL11.GL_SMOOTH);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDisable(GL11.GL_LIGHTING);
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+            GL11.glClearDepth(1);
 
-        while (!Display.isCloseRequested()) {
-            if (Display.wasResized()) {
-                int width = Display.getWidth();
-                int height = Display.getHeight();
-                GL11.glMatrixMode(GL11.GL_PROJECTION);
-                GL11.glLoadIdentity();
-                GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-                GL11.glMatrixMode(GL11.GL_MODELVIEW);
-                GL11.glScissor(0, 0, width, height);
-                GL11.glViewport(0, 0, width, height);
-                this.renderHandler.init();
-                this.mww2 = this.renderHandler.renderResolution.getWidth() / 2.0F;
-                this.mhh2 = this.renderHandler.renderResolution.getHeight() / 2.0F;
-            }
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            long currentTime = System.nanoTime();
-            this.delta += (currentTime - previousTime) / nanoUpdates;
-            previousTime = currentTime;
-
-            while (this.delta >= 1) {
-                this.update();
-                this.renderHandler.update();
-                this.delta--;
-                ups++;
-            }
-
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-            GL11.glPushMatrix();
-
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-
-            this.renderHandler.render();
-
-            this.fps++;
-
-            if (System.currentTimeMillis() - timer > 1000) {
-                int bytesPerSecond = 0;
-                if (networkManager != null) {
-                    bytesPerSecond = networkManager.bytesPerSecond;
-                    networkManager.bytesPerSecond = 0;
+            while (!Display.isCloseRequested()) {
+                if (Display.wasResized()) {
+                    int width = Display.getWidth();
+                    int height = Display.getHeight();
+                    GL11.glMatrixMode(GL11.GL_PROJECTION);
+                    GL11.glLoadIdentity();
+                    GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+                    GL11.glScissor(0, 0, width, height);
+                    GL11.glViewport(0, 0, width, height);
+                    this.renderHandler.init();
+                    this.mww2 = this.renderHandler.renderResolution.getWidth() / 2.0F;
+                    this.mhh2 = this.renderHandler.renderResolution.getHeight() / 2.0F;
                 }
-                Display.setTitle("Slyther - FPS: " + fps + " - UPS: " + ups + " - BPS: " + bytesPerSecond);
-                this.fps = 0;
 
-                timer += 1000;
-                ups = 0;
+                long currentTime = System.nanoTime();
+                this.delta += (currentTime - previousTime) / nanoUpdates;
+                previousTime = currentTime;
+
+                while (this.delta >= 1) {
+                    this.update();
+                    this.renderHandler.update();
+                    this.delta--;
+                    ups++;
+                }
+
+                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+                GL11.glPushMatrix();
+
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+
+                this.renderHandler.render();
+
+                this.fps++;
+
+                if (System.currentTimeMillis() - timer > 1000) {
+                    int bytesPerSecond = 0;
+                    if (networkManager != null) {
+                        bytesPerSecond = networkManager.bytesPerSecond;
+                        networkManager.bytesPerSecond = 0;
+                    }
+                    Display.setTitle("Slyther - FPS: " + fps + " - UPS: " + ups + " - BPS: " + bytesPerSecond);
+                    this.fps = 0;
+
+                    timer += 1000;
+                    ups = 0;
+                }
+
+                GL11.glPopMatrix();
+                Display.sync(60);
+                Display.update();
             }
-
-            GL11.glPopMatrix();
-            Display.sync(60);
-            Display.update();
+            System.exit(1);
         }
-
-        System.exit(-1);
     }
 
     public void connect() {
@@ -585,5 +600,16 @@ public class SlytherClient {
 
     public void closeGui(Gui gui) {
         this.renderHandler.closeGui(gui);
+    }
+
+    public void closeAllGuis() {
+        this.renderHandler.closeAllGuis();
+    }
+
+    public void reset() {
+        this.closeAllGuis();
+        this.openGui(new GuiMainMenu());
+        this.networkManager = null;
+        this.setup();
     }
 }

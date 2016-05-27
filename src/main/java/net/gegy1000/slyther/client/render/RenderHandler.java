@@ -97,4 +97,8 @@ public class RenderHandler {
     public List<Gui> getGuis() {
         return new ArrayList<>(this.guis);
     }
+
+    public void closeAllGuis() {
+        this.guis.clear();
+    }
 }

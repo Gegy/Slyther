@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.client;
 
+import net.gegy1000.slyther.client.gui.GuiMainMenu;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
 import net.gegy1000.slyther.network.ServerListHandler;
@@ -64,9 +65,11 @@ public class ClientNetworkManager extends WebSocketClient {
     }
 
     public void ping() {
-        if (!client.wfpr) {
-            this.send(new byte[] { (byte) 251 });
-            this.client.wfpr = true;
+        if (this.isOpen) {
+            if (!client.wfpr) {
+                this.send(new byte[] { (byte) 251 });
+                this.client.wfpr = true;
+            }
         }
     }
 
@@ -113,13 +116,14 @@ public class ClientNetworkManager extends WebSocketClient {
     public void onClose(int code, String reason, boolean remote) {
         System.out.println("Connection closed with code " + code + " for reason \"" + reason + "\"");
         this.isOpen = false;
-        System.exit(-1);
+        this.client.reset();
     }
 
     @Override
     public void onError(Exception e) {
         e.printStackTrace();
-        System.exit(-1);
+        this.isOpen = false;
+        this.client.reset();
     }
 
     public void send(SlytherClientMessageBase message) {
