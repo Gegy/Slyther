@@ -2,6 +2,8 @@ package net.gegy1000.slyther.network;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.util.SystemUtils;
 
 import java.io.*;
@@ -9,14 +11,22 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
-public enum ServerListHandler {
+public enum ServerHandler {
     INSTANCE;
 
     private volatile int pingedCount;
     private List<Server> serverList;
     private String encodedServerList;
+    private Map<String, String> headers;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
+    public Map<String, String> getHeaders() throws IOException {
+        if (headers == null) {
+            headers = GSON.fromJson(new InputStreamReader(SlytherClient.class.getResourceAsStream("/data/headers.json")), new TypeToken<Map<String, String>>(){}.getType());
+        }
+        return headers;
+    }
 
     public List<Server> getServerList() throws IOException {
         if (serverList == null) {
@@ -182,7 +192,7 @@ public enum ServerListHandler {
                 this.ping += ping;
             }
             ping /= pings.length;
-            ServerListHandler.INSTANCE.pingedCount++;
+            ServerHandler.INSTANCE.pingedCount++;
         }
 
         @Override

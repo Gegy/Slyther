@@ -55,8 +55,8 @@ public class Prey {
     }
 
     public void update(float vfr, float vfrb) {
-        float c = client.MAMU2 * vfr;
-        float movement = sp * vfr / 4;
+        float turnSpeed = client.MAMU2 * vfr;
+        float moveAmount = sp * vfr / 4;
         if (vfrb > 0) {
             if (ftg > 0) {
                 float h = vfrb;
@@ -83,14 +83,14 @@ public class Prey {
             }
         }
         if (dir == 1) {
-            ang -= c;
+            ang -= turnSpeed;
             if (ang < 0 || ang >= SlytherClient.PI_2) {
                 ang %= SlytherClient.PI_2;
             }
             if (ang < 0) {
                 ang += SlytherClient.PI_2;
             }
-            float h = (float) ((wang -= ang) % SlytherClient.PI_2);
+            float h = (float) ((wang - ang) % SlytherClient.PI_2);
             if (h < 0) {
                 h += SlytherClient.PI_2;
             }
@@ -102,14 +102,14 @@ public class Prey {
                 dir = 0;
             }
         } else if (dir == 2) {
-            ang += c;
+            ang += turnSpeed;
             if (ang < 0 || ang >= SlytherClient.PI_2) {
                 ang %= SlytherClient.PI_2;
             }
             if (ang < 0) {
                 ang += SlytherClient.PI_2;
             }
-            float h = (float) ((wang -= ang) % SlytherClient.PI_2);
+            float h = (float) ((wang - ang) % SlytherClient.PI_2);
             if (h < 0) {
                 h += SlytherClient.PI_2;
             }
@@ -123,8 +123,8 @@ public class Prey {
         } else {
             ang = wang;
         }
-        posX += Math.cos(ang) * movement;
-        posY += Math.sin(ang) * movement;
+        posX += Math.cos(ang) * moveAmount;
+        posY += Math.sin(ang) * moveAmount;
         gfr += vfr * gr;
         if (eaten) {
             if (fr != 1.5F) {

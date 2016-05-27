@@ -100,7 +100,6 @@ public class GuiGame extends Gui {
                     float posX = prey.posX + prey.fx;
                     float posY = prey.posY + prey.fy;
                     if (posX >= client.fpx1 && posX <= client.fpx2 && posY >= client.fpy1 && posY <= client.fpy2) {
-                        System.out.println("Prey");
                         Color color = prey.cv;
                         float size = (prey.sz / 10.0F) * prey.rad;
                         GL11.glPushMatrix();

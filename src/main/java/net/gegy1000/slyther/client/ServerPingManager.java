@@ -1,6 +1,6 @@
 package net.gegy1000.slyther.client;
 
-import net.gegy1000.slyther.network.ServerListHandler;
+import net.gegy1000.slyther.network.ServerHandler;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
@@ -13,21 +13,21 @@ import java.util.*;
 
 public class ServerPingManager extends WebSocketClient {
     private static final int PING_TIMEOUT = 20000;
-    private ServerListHandler.Server server;
+    private ServerHandler.Server server;
     private int pingCount = 0;
     private boolean closed;
     private long[] pings = new long[4];
     private long pingSendTime;
 
-    public ServerPingManager(ServerListHandler.Server server) throws URISyntaxException {
-        super(new URI("ws://" + server.getClusterIp() + ":80/ptc"), new Draft_17(), ClientNetworkManager.HEADERS, 0);
+    public ServerPingManager(ServerHandler.Server server) throws URISyntaxException, IOException {
+        super(new URI("ws://" + server.getClusterIp() + ":80/ptc"), new Draft_17(), ServerHandler.INSTANCE.getHeaders(), 0);
         this.server = server;
         connect();
     }
 
     @Override
     public void onOpen(ServerHandshake handshake) {
-        if (ServerListHandler.INSTANCE.getPingedCount() < 10) {
+        if (ServerHandler.INSTANCE.getPingedCount() < 10) {
             pingSendTime = System.currentTimeMillis();
             send(new byte[] { 'p' });
         } else {
@@ -37,7 +37,7 @@ public class ServerPingManager extends WebSocketClient {
 
     @Override
     public void onMessage(ByteBuffer buffer) {
-        if (ServerListHandler.INSTANCE.getPingedCount() < 10) {
+        if (ServerHandler.INSTANCE.getPingedCount() < 10) {
             if (buffer.get() == 'p') {
                 if (pingCount < 4) {
                     long currentTime = System.currentTimeMillis();
@@ -71,11 +71,11 @@ public class ServerPingManager extends WebSocketClient {
     }
 
     public static void pingServers() throws IOException {
-        ServerListHandler.INSTANCE.resetPingedServerCount();
-        List<ServerListHandler.Server> servers = ServerListHandler.INSTANCE.getServerList();
+        ServerHandler.INSTANCE.resetPingedServerCount();
+        List<ServerHandler.Server> servers = ServerHandler.INSTANCE.getServerList();
         List<ServerPingManager> pingers = new ArrayList<>();
         if (servers != null && servers.size() > 0) {
-            for (ServerListHandler.Server server : servers) {
+            for (ServerHandler.Server server : servers) {
                 try {
                     pingers.add(new ServerPingManager(server));
                 } catch (URISyntaxException e) {

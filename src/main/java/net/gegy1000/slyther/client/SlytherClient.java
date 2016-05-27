@@ -4,7 +4,7 @@ import net.gegy1000.slyther.client.gui.Gui;
 import net.gegy1000.slyther.client.gui.GuiMainMenu;
 import net.gegy1000.slyther.client.render.RenderHandler;
 import net.gegy1000.slyther.game.*;
-import net.gegy1000.slyther.network.ServerListHandler;
+import net.gegy1000.slyther.network.ServerHandler;
 import net.gegy1000.slyther.network.message.MessageAccelerate;
 import net.gegy1000.slyther.network.message.MessageSetAngle;
 import net.gegy1000.slyther.network.message.MessageSetTurn;
@@ -15,7 +15,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -307,8 +306,8 @@ public class SlytherClient {
         new Thread(() -> {
             try {
                 if (configuration.server == null) {
-                    while (ServerListHandler.INSTANCE.getPingedCount() < 5) ;
-                    List<ServerListHandler.Server> servers = ServerListHandler.INSTANCE.getServerList();
+                    while (ServerHandler.INSTANCE.getPingedCount() < 5) ;
+                    List<ServerHandler.Server> servers = ServerHandler.INSTANCE.getServerList();
                     Collections.sort(servers);
                     while ((networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)), configuration.shouldRecord)) == null);
                 } else {

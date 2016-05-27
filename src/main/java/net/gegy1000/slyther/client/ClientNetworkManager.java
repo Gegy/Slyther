@@ -2,7 +2,7 @@ package net.gegy1000.slyther.client;
 
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
-import net.gegy1000.slyther.network.ServerListHandler;
+import net.gegy1000.slyther.network.ServerHandler;
 import net.gegy1000.slyther.network.message.MessageSetUsername;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -24,22 +24,11 @@ public class ClientNetworkManager extends WebSocketClient {
 
     private boolean isOpen = false;
 
-    public static final Map<String, String> HEADERS = new HashMap<>();
-
     public int bytesPerSecond;
 
     public boolean isReplaying;
     public GameRecorder recorder;
     public GameReplayer replayer;
-
-    static {
-        HEADERS.put("Origin", "http://slither.io");
-        HEADERS.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
-        HEADERS.put("Accept-Language", "en-US,en;q=0.8");
-        HEADERS.put("Cache-Control", "no-cache");
-        HEADERS.put("Connection", "Upgrade");
-        HEADERS.put("Pragma", "no-cache");
-    }
 
     public ClientNetworkManager(SlytherClient client, String ip, Map<String, String> headers, boolean shouldRecord, boolean isReplaying) throws URISyntaxException, IOException {
         super(new URI("ws://" + ip + "/slither"), new Draft_17(), headers, 0);
@@ -67,13 +56,13 @@ public class ClientNetworkManager extends WebSocketClient {
         }
     }
 
-    public static ClientNetworkManager create(SlytherClient client, ServerListHandler.Server server, boolean shouldRecord) throws Exception {
+    public static ClientNetworkManager create(SlytherClient client, ServerHandler.Server server, boolean shouldRecord) throws Exception {
         return create(client, server.getIp(), shouldRecord);
     }
 
     public static ClientNetworkManager create(SlytherClient client, String ip, boolean shouldRecord) throws Exception {
         System.out.println("Connecting to server " + ip);
-        Map<String, String> headers = new HashMap<>(HEADERS);
+        Map<String, String> headers = new HashMap<>(ServerHandler.INSTANCE.getHeaders());
         headers.put("Host", ip);
         return new ClientNetworkManager(client, ip, headers, shouldRecord, false);
     }
