@@ -17,6 +17,10 @@ public abstract class Element {
         this.height = height;
     }
 
+    public abstract void keyPressed(int key, char character);
+
+    public abstract void update();
+
     public abstract void render(float mouseX, float mouseY);
 
     public abstract boolean mouseClicked(float mouseX, float mouseY, int button);

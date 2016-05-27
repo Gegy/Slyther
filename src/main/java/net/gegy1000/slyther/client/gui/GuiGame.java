@@ -410,6 +410,11 @@ public class GuiGame extends Gui {
     }
 
     @Override
+    public void keyPressed(int key, char character) {
+
+    }
+
+    @Override
     public void mouseClicked(float mouseX, float mouseY, int button) {
 
     }

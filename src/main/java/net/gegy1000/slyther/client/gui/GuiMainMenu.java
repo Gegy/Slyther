@@ -3,6 +3,7 @@ package net.gegy1000.slyther.client.gui;
 import com.google.gson.GsonBuilder;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.gui.element.ButtonElement;
+import net.gegy1000.slyther.client.gui.element.TextBoxElement;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -39,14 +40,20 @@ public class GuiMainMenu extends Gui {
     @Override
     public void init() {
         elements.clear();
+        elements.add(new TextBoxElement(this, client.configuration.nickname, renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F - 60.0F, 200.0F, 40.0F, (textbox) -> {
+            client.configuration.nickname = textbox.getText();
+            return null;
+        }));
         elements.add(new ButtonElement(this, "Play", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F, 150.0F, 40.0F, (button) -> {
             closeGui();
             client.connect();
             renderHandler.openGui(new GuiGame());
             return true;
         }));
+        elements.add(new ButtonElement(this, "Select Server", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F + 50.0F, 150.0F, 40.0F, (button) -> true));
+        elements.add(new ButtonElement(this, "Change Skin", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F + 100.0F, 150.0F, 40.0F, (button) -> true));
         if (SlytherClient.RECORD_FILE.exists()) {
-            elements.add(new ButtonElement(this, "Replay Last Game", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F + 50.0F, 150.0F, 40.0F, (button) -> {
+            elements.add(new ButtonElement(this, "Replay Last Game", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F + 150.0F, 150.0F, 40.0F, (button) -> {
                 closeGui();
                 client.replay();
                 renderHandler.openGui(new GuiGame());
@@ -62,6 +69,11 @@ public class GuiMainMenu extends Gui {
         float angle = (float) Math.atan2(y, x);
         backgroundX += Math.cos(angle) * 1.5F;
         backgroundY += Math.sin(angle) * 1.5F;
+    }
+
+    @Override
+    public void keyPressed(int key, char character) {
+
     }
 
     @Override
@@ -86,7 +98,7 @@ public class GuiMainMenu extends Gui {
         }
         renderHandler.textureManager.bindTexture("/textures/circle.png");
         GL11.glPushMatrix();
-        GL11.glTranslatef(renderResolution.getWidth() / 2, renderResolution.getHeight() / 3, 0);
+        GL11.glTranslatef(renderResolution.getWidth() / 2, renderResolution.getHeight() / 6, 0);
         final float s = 0.5F;
         GL11.glScalef(s, s, 1);
         GL11.glTranslatef(-logoWidth / 2, -logoHeight / 2, 0);

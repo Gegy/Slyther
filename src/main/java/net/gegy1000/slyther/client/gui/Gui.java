@@ -44,7 +44,23 @@ public abstract class Gui {
 
     public abstract void render(float mouseX, float mouseY);
 
+    public final void updateBase() {
+        for (Element element : elements) {
+            element.update();
+        }
+        update();
+    }
+
     public abstract void update();
+
+    public final void keyPressedBase(int key, char character) {
+        for (Element element : elements) {
+            element.keyPressed(key, character);
+        }
+        keyPressed(key, character);
+    }
+
+    public abstract void keyPressed(int key, char character);
 
     public final void mouseClickedBase(float mouseX, float mouseY, int button) {
         List<Element> elements = new ArrayList<>(this.elements);

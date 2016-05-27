@@ -62,7 +62,16 @@ public class RenderHandler {
 
     public void update() {
         for (Gui gui : getGuis()) {
-            gui.update();
+            gui.updateBase();
+        }
+        while (Keyboard.next()) {
+            if (Keyboard.getEventKeyState()) {
+                int key = Keyboard.getEventKey();
+                char character = Keyboard.getEventCharacter();
+                for (Gui gui : getGuis()) {
+                    gui.keyPressedBase(key, character);
+                }
+            }
         }
     }
 
