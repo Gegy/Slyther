@@ -28,7 +28,7 @@ public class RenderHandler {
 
     public RenderHandler(SlytherClient client) {
         this.client = client;
-        this.textureManager = new TextureManager();
+        textureManager = new TextureManager();
     }
 
     public void setup() {
@@ -41,13 +41,13 @@ public class RenderHandler {
             Mouse.create();
             try {
                 Font awtFont = new Font("Arial Rounded MT Bold", Font.PLAIN, 0);
-                this.font = new TrueTypeFont(awtFont.deriveFont(14.0F), true);
-                this.largeFont = new TrueTypeFont(awtFont.deriveFont(30.0F), true);
+                font = new TrueTypeFont(awtFont.deriveFont(14.0F), true);
+                largeFont = new TrueTypeFont(awtFont.deriveFont(30.0F), true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            this.init();
-            this.openGui(new GuiMainMenu());
+            init();
+            openGui(new GuiMainMenu());
         } catch (LWJGLException e) {
             e.printStackTrace();
         }
@@ -55,13 +55,13 @@ public class RenderHandler {
 
     public void init() {
         renderResolution = new RenderResolution();
-        for (Gui gui : this.getGuis()) {
+        for (Gui gui : getGuis()) {
             gui.initBase(client);
         }
     }
 
     public void update() {
-        for (Gui gui : this.getGuis()) {
+        for (Gui gui : getGuis()) {
             gui.update();
         }
     }
@@ -70,13 +70,13 @@ public class RenderHandler {
         renderResolution.applyScale();
         float mouseX = Mouse.getX() / renderResolution.getScale();
         float mouseY = (Display.getHeight() - Mouse.getY()) / renderResolution.getScale();
-        for (Gui gui : this.getGuis()) {
+        for (Gui gui : getGuis()) {
             gui.renderBase(mouseX, mouseY);
         }
         while (Mouse.next()) {
             int button = Mouse.getEventButton();
             if (Mouse.getEventButtonState()) {
-                for (Gui gui : this.getGuis()) {
+                for (Gui gui : getGuis()) {
                     gui.mouseClickedBase(mouseX, mouseY, button);
                 }
             }
@@ -91,14 +91,14 @@ public class RenderHandler {
     }
 
     public void closeGui(Gui gui) {
-        this.guis.remove(gui);
+        guis.remove(gui);
     }
 
     public List<Gui> getGuis() {
-        return new ArrayList<>(this.guis);
+        return new ArrayList<>(guis);
     }
 
     public void closeAllGuis() {
-        this.guis.clear();
+        guis.clear();
     }
 }

@@ -50,14 +50,14 @@ public class ClientNetworkManager extends WebSocketClient {
             if (!SlytherClient.RECORD_FILE.exists()) {
                 SlytherClient.RECORD_FILE.createNewFile();
             }
-            this.replayer = new GameReplayer(SlytherClient.RECORD_FILE, this);
+            replayer = new GameReplayer(SlytherClient.RECORD_FILE, this);
         } else {
             if (!SlytherClient.RECORD_FILE.delete()) {
                 SlytherClient.RECORD_FILE.createNewFile();
             }
         }
         if (!isReplaying) {
-            this.connect();
+            connect();
             if (shouldRecord) {
                 recorder = new GameRecorder(SlytherClient.RECORD_FILE);
                 recorder.start();
@@ -84,17 +84,17 @@ public class ClientNetworkManager extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
-        this.isOpen = true;
-        this.send(new MessageSetUsername(client.configuration.nickname, client.configuration.skin));
-        this.ping();
+        isOpen = true;
+        send(new MessageSetUsername(client.configuration.nickname, client.configuration.skin));
+        ping();
         System.out.println("Connected to " + ip);
     }
 
     public void ping() {
-        if (this.isOpen && !this.isReplaying) {
+        if (isOpen && !isReplaying) {
             if (!client.wfpr) {
-                this.send(new byte[] { (byte) 251 });
-                this.client.wfpr = true;
+                send(new byte[] { (byte) 251 });
+                client.wfpr = true;
             }
         }
     }
@@ -106,7 +106,7 @@ public class ClientNetworkManager extends WebSocketClient {
     @Override
     public void onMessage(ByteBuffer byteBuffer) {
         MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer);
-        if (this.recorder != null) {
+        if (recorder != null) {
             this.recorder.onMessage(byteBuffer.array());
         }
         if (buffer.limit() >= 2) {
@@ -128,7 +128,7 @@ public class ClientNetworkManager extends WebSocketClient {
                     message.messageId = messageId;
                     message.serverTimeDelta = serverTimeDelta;
                     client.scheduleTask(() -> {
-                        message.readBase(buffer, this.client);
+                        message.readBase(buffer, client);
                         return null;
                     });
                 } catch (Exception e) {
@@ -144,23 +144,23 @@ public class ClientNetworkManager extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         System.out.println("Connection closed with code " + code + " for reason \"" + reason + "\"");
-        this.isOpen = false;
-        this.client.reset();
+        isOpen = false;
+        client.reset();
     }
 
     @Override
     public void onError(Exception e) {
         e.printStackTrace();
-        this.isOpen = false;
-        this.client.reset();
+        isOpen = false;
+        client.reset();
     }
 
     public void send(SlytherClientMessageBase message) {
-        if (this.isOpen && !this.isReplaying) {
+        if (isOpen && !isReplaying) {
             try {
                 MessageByteBuffer buffer = new MessageByteBuffer();
                 message.write(buffer, client);
-                this.send(buffer.bytes());
+                send(buffer.bytes());
             } catch (Exception e) {
                 System.err.println("An error occurred while sending message " + message.getClass().getName());
                 e.printStackTrace();
@@ -169,10 +169,10 @@ public class ClientNetworkManager extends WebSocketClient {
     }
 
     public void tick() {
-        if (this.isReplaying) {
+        if (isReplaying) {
             try {
-                if (!this.replayer.tick()) {
-                    this.onClose(0, "Finished Playback", false);
+                if (!replayer.tick()) {
+                    onClose(0, "Finished Playback", false);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

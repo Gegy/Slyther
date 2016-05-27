@@ -13,7 +13,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        boolean alive = this.messageId == 'n' || this.messageId == 'N';
+        boolean alive = messageId == 'n' || messageId == 'N';
         int id = buffer.readUInt16();
         Snake snake = client.getSnake(id);
         if (snake != null) {
@@ -30,7 +30,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
             SnakePoint head = snake.pts.get(snake.pts.size() - 1);
             float x;
             float y;
-            if (this.messageId == 'g' || this.messageId == 'n') {
+            if (messageId == 'g' || messageId == 'n') {
                 x = buffer.readUInt16();
                 y = buffer.readUInt16();
             } else {

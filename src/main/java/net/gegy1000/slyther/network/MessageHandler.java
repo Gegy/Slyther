@@ -11,24 +11,24 @@ public enum MessageHandler {
     private final Map<Byte, Class<? extends SlytherServerMessageBase>> SERVER_MESSAGES = new HashMap<>();
 
     MessageHandler() {
-        this.registerServer(MessagePing.class);
-        this.registerServer(MessageSetup.class);
-        this.registerServer(MessageNewSnake.class);
-        this.registerServer(MessageUpdateSectorFoods.class);
-        this.registerServer(MessageNewFood.class);
-        this.registerServer(MessageNewPrey.class);
-        this.registerServer(MessageUpdateSnake.class);
-        this.registerServer(MessageUpdateSnakePoints.class);
-        this.registerServer(MessagePreyPositionUpdate.class);
-        this.registerServer(MessageUpdateFam.class);
-        this.registerServer(MessageRemoveFood.class);
-        this.registerServer(MessageRemoveSnakePoint.class);
-        this.registerServer(MessageUpdateLeaderboard.class);
-        this.registerServer(MessageUpdateLongestPlayer.class);
-        this.registerServer(MessageAddSector.class);
-        this.registerServer(MessageRemoveSector.class);
-        this.registerServer(MessagePlayerDeath.class);
-        this.registerServer(MessageUpdateMap.class);
+        registerServer(MessagePing.class);
+        registerServer(MessageSetup.class);
+        registerServer(MessageNewSnake.class);
+        registerServer(MessageUpdateSectorFoods.class);
+        registerServer(MessageNewFood.class);
+        registerServer(MessageNewPrey.class);
+        registerServer(MessageUpdateSnake.class);
+        registerServer(MessageUpdateSnakePoints.class);
+        registerServer(MessagePreyPositionUpdate.class);
+        registerServer(MessageUpdateFam.class);
+        registerServer(MessageRemoveFood.class);
+        registerServer(MessageRemoveSnakePoint.class);
+        registerServer(MessageUpdateLeaderboard.class);
+        registerServer(MessageUpdateLongestPlayer.class);
+        registerServer(MessageAddSector.class);
+        registerServer(MessageRemoveSector.class);
+        registerServer(MessagePlayerDeath.class);
+        registerServer(MessageUpdateMap.class);
     }
 
     public void registerServer(Class<? extends SlytherServerMessageBase> message) {

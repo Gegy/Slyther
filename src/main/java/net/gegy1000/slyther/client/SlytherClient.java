@@ -189,36 +189,36 @@ public class SlytherClient {
     public boolean allowUserInput = true;
 
     public SlytherClient() throws Exception {
-        this.setup();
+        setup();
     }
 
     private void setup() {
-        if (this.configuration == null) {
+        if (configuration == null) {
             try {
-                this.configuration = ConfigHandler.INSTANCE.readConfig(ClientConfig.class);
-                ConfigHandler.INSTANCE.saveConfig(this.configuration);
+                configuration = ConfigHandler.INSTANCE.readConfig(ClientConfig.class);
+                ConfigHandler.INSTANCE.saveConfig(configuration);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        if (this.renderHandler == null) {
-            this.renderHandler = new RenderHandler(this);
-            this.renderHandler.setup();
+        if (renderHandler == null) {
+            renderHandler = new RenderHandler(this);
+            renderHandler.setup();
         }
 
-        this.snakes.clear();
-        this.foods.clear();
-        this.preys.clear();
-        this.sectors.clear();
-        this.ticks = 0;
-        this.vfr = 0;
-        this.player = null;
-        this.lagging = false;
-        this.wfpr = false;
-        this.gsc = INITIAL_GSC;
-        this.lagMultiplier = 0.0F;
-        this.wumsts = false;
+        snakes.clear();
+        foods.clear();
+        preys.clear();
+        sectors.clear();
+        ticks = 0;
+        vfr = 0;
+        player = null;
+        lagging = false;
+        wfpr = false;
+        gsc = INITIAL_GSC;
+        lagMultiplier = 0.0F;
+        wumsts = false;
 
         try {
             ServerPingManager.pingServers();
@@ -226,10 +226,10 @@ public class SlytherClient {
             e.printStackTrace();
         }
 
-        if (!this.tickLoopInitialized) {
-            this.tickLoopInitialized = true;
+        if (!tickLoopInitialized) {
+            tickLoopInitialized = true;
 
-            this.delta = 0;
+            delta = 0;
             long previousTime = System.nanoTime();
             long timer = System.currentTimeMillis();
             int ups = 0;
@@ -256,19 +256,19 @@ public class SlytherClient {
                     GL11.glMatrixMode(GL11.GL_MODELVIEW);
                     GL11.glScissor(0, 0, width, height);
                     GL11.glViewport(0, 0, width, height);
-                    this.renderHandler.init();
-                    this.mww2 = this.renderHandler.renderResolution.getWidth() / 2.0F;
-                    this.mhh2 = this.renderHandler.renderResolution.getHeight() / 2.0F;
+                    renderHandler.init();
+                    mww2 = renderHandler.renderResolution.getWidth() / 2.0F;
+                    mhh2 = renderHandler.renderResolution.getHeight() / 2.0F;
                 }
 
                 long currentTime = System.nanoTime();
-                this.delta += (currentTime - previousTime) / nanoUpdates;
+                delta += (currentTime - previousTime) / nanoUpdates;
                 previousTime = currentTime;
 
-                while (this.delta >= 1) {
-                    this.update();
-                    this.renderHandler.update();
-                    this.delta--;
+                while (delta >= 1) {
+                    update();
+                    renderHandler.update();
+                    delta--;
                     ups++;
                 }
 
@@ -277,9 +277,9 @@ public class SlytherClient {
 
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 
-                this.renderHandler.render();
+                renderHandler.render();
 
-                this.fps++;
+                fps++;
 
                 if (System.currentTimeMillis() - timer > 1000) {
                     int bytesPerSecond = 0;
@@ -288,7 +288,7 @@ public class SlytherClient {
                         networkManager.bytesPerSecond = 0;
                     }
                     Display.setTitle("Slyther - FPS: " + fps + " - UPS: " + ups + " - BPS: " + bytesPerSecond);
-                    this.fps = 0;
+                    fps = 0;
 
                     timer += 1000;
                     ups = 0;
@@ -303,16 +303,16 @@ public class SlytherClient {
     }
 
     public void connect() {
-        this.allowUserInput = true;
+        allowUserInput = true;
         new Thread(() -> {
             try {
                 if (configuration.server == null) {
                     while (ServerListHandler.INSTANCE.getPingedCount() < 5) ;
                     List<ServerListHandler.Server> servers = ServerListHandler.INSTANCE.getServerList();
                     Collections.sort(servers);
-                    while ((SlytherClient.this.networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)), configuration.shouldRecord)) == null);
+                    while ((networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)), configuration.shouldRecord)) == null);
                 } else {
-                    SlytherClient.this.networkManager = ClientNetworkManager.create(SlytherClient.this, configuration.server, configuration.shouldRecord);
+                    networkManager = ClientNetworkManager.create(SlytherClient.this, configuration.server, configuration.shouldRecord);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -321,27 +321,27 @@ public class SlytherClient {
     }
 
     public void replay() {
-        this.allowUserInput = false;
+        allowUserInput = false;
         try {
-            SlytherClient.this.networkManager = ClientNetworkManager.create(this);
+            networkManager = ClientNetworkManager.create(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void setup(int gameRadius, int mscps, int sectorSize, int sectorCountAlongEdge, float spangDV, float nsp1, float nsp2, float nsp3, float mamu, float mamu2, float cst, int protocolVersion) {
-        this.GAME_RADIUS = gameRadius;
-        this.SECTOR_SIZE = sectorSize;
-        this.SECTORS_ALONG_EDGE = sectorCountAlongEdge;
-        this.SPANG_DIV = spangDV;
-        this.NSP1 = nsp1;
-        this.NSP2 = nsp2;
-        this.NSP3 = nsp3;
-        this.MAMU = mamu;
-        this.MAMU2 = mamu2;
-        this.CST = cst;
-        this.PROTOCOL_VERSION = protocolVersion;
-        this.setMSCPS(mscps);
+        GAME_RADIUS = gameRadius;
+        SECTOR_SIZE = sectorSize;
+        SECTORS_ALONG_EDGE = sectorCountAlongEdge;
+        SPANG_DIV = spangDV;
+        NSP1 = nsp1;
+        NSP2 = nsp2;
+        NSP3 = nsp3;
+        MAMU = mamu;
+        MAMU2 = mamu2;
+        CST = cst;
+        PROTOCOL_VERSION = protocolVersion;
+        setMSCPS(mscps);
 
         if (PROTOCOL_VERSION < 8) {
             throw new RuntimeException("Unsupported protocol version (" + PROTOCOL_VERSION + ")" + "!");
@@ -349,10 +349,10 @@ public class SlytherClient {
     }
 
     public void setMSCPS(int mscps) {
-        if (this.MSCPS != mscps) {
-            this.MSCPS = mscps;
-            this.fmlts = new float[mscps];
-            this.fpsls = new float[mscps + 1];
+        if (MSCPS != mscps) {
+            MSCPS = mscps;
+            fmlts = new float[mscps];
+            fpsls = new float[mscps + 1];
             for (int i = 0; i <= mscps; i++) {
                 if (i < mscps) {
                     fmlts[i] = (float) Math.pow(1.0F - i / (float) mscps, 2.25F);
@@ -373,14 +373,14 @@ public class SlytherClient {
     }
 
     public void update() {
-        if (this.networkManager != null) {
-            this.networkManager.tick();
+        if (networkManager != null) {
+            networkManager.tick();
             runTasks();
             long time = System.currentTimeMillis();
             vfr = 0;
             float vfrb;
             float avfr = vfr = (time - ltm) / 8;
-            this.ltm = time;
+            ltm = time;
             if (!lagging && wfpr && time - lastPacketTime > 420) {
                 lagging = true;
             }
@@ -468,7 +468,7 @@ public class SlytherClient {
                             keyDownRightFrb -= direction;
                             player.eang += MAMU * direction * player.scang * player.spang;
                         }
-                        this.networkManager.send(new MessageSetTurn((byte) direction));
+                        networkManager.send(new MessageSetTurn((byte) direction));
                     }
                 }
                 if (!wfpr) {
@@ -481,8 +481,8 @@ public class SlytherClient {
                 etm *= Math.pow(0.993, vfrb);
                 if (time - lastAccelerateUpdateTime > 150) {
                     if (player.md != player.prevMd) {
-                        this.lastAccelerateUpdateTime = time;
-                        this.networkManager.send(new MessageAccelerate(player.md));
+                        lastAccelerateUpdateTime = time;
+                        networkManager.send(new MessageAccelerate(player.md));
                         player.prevMd = player.md;
                     }
                 }
@@ -490,7 +490,7 @@ public class SlytherClient {
                     int mouseX = Mouse.getX() - (Display.getWidth() / 2);
                     int mouseY = (Display.getHeight() - Mouse.getY()) - (Display.getHeight() / 2);
                     if (mouseX != lastMouseX || mouseY != lastMouseY) {
-                        this.mouseMoved = true;
+                        mouseMoved = true;
                     }
                     if (mouseMoved) {
                         if (time - lastTurnTime > 100) {
@@ -510,23 +510,23 @@ public class SlytherClient {
                             if (ang < 0) {
                                 ang += PI_2;
                             }
-                            this.networkManager.send(new MessageSetAngle(ang));
+                            networkManager.send(new MessageSetAngle(ang));
                         }
                     }
                 }
-                for (Snake snake : new ArrayList<>(this.snakes)) {
+                for (Snake snake : new ArrayList<>(snakes)) {
                     snake.update(vfr, vfrb, vfrb2);
                 }
-                for (Prey prey : new ArrayList<>(this.preys)) {
+                for (Prey prey : new ArrayList<>(preys)) {
                     prey.update(vfr, vfrb);
                 }
-                for (int i = this.foods.size() - 1; i >= 0; i--) {
-                    Food food = this.foods.get(i);
+                for (int i = foods.size() - 1; i >= 0; i--) {
+                    Food food = foods.get(i);
                     food.gfr += vfr * food.gr;
                     if (food.eaten) {
                         food.eatenFr += vfr / 41.0F;
                         if (food.eatenFr >= 1.0F || food.eater == null) {
-                            this.foods.remove(i);
+                            foods.remove(i);
                         } else {
                             Snake eater = food.eater;
                             float h = food.eatenFr * food.eatenFr;
@@ -554,7 +554,7 @@ public class SlytherClient {
                 }
             }
         }
-        this.ticks++;
+        ticks++;
     }
 
     public void scheduleTask(Callable<?> callable) {
@@ -584,12 +584,12 @@ public class SlytherClient {
             if (ang < 0) {
                 ang += PI_2;
             }
-            this.networkManager.send(new MessageSetAngle(ang));
+            networkManager.send(new MessageSetAngle(ang));
         }
     }
 
     public Snake getSnake(int id) {
-        for (Snake snake : this.snakes) {
+        for (Snake snake : snakes) {
             if (snake.id == id) {
                 return snake;
             }
@@ -598,7 +598,7 @@ public class SlytherClient {
     }
 
     public Prey getPrey(int id) {
-        for (Prey prey : this.preys) {
+        for (Prey prey : preys) {
             if (prey.id == id) {
                 return prey;
             }
@@ -607,7 +607,7 @@ public class SlytherClient {
     }
 
     public Food getFood(int id) {
-        for (Food food : this.foods) {
+        for (Food food : foods) {
             if (food.id == id) {
                 return food;
             }
@@ -616,24 +616,24 @@ public class SlytherClient {
     }
 
     public void openGui(Gui gui) {
-        this.renderHandler.openGui(gui);
+        renderHandler.openGui(gui);
     }
 
     public void closeGui(Gui gui) {
-        this.renderHandler.closeGui(gui);
+        renderHandler.closeGui(gui);
     }
 
     public void closeAllGuis() {
-        this.renderHandler.closeAllGuis();
+        renderHandler.closeAllGuis();
     }
 
     public void reset() {
-        this.closeAllGuis();
-        this.openGui(new GuiMainMenu());
-        if (this.networkManager != null && this.networkManager.recorder != null) {
-            this.networkManager.recorder.close();
+        closeAllGuis();
+        openGui(new GuiMainMenu());
+        if (networkManager != null && networkManager.recorder != null) {
+            networkManager.recorder.close();
         }
-        this.networkManager = null;
-        this.setup();
+        networkManager = null;
+        setup();
     }
 }

@@ -35,62 +35,62 @@ public class Prey {
     public Prey(SlytherClient client, int id, float x, float y, float size, Color cv, int dir, float wang, float ang, float sp) {
         this.client = client;
         this.id = id;
-        this.posX = x;
-        this.posY = y;
-        this.rad = 0.00001F;
-        this.sz = size;
+        posX = x;
+        posY = y;
+        rad = 0.00001F;
+        sz = size;
         this.cv = cv;
         this.dir = dir;
         this.wang = wang;
         this.ang = ang;
         this.sp = sp;
-        this.gfr = (int) (64 * Math.random());
+        gfr = (int) (64 * Math.random());
         SkinColor color = SkinColor.values()[this.cv.ordinal()];
-        this.rr = (int) Math.min(255, color.red + Math.floor(20.0F * Math.random()));
-        this.gg = (int) Math.min(255, color.green + Math.floor(20.0F * Math.random()));
-        this.bb = (int) Math.min(255, color.blue + Math.floor(20.0F * Math.random()));
-        this.cs = ((rr & 0xFF) << 16) | ((gg & 0xFF) << 8) | (bb & 0xFF);
-        this.fxs = new float[SlytherClient.RFC];
-        this.fys = new float[SlytherClient.RFC];
+        rr = (int) Math.min(255, color.red + Math.floor(20.0F * Math.random()));
+        gg = (int) Math.min(255, color.green + Math.floor(20.0F * Math.random()));
+        bb = (int) Math.min(255, color.blue + Math.floor(20.0F * Math.random()));
+        cs = ((rr & 0xFF) << 16) | ((gg & 0xFF) << 8) | (bb & 0xFF);
+        fxs = new float[SlytherClient.RFC];
+        fys = new float[SlytherClient.RFC];
     }
 
     public void update(float vfr, float vfrb) {
         float c = client.MAMU2 * vfr;
-        float movement = this.sp * vfr / 4;
+        float movement = sp * vfr / 4;
         if (vfrb > 0) {
-            if (this.ftg > 0) {
+            if (ftg > 0) {
                 float h = vfrb;
-                if (h > this.ftg) {
-                    h = this.ftg;
+                if (h > ftg) {
+                    h = ftg;
                 }
-                this.ftg -= h;
+                ftg -= h;
                 for (int qq = 1; qq <= h; qq++) {
                     if (qq == h) {
-                        this.fx = this.fxs[this.fpos];
-                        this.fy = this.fys[this.fpos];
+                        fx = fxs[fpos];
+                        fy = fys[fpos];
                     }
-                    this.fxs[this.fpos] = 0;
-                    this.fys[this.fpos] = 0;
-                    this.fpos++;
-                    if (this.fpos >= SlytherClient.RFC) {
-                        this.fpos = 0;
+                    fxs[fpos] = 0;
+                    fys[fpos] = 0;
+                    fpos++;
+                    if (fpos >= SlytherClient.RFC) {
+                        fpos = 0;
                     }
                 }
-            } else if (this.ftg == 0) {
-                this.fx = 0;
-                this.fy = 0;
-                this.ftg = -1;
+            } else if (ftg == 0) {
+                fx = 0;
+                fy = 0;
+                ftg = -1;
             }
         }
-        if (this.dir == 1) {
-            this.ang -= c;
-            if (this.ang < 0 || this.ang >= SlytherClient.PI_2) {
-                this.ang %= SlytherClient.PI_2;
+        if (dir == 1) {
+            ang -= c;
+            if (ang < 0 || ang >= SlytherClient.PI_2) {
+                ang %= SlytherClient.PI_2;
             }
-            if (this.ang < 0) {
-                this.ang += SlytherClient.PI_2;
+            if (ang < 0) {
+                ang += SlytherClient.PI_2;
             }
-            float h = (float) ((this.wang -= this.ang) % SlytherClient.PI_2);
+            float h = (float) ((wang -= ang) % SlytherClient.PI_2);
             if (h < 0) {
                 h += SlytherClient.PI_2;
             }
@@ -98,18 +98,18 @@ public class Prey {
                 h -= SlytherClient.PI_2;
             }
             if (h > 0) {
-                this.ang = this.wang;
-                this.dir = 0;
+                ang = wang;
+                dir = 0;
             }
-        } else if (this.dir == 2) {
-            this.ang += c;
-            if (this.ang < 0 || this.ang >= SlytherClient.PI_2) {
-                this.ang %= SlytherClient.PI_2;
+        } else if (dir == 2) {
+            ang += c;
+            if (ang < 0 || ang >= SlytherClient.PI_2) {
+                ang %= SlytherClient.PI_2;
             }
-            if (this.ang < 0) {
-                this.ang += SlytherClient.PI_2;
+            if (ang < 0) {
+                ang += SlytherClient.PI_2;
             }
-            float h = (float) ((this.wang -= this.ang) % SlytherClient.PI_2);
+            float h = (float) ((wang -= ang) % SlytherClient.PI_2);
             if (h < 0) {
                 h += SlytherClient.PI_2;
             }
@@ -117,38 +117,38 @@ public class Prey {
                 h -= SlytherClient.PI_2;
             }
             if (h < 0) {
-                this.ang = this.wang;
-                this.dir = 0;
+                ang = wang;
+                dir = 0;
             }
         } else {
-            this.ang = this.wang;
+            ang = wang;
         }
-        this.posX += Math.cos(this.ang) * movement;
-        this.posY += Math.sin(this.ang) * movement;
-        this.gfr += vfr * this.gr;
-        if (this.eaten) {
-            if (this.fr != 1.5F) {
-                this.fr += vfr / 150.0F;
-                if (this.fr >= 1.5F) {
-                    this.fr = 1.5F;
+        posX += Math.cos(ang) * movement;
+        posY += Math.sin(ang) * movement;
+        gfr += vfr * gr;
+        if (eaten) {
+            if (fr != 1.5F) {
+                fr += vfr / 150.0F;
+                if (fr >= 1.5F) {
+                    fr = 1.5F;
                 }
             }
-            this.eatenFR += vfr / 47.0F;
-            this.gfr += vfr;
-            if (this.eatenFR >= 1 || eater == null) {
+            eatenFR += vfr / 47.0F;
+            gfr += vfr;
+            if (eatenFR >= 1 || eater == null) {
                 client.preys.remove(this);
             } else {
-                this.rad = (float) (1 - Math.pow(this.eatenFR, 3));
+                rad = (float) (1 - Math.pow(eatenFR, 3));
             }
         } else {
-            if (this.fr != 1.0F) {
-                this.fr += vfr / 150.0F;
-                if (this.fr >= 1.0F) {
-                    this.fr = 1.0F;
-                    this.rad = 1.0F;
+            if (fr != 1.0F) {
+                fr += vfr / 150.0F;
+                if (fr >= 1.0F) {
+                    fr = 1.0F;
+                    rad = 1.0F;
                 } else {
-                    this.rad = (float) (0.5F * (1.0F - Math.cos(Math.PI * this.fr)));
-                    this.rad += 0.66F * (0.5F * (1.0F - Math.cos(Math.PI * this.rad)) - this.rad);
+                    rad = (float) (0.5F * (1.0F - Math.cos(Math.PI * fr)));
+                    rad += 0.66F * (0.5F * (1.0F - Math.cos(Math.PI * rad)) - rad);
                 }
             }
         }

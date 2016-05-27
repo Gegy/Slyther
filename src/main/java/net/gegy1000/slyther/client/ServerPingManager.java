@@ -22,16 +22,16 @@ public class ServerPingManager extends WebSocketClient {
     public ServerPingManager(ServerListHandler.Server server) throws URISyntaxException {
         super(new URI("ws://" + server.getClusterIp() + ":80/ptc"), new Draft_17(), ClientNetworkManager.HEADERS, 0);
         this.server = server;
-        this.connect();
+        connect();
     }
 
     @Override
     public void onOpen(ServerHandshake handshake) {
         if (ServerListHandler.INSTANCE.getPingedCount() < 10) {
-            this.pingSendTime = System.currentTimeMillis();
-            this.send(new byte[] { 'p' });
+            pingSendTime = System.currentTimeMillis();
+            send(new byte[] { 'p' });
         } else {
-            this.close();
+            close();
         }
     }
 
@@ -39,20 +39,20 @@ public class ServerPingManager extends WebSocketClient {
     public void onMessage(ByteBuffer buffer) {
         if (ServerListHandler.INSTANCE.getPingedCount() < 10) {
             if (buffer.get() == 'p') {
-                if (this.pingCount < 4) {
+                if (pingCount < 4) {
                     long currentTime = System.currentTimeMillis();
-                    this.pings[pingCount] = currentTime - this.pingSendTime;
-                    this.pingSendTime = currentTime;
-                    this.send(new byte[] { 'p' });
-                    this.pingCount++;
+                    pings[pingCount] = currentTime - pingSendTime;
+                    pingSendTime = currentTime;
+                    send(new byte[] { 'p' });
+                    pingCount++;
                 } else {
-                    server.setPing(this.pings);
-                    System.out.println(this.server.getClusterIp() + " has a ping time of " + server.getPing());
-                    this.close();
+                    server.setPing(pings);
+                    System.out.println(server.getClusterIp() + " has a ping time of " + server.getPing());
+                    close();
                 }
             }
         } else {
-            this.close();
+            close();
         }
     }
 
@@ -62,12 +62,12 @@ public class ServerPingManager extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        this.closed = true;
+        closed = true;
     }
 
     @Override
     public void onError(Exception ex) {
-        this.closed = true;
+        closed = true;
     }
 
     public static void pingServers() throws IOException {
@@ -85,12 +85,10 @@ public class ServerPingManager extends WebSocketClient {
         }
         new Thread(() -> {
             long start = System.currentTimeMillis();
-            while (true) {
-                if (System.currentTimeMillis() - start > ServerPingManager.PING_TIMEOUT) {
-                    for (ServerPingManager server : new ArrayList<>(pingers)) {
-                        if (!server.closed) {
-                            server.close();
-                        }
+            if (System.currentTimeMillis() - start > ServerPingManager.PING_TIMEOUT) {
+                for (ServerPingManager server : new ArrayList<>(pingers)) {
+                    if (!server.closed) {
+                        server.close();
                     }
                 }
             }

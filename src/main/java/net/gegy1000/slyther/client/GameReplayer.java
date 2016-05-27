@@ -14,9 +14,9 @@ public class GameReplayer {
     private long position;
 
     public GameReplayer(File file, ClientNetworkManager networkManager) throws IOException {
-        this.channel = new RandomAccessFile(file, "r").getChannel();
+        channel = new RandomAccessFile(file, "r").getChannel();
         this.networkManager = networkManager;
-        this.next = this.getNextPacket();
+        next = getNextPacket();
     }
 
     public boolean tick() throws IOException {
@@ -26,7 +26,7 @@ public class GameReplayer {
             while (shouldContinue) {
                 if (time - lastTime >= next.timeDelta) {
                     next.apply();
-                    next = this.getNextPacket();
+                    next = getNextPacket();
                     if (next == null || position >= channel.size()) {
                         return false;
                     }
@@ -41,13 +41,13 @@ public class GameReplayer {
 
     public ReplayPacket getNextPacket() throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(2);
-        this.read(buffer);
+        read(buffer);
         short timeDelta = buffer.getShort();
         buffer = ByteBuffer.allocate(2);
-        this.read(buffer);
+        read(buffer);
         short packetLength = buffer.getShort();
         buffer = ByteBuffer.allocate(packetLength);
-        this.read(buffer);
+        read(buffer);
         return new ReplayPacket(timeDelta, buffer);
     }
 
@@ -68,7 +68,7 @@ public class GameReplayer {
         }
 
         public void apply() {
-            GameReplayer.this.networkManager.onMessage(data);
+            networkManager.onMessage(data);
         }
     }
 }

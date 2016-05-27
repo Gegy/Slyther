@@ -21,7 +21,7 @@ public class GuiGame extends Gui {
         textureManager.bindTexture("/textures/background.png");
         GL11.glScalef(client.gsc, client.gsc, 1.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.drawTexture(0.0F, 0.0F, loading ? backgroundX : client.viewX, client.viewY, renderResolution.getWidth() / client.gsc, renderResolution.getHeight() / client.gsc, 599, 519);
+        drawTexture(0.0F, 0.0F, loading ? backgroundX : client.viewX, client.viewY, renderResolution.getWidth() / client.gsc, renderResolution.getHeight() / client.gsc, 599, 519);
         GL11.glTranslatef(-client.viewX, -client.viewY, 0.0F);
         if (!loading) {
             GL11.glTranslatef(client.mww2 / client.gsc, client.mhh2 / client.gsc, 0.0F);
@@ -89,7 +89,7 @@ public class GuiGame extends Gui {
                         GL11.glScalef(size, size, 1.0F);
                         float x = food.rx / size;
                         float y = food.ry / size;
-                        this.drawTexture(x - 64.0F, y - 64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
+                        drawTexture(x - 64.0F, y - 64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                         GL11.glPopMatrix();
                     }
                 }
@@ -108,7 +108,7 @@ public class GuiGame extends Gui {
                         GL11.glScalef(size, size, 1.0F);
                         float x = posX / size;
                         float y = posY / size;
-                        this.drawTexture(x - 64.0F, y - 64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
+                        drawTexture(x - 64.0F, y - 64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                         GL11.glPopMatrix();
                     }
                 }
@@ -228,7 +228,7 @@ public class GuiGame extends Gui {
                             xs.add(ax);
                             ys.add(ay);
                         }
-                        this.textureManager.bindTexture("/textures/snake_point.png");
+                        textureManager.bindTexture("/textures/snake_point.png");
                         for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
                             float pointX = (xs.get(pointIndex));
                             float pointY = (ys.get(pointIndex));
@@ -245,7 +245,7 @@ public class GuiGame extends Gui {
                             GL11.glPushMatrix();
                             GL11.glTranslatef(pointX, pointY, 0);
                             GL11.glScalef(snake.sc * 0.25F, snake.sc * 0.25F, 1);
-                            this.drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
+                            drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
                             GL11.glPopMatrix();
                         }
                         if (!snake.oneEye) {
@@ -255,16 +255,16 @@ public class GuiGame extends Gui {
                             GL11.glTranslatef(originX, originY, 0.0F);
                             float eyeOffsetX = (float) (Math.cos(ehang) * eyeForward + Math.cos(ehang - Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
                             float eyeOffsetY = (float) (Math.sin(ehang) * eyeForward + Math.sin(ehang - Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
-                            this.drawCircle(eyeOffsetX, eyeOffsetY, snake.er * sc, snake.ec);
+                            drawCircle(eyeOffsetX, eyeOffsetY, snake.er * sc, snake.ec);
                             eyeOffsetX = (float) (Math.cos(ehang) * eyeForward + Math.cos(ehang + Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
                             eyeOffsetY = (float) (Math.sin(ehang) * eyeForward + Math.sin(ehang + Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
-                            this.drawCircle(eyeOffsetX, eyeOffsetY, snake.er * sc, snake.ec);
+                            drawCircle(eyeOffsetX, eyeOffsetY, snake.er * sc, snake.ec);
                             eyeOffsetX = (float) (Math.cos(ehang) * (eyeForward + 0.5F) + snake.rex * sc + Math.cos(ehang + Math.PI / 2.0F) * eyeSideDistance);
                             eyeOffsetY = (float) (Math.sin(ehang) * (eyeForward + 0.5F) + snake.rey * sc + Math.sin(ehang + Math.PI / 2.0F) * eyeSideDistance);
-                            this.drawCircle(eyeOffsetX, eyeOffsetY, 3.5F * sc, snake.ppc);
+                            drawCircle(eyeOffsetX, eyeOffsetY, 3.5F * sc, snake.ppc);
                             eyeOffsetX = (float) (Math.cos(ehang) * (eyeForward + 0.5F) + snake.rex * sc + Math.cos(ehang - Math.PI / 2.0F) * eyeSideDistance);
                             eyeOffsetY = (float) (Math.sin(ehang) * (eyeForward + 0.5F) + snake.rey * sc + Math.sin(ehang - Math.PI / 2.0F) * eyeSideDistance);
-                            this.drawCircle(eyeOffsetX, eyeOffsetY, 3.5F * sc, snake.ppc);
+                            drawCircle(eyeOffsetX, eyeOffsetY, 3.5F * sc, snake.ppc);
                             GL11.glPopMatrix();
                         }
                         if (snake.antenna) {
@@ -310,28 +310,28 @@ public class GuiGame extends Gui {
                             fj = snake.atx.length;
                             float prevX = snake.atx[fj - 1];
                             float prevY = snake.aty[fj - 1];
-                            this.beginConnectedLines(E * 5.0F, snake.atc1);
+                            beginConnectedLines(E * 5.0F, snake.atc1);
                             for (int t = 0; t < fj; t++) {
                                 x = snake.atx[t];
                                 y = snake.aty[t];
                                 if (Math.abs(x - prevX) + Math.abs(y - prevY) >= 1) {
-                                    this.drawConnectedLine(prevX, prevY, x, y);
+                                    drawConnectedLine(prevX, prevY, x, y);
                                     prevX = x;
                                     prevY = y;
                                 }
                             }
-                            this.endConnectedLines();
-                            this.beginConnectedLines(E * 4.0F, snake.atc2);
+                            endConnectedLines();
+                            beginConnectedLines(E * 4.0F, snake.atc2);
                             for (int t = 0; t < fj; t++) {
                                 x = snake.atx[t];
                                 y = snake.aty[t];
                                 if (Math.abs(x - prevX) + Math.abs(y - prevY) >= 1) {
-                                    this.drawConnectedLine(prevX, prevY, x, y);
+                                    drawConnectedLine(prevX, prevY, x, y);
                                     prevX = x;
                                     prevY = y;
                                 }
                             }
-                            this.endConnectedLines();
+                            endConnectedLines();
                             if (snake.antennaTexture != null) {
                                 GL11.glTranslatef(snake.atx[fj - 1], snake.aty[fj - 1], 0.0F);
                                 if (snake.abrot) {
@@ -352,7 +352,7 @@ public class GuiGame extends Gui {
                                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                                 GL11.glScalef(snake.sc * 0.25F, snake.sc * 0.25F, 1.0F);
                                 textureManager.bindTexture("/textures/" + snake.antennaTexture + ".png");
-                                this.drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
+                                drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                             }
                             GL11.glPopMatrix();
                         }
@@ -362,10 +362,10 @@ public class GuiGame extends Gui {
 
             GL11.glPopMatrix();
 
-            this.drawString("Your length: " + (int) Math.floor(15.0 * (client.getFPSL(player.sct) + player.fam / client.getFMLT(player.sct) - 1.0) - 5.0), 3.0F, renderResolution.getHeight() - 35.0F, 1.0F, 0xFFFFFF);
-            this.drawString("Rank " + client.rank + "/" + client.snakeCount, 3.0F, renderResolution.getHeight() - 18.0F, 1.0F, 0xAAAAAA);
+            drawString("Your length: " + (int) Math.floor(15.0 * (client.getFPSL(player.sct) + player.fam / client.getFMLT(player.sct) - 1.0) - 5.0), 3.0F, renderResolution.getHeight() - 35.0F, 1.0F, 0xFFFFFF);
+            drawString("Rank " + client.rank + "/" + client.snakeCount, 3.0F, renderResolution.getHeight() - 18.0F, 1.0F, 0xAAAAAA);
 
-            this.drawLargeString("Leaderboard:", renderResolution.getWidth() - largeFont.getWidth("Leaderboard:") - 10.0F, 2.0F, 1.0F, 0xFFFFFF);
+            drawLargeString("Leaderboard:", renderResolution.getWidth() - largeFont.getWidth("Leaderboard:") - 10.0F, 2.0F, 1.0F, 0xFFFFFF);
 
             int leaderboardY = largeFont.getHeight() + 4;
 
@@ -376,8 +376,8 @@ public class GuiGame extends Gui {
 
             for (int i = 1; i <= leaderboard.size(); i++) {
                 LeaderboardEntry leaderboardEntry = leaderboard.get(i - 1);
-                String text = i + ". " + leaderboardEntry.toString();
-                this.drawString(text, renderResolution.getWidth() - font.getWidth(text) - 8.0F, leaderboardY, 1.0F, leaderboardEntry.color.toHex() | alpha << 24);
+                String text = i + ". " + leaderboardEntry;
+                drawString(text, renderResolution.getWidth() - font.getWidth(text) - 8.0F, leaderboardY, 1.0F, leaderboardEntry.color.toHex() | alpha << 24);
 
                 leaderboardY += font.getHeight() + 2;
                 alpha -= alphaChange;
@@ -385,23 +385,23 @@ public class GuiGame extends Gui {
 
             float mapX = renderResolution.getWidth() - 100.0F + 40.0F;
             float mapY = renderResolution.getHeight() - 100.0F + 40.0F;
-            this.drawCircle(mapX, mapY, 42.5F, 0x222222);
-            this.drawCircle(mapX, mapY, 40.0F, 0x555555);
+            drawCircle(mapX, mapY, 42.5F, 0x222222);
+            drawCircle(mapX, mapY, 40.0F, 0x555555);
             GL11.glColor4f(0.8F, 0.8F, 0.8F, 1.0F);
             for (int x = 0; x < 80; x++) {
                 for (int y = 0; y < 80; y++) {
                     if (client.map[x][y]) {
-                        this.drawRect((renderResolution.getWidth() - 100.0F) + x, (renderResolution.getHeight() - 100.0F) + y, 1.0F, 1.0F);
+                        drawRect((renderResolution.getWidth() - 100.0F) + x, (renderResolution.getHeight() - 100.0F) + y, 1.0F, 1.0F);
                     }
                 }
             }
             float locationMarkerX = (renderResolution.getWidth() - 100.0F) + Math.round((client.player.posX - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7);
             float locationMarkerY = (renderResolution.getHeight() - 100.0F) + Math.round((client.player.posY - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7);
-            this.drawCircle(locationMarkerX, locationMarkerY, 3.0F, 0x202020);
-            this.drawCircle(locationMarkerX, locationMarkerY, 2.0F, 0xFFFFFF);
+            drawCircle(locationMarkerX, locationMarkerY, 3.0F, 0x202020);
+            drawCircle(locationMarkerX, locationMarkerY, 2.0F, 0xFFFFFF);
         } else {
             GL11.glPopMatrix();
-            this.drawCenteredLargeString("Connecting to server...", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F, 2.0F, 0xFFFFFF);
+            drawCenteredLargeString("Connecting to server...", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F, 2.0F, 0xFFFFFF);
         }
     }
 

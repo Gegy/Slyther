@@ -31,7 +31,7 @@ public class GameRecorder extends Thread implements Closeable {
     private long lastTime;
 
     public GameRecorder(File file) {
-        this.file = file;
+        file = file;
     }
 
     @Override

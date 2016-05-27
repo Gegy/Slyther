@@ -67,7 +67,7 @@ public class GuiMainMenu extends Gui {
     @Override
     public void render(float mouseX, float mouseY) {
         textureManager.bindTexture("/textures/background.png");
-        this.drawTexture(0.0F, 0.0F, backgroundX, backgroundY, renderResolution.getWidth() / client.gsc, renderResolution.getHeight() / client.gsc, 599, 519);
+        drawTexture(0.0F, 0.0F, backgroundX, backgroundY, renderResolution.getWidth() / client.gsc, renderResolution.getHeight() / client.gsc, 599, 519);
         long time = System.currentTimeMillis();
         double delta = (time - logoTime) / 25D;
         logoTime = time;

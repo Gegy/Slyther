@@ -14,11 +14,11 @@ public abstract class SlytherServerMessageBase {
     public final void writeBase(MessageByteBuffer buffer, SlytherServer server) {
 //        buffer.writeShort((short) 0); //TODO serverTimeDelta
 //        buffer.writeByte((byte) this.getMessageIds());
-        this.write(buffer, server);
+        write(buffer, server);
     }
 
     public final void readBase(MessageByteBuffer buffer, SlytherClient client)  {
-        this.read(buffer, client);
+        read(buffer, client);
     }
 
     public abstract void write(MessageByteBuffer buffer, SlytherServer server);

@@ -13,6 +13,6 @@ public class LeaderboardEntry {
 
     @Override
     public String toString() {
-        return this.name + " - " + this.score;
+        return name + " - " + score;
     }
 }

@@ -4,7 +4,7 @@ import java.io.File;
 
 public final class SystemUtils {
     public enum OperatingSystem {
-        WINDOWS, LINUX, MACOSX, SOLARIS, UNKNOWN;
+        WINDOWS, LINUX, MACOSX, SOLARIS, UNKNOWN
     }
 
     private static File GAME_FOLDER;

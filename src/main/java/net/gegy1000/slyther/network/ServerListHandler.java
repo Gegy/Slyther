@@ -23,7 +23,7 @@ public enum ServerListHandler {
             File cache = new File(SystemUtils.getGameFolder(), "server_list.json");
             try {
                 serverList = new ArrayList<>();
-                Map<String, List<String>> rawServers = this.decodeServerList(this.getEncodedServerList());
+                Map<String, List<String>> rawServers = decodeServerList(getEncodedServerList());
                 for (Map.Entry<String, List<String>> entry : rawServers.entrySet()) {
                     serverList.add(new Server(entry.getKey(), entry.getValue()));
                 }
@@ -147,7 +147,7 @@ public enum ServerListHandler {
     }
 
     public void resetPingedServerCount() {
-        this.pingedCount = 0;
+        pingedCount = 0;
     }
 
     public class Server implements Comparable<Server> {
@@ -161,7 +161,7 @@ public enum ServerListHandler {
         }
 
         public String getIp() {
-            return ip + ":" + this.ports.get(new Random().nextInt(this.ports.size()));
+            return ip + ":" + ports.get(new Random().nextInt(ports.size()));
         }
 
         public String getClusterIp() {
@@ -169,7 +169,7 @@ public enum ServerListHandler {
         }
 
         public List<String> getPorts() {
-            return this.ports;
+            return ports;
         }
 
         public long getPing() {
@@ -177,17 +177,17 @@ public enum ServerListHandler {
         }
 
         public void setPing(long[] pings) {
-            this.ping = 0;
+            ping = 0;
             for (long ping : pings) {
                 this.ping += ping;
             }
-            this.ping /= pings.length;
+            ping /= pings.length;
             ServerListHandler.INSTANCE.pingedCount++;
         }
 
         @Override
         public int compareTo(Server server) {
-            return Long.compare(this.ping != -1 ? this.ping : Long.MAX_VALUE, server.ping != -1 ? server.ping : Long.MAX_VALUE);
+            return Long.compare(ping != -1 ? ping : Long.MAX_VALUE, server.ping != -1 ? server.ping : Long.MAX_VALUE);
         }
     }
 

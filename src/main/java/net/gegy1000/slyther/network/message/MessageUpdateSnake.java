@@ -18,34 +18,34 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
         float wang = -1;
         float sp = -1;
         if (buffer.hasRemaining(3)) {
-            dir = this.messageId == 'e' ? 1 : 2;
+            dir = messageId == 'e' ? 1 : 2;
             ang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
             wang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
             sp = buffer.readUInt8() / 18.0F;
         } else if (buffer.hasRemaining(2)) {
-            if (this.messageId == 'e') {
+            if (messageId == 'e') {
                 ang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
                 sp = buffer.readUInt8() / 18.0F;
-            } else if (this.messageId == 'E') {
+            } else if (messageId == 'E') {
                 dir = 1;
                 wang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
                 sp = buffer.readUInt8() / 18.0F;
-            } else if (this.messageId == '4') {
+            } else if (messageId == '4') {
                 dir = 2;
                 wang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
                 sp = buffer.readUInt8() / 18.0F;
-            } else if (this.messageId == '5') {
+            } else if (messageId == '5') {
                 dir = 2;
                 ang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
                 wang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
             }
         } else if (buffer.hasRemaining()) {
-            if (this.messageId == 'e') {
+            if (messageId == 'e') {
                 ang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
-            } else if (this.messageId == 'E') {
+            } else if (messageId == 'E') {
                 dir = 1;
                 wang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
-            } else if (this.messageId == '3') {
+            } else if (messageId == '3') {
                 sp = buffer.readUInt8() / 18.0F;
             }
         }

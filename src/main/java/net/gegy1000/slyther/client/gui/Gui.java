@@ -24,20 +24,20 @@ public abstract class Gui {
 
     public final void initBase(SlytherClient client) {
         this.client = client;
-        this.renderHandler = client.renderHandler;
-        this.renderResolution = renderHandler.renderResolution;
-        this.textureManager = renderHandler.textureManager;
-        this.font = renderHandler.font;
-        this.largeFont = renderHandler.largeFont;
-        this.elements.clear();
-        this.init();
+        renderHandler = client.renderHandler;
+        renderResolution = renderHandler.renderResolution;
+        textureManager = renderHandler.textureManager;
+        font = renderHandler.font;
+        largeFont = renderHandler.largeFont;
+        elements.clear();
+        init();
     }
 
     public abstract void init();
 
     public final void renderBase(float mouseX, float mouseY) {
-        this.render(mouseX, mouseY);
-        for (Element element : this.elements) {
+        render(mouseX, mouseY);
+        for (Element element : elements) {
             element.render(mouseX, mouseY);
         }
     }
@@ -54,7 +54,7 @@ public abstract class Gui {
                 break;
             }
         }
-        this.mouseClicked(mouseX, mouseY, button);
+        mouseClicked(mouseX, mouseY, button);
     }
 
     public abstract void mouseClicked(float mouseX, float mouseY, int button);
@@ -146,10 +146,10 @@ public abstract class Gui {
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glShadeModel(GL11.GL_FLAT);
 
-        this.drawVertex(x, y + height, u, v + height, uMultiplier, vMultiplier);
-        this.drawVertex(x + width, y + height, u + width, v + height, uMultiplier, vMultiplier);
-        this.drawVertex(x + width, y, u + width, v, uMultiplier, vMultiplier);
-        this.drawVertex(x, y, u, v, uMultiplier, vMultiplier);
+        drawVertex(x, y + height, u, v + height, uMultiplier, vMultiplier);
+        drawVertex(x + width, y + height, u + width, v + height, uMultiplier, vMultiplier);
+        drawVertex(x + width, y, u + width, v, uMultiplier, vMultiplier);
+        drawVertex(x, y, u, v, uMultiplier, vMultiplier);
 
         GL11.glEnd();
     }
@@ -177,10 +177,10 @@ public abstract class Gui {
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glShadeModel(GL11.GL_FLAT);
 
-        this.drawVertex(x, y, u, v, uMultiplier, vMultiplier);
-        this.drawVertex(x + actualWidth, y, u + width, v, uMultiplier, vMultiplier);
-        this.drawVertex(x + actualWidth, y + actualHeight, u + width, v + height, uMultiplier, vMultiplier);
-        this.drawVertex(x, y + actualHeight, u, v + height, uMultiplier, vMultiplier);
+        drawVertex(x, y, u, v, uMultiplier, vMultiplier);
+        drawVertex(x + actualWidth, y, u + width, v, uMultiplier, vMultiplier);
+        drawVertex(x + actualWidth, y + actualHeight, u + width, v + height, uMultiplier, vMultiplier);
+        drawVertex(x, y + actualHeight, u, v + height, uMultiplier, vMultiplier);
 
         GL11.glEnd();
     }
@@ -202,6 +202,6 @@ public abstract class Gui {
     }
 
     public final void closeGui() {
-        this.renderHandler.closeGui(this);
+        renderHandler.closeGui(this);
     }
 }

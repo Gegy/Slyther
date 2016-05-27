@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TextureManager {
-    private Map<String, Texture> textures = new HashMap<String, Texture>();
+    private Map<String, Texture> textures = new HashMap<>();
 
     public Texture getTexture(String path) {
         if (textures.containsKey(path)) {

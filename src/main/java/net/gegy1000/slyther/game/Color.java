@@ -14,21 +14,21 @@ public enum Color {
     float red, green, blue;
 
     Color(int color) {
-        this.red = ((color >> 16) & 0x0000FF) / 255.0F;
-        this.green = ((color >> 8) & 0x0000FF) / 255.0F;
-        this.blue = (color & 0x0000FF) / 255.0F;
+        red = ((color >> 16) & 0x0000FF) / 255.0F;
+        green = ((color >> 8) & 0x0000FF) / 255.0F;
+        blue = (color & 0x0000FF) / 255.0F;
     }
 
     public float getRed() {
-        return this.red;
+        return red;
     }
 
     public float getGreen() {
-        return this.green;
+        return green;
     }
 
     public float getBlue() {
-        return this.blue;
+        return blue;
     }
 
     public int toHex() {
