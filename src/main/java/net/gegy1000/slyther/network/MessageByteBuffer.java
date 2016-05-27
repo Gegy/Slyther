@@ -112,8 +112,14 @@ public class MessageByteBuffer {
         return buf.position();
     }
 
-    public byte[] array() {
+    public byte[] bytes() {
         byte[] array = new byte[buf.position()];
+        System.arraycopy(buf.array(), buf.arrayOffset(), array, 0, array.length);
+        return array;
+    }
+
+    public byte[] array() {
+        byte[] array = new byte[buf.limit()];
         System.arraycopy(buf.array(), buf.arrayOffset(), array, 0, array.length);
         return array;
     }

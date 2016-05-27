@@ -59,7 +59,8 @@ public class ClientNetworkManager extends WebSocketClient {
         if (!isReplaying) {
             this.connect();
             if (shouldRecord) {
-                this.recorder = new GameRecorder(SlytherClient.RECORD_FILE);
+                recorder = new GameRecorder(SlytherClient.RECORD_FILE);
+                recorder.start();
             }
         } else {
             this.isOpen = true;
@@ -106,13 +107,7 @@ public class ClientNetworkManager extends WebSocketClient {
     public void onMessage(ByteBuffer byteBuffer) {
         MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer);
         if (this.recorder != null) {
-            client.scheduleTask(() -> {
-                try {
-                    this.recorder.onMessage(byteBuffer.array());
-                } catch (IOException e) {
-                }
-                return null;
-            });
+            this.recorder.onMessage(byteBuffer.array());
         }
         if (buffer.limit() >= 2) {
             bytesPerSecond += buffer.limit();
@@ -141,7 +136,7 @@ public class ClientNetworkManager extends WebSocketClient {
                     e.printStackTrace();
                 }
             } else {
-                System.err.println("Received unknown message " + messageId + "!" + " (" + (char) messageId + ") " + Arrays.toString(buffer.array()));
+                System.err.println("Received unknown message " + messageId + "!" + " (" + (char) messageId + ") " + Arrays.toString(buffer.bytes()));
             }
         }
     }
@@ -165,7 +160,7 @@ public class ClientNetworkManager extends WebSocketClient {
             try {
                 MessageByteBuffer buffer = new MessageByteBuffer();
                 message.write(buffer, client);
-                this.send(buffer.array());
+                this.send(buffer.bytes());
             } catch (Exception e) {
                 System.err.println("An error occurred while sending message " + message.getClass().getName());
                 e.printStackTrace();

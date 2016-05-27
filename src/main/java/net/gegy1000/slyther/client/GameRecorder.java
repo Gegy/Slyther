@@ -1,43 +1,87 @@
 package net.gegy1000.slyther.client;
 
+import java.io.Closeable;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-public class GameRecorder {
-    private FileChannel channel;
+import org.apache.commons.io.IOUtils;
+
+public class GameRecorder extends Thread implements Closeable {
+    private static final Msg POISON = new Msg();
+
+    private Thread thread;
+
+    private File file;
+
+    private FileOutputStream fout;
+
+    private DataOutput dout;
+
+    private BlockingQueue<Msg> messages = new LinkedBlockingQueue<>();
+
+    private Queue<Msg> msgPool = new ConcurrentLinkedQueue<>();
+
     private long lastTime;
-    private long position;
 
-    public GameRecorder(File file) throws IOException {
-        this.channel = new RandomAccessFile(file, "rw").getChannel();
+    public GameRecorder(File file) {
+        this.file = file;
     }
 
-    public void onMessage(byte[] messageBuffer) throws IOException {
-        long time = System.currentTimeMillis();
-        ByteBuffer buffer = ByteBuffer.allocate(2);
-        buffer.putShort((short) (time - lastTime));
-        this.write(buffer.array());
-        buffer = ByteBuffer.allocate(2);
-        buffer.putShort((short) messageBuffer.length);
-        this.write(buffer.array());
-        this.write(messageBuffer);
-        lastTime = time;
-    }
-
-    private void write(byte[] bytes) throws IOException {
-        this.channel.position(position);
-        this.channel.write(ByteBuffer.wrap(bytes));
-        this.position += bytes.length;
-    }
-
-    public void close() {
-        try {
-            this.channel.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    public synchronized void start() {
+        if (thread == null) {
+            thread = new Thread(this, "Recorder");
+            thread.start();
         }
+    }
+
+    @Override
+    public void run() {
+        try {
+            fout = new FileOutputStream(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        dout = new DataOutputStream(fout);
+        try {
+            Msg msg;
+            while ((msg = messages.take()) != POISON) {
+                dout.writeShort(msg.timeSinceLastMessage);
+                dout.writeShort(msg.payload.length);
+                dout.write(msg.payload);
+                msgPool.add(msg);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(fout);
+        }
+    }
+
+    public void onMessage(byte[] payload) {
+        Msg msg = msgPool.isEmpty() ? new Msg() : msgPool.poll();
+        long time = System.currentTimeMillis();
+        msg.timeSinceLastMessage = (short) (time - lastTime);
+        msg.payload = payload;
+        lastTime = time;
+        messages.add(msg);
+    }
+
+    @Override
+    public void close() {
+        messages.add(POISON);
+        msgPool.clear();
+    }
+
+    private static class Msg {
+        short timeSinceLastMessage;
+        byte[] payload;
     }
 }
