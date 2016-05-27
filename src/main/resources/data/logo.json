@@ -1,0 +1,191 @@
+[
+	{
+		"parts": [
+			107, 107,
+			 80,  83,  53,  98,
+			 31, 115,  55, 131,
+			 98, 147, 101, 162,
+			101, 190,  66, 188,
+			 49, 187,  34, 173
+		],
+		"resolution": 22,
+		"wiggleAmount": 4,
+		"wiggleAmountStep": 0.025,
+		"wiggleStep": 0.025,
+		"wiggleSpeed": 0.06,
+		"thickness": 11,
+		"thicknessMultiplier": 1,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			150,  30,
+			150, 107, 150, 184
+		],
+		"resolution": 66,
+		"wiggleAmount": 4,
+		"wiggleAmountStep": 0.05,
+		"wiggleStep": 0.025,
+		"wiggleSpeed": 0.06,
+		"thickness": 11,
+		"thicknessMultiplier": 1,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			207, 96,
+			207, 140, 207, 184
+		],
+		"resolution": 46,
+		"wiggleAmount": 4,
+		"wiggleAmountStep": 0.03,
+		"wiggleStep": 0.035,
+		"wiggleSpeed": 0.06,
+		"thickness": 11,
+		"thicknessMultiplier": 1,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			207, 47,
+			207, 48.5, 207, 50
+		],
+		"resolution": 11,
+		"wiggleAmount": 2,
+		"wiggleAmountStep": 0.06,
+		"wiggleStep": 0.05,
+		"wiggleSpeed": 0.06,
+		"thickness": 15,
+		"thicknessMultiplier": 0.5,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			267,  65,
+			267, 114.5, 267, 164,
+			267, 194  , 297, 186
+		],
+		"resolution": 66,
+		"wiggleAmount": 6,
+		"wiggleAmountStep": -0.025,
+		"wiggleStep": -0.0125,
+		"wiggleSpeed": 0.06,
+		"thickness": 11,
+		"thicknessMultiplier": 1.5,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			243, 94,
+			268, 94, 293, 94
+		],
+		"resolution": 66,
+		"wiggleAmount": 4,
+		"wiggleAmountStep": 0.015,
+		"wiggleStep": 0.025,
+		"wiggleSpeed": 0.06,
+		"thickness": 9,
+		"thicknessMultiplier": 1.2,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			338,  30,
+			338,  68.5, 338, 107,
+			338, 145.5, 338, 184,
+			338, 164  , 338, 144,
+			338, 104  , 378, 104,
+			418, 104  , 418, 144,
+			418, 164  , 418, 184
+		],
+		"resolution": 46,
+		"wiggleAmount": 4,
+		"wiggleAmountStep": 0.005,
+		"wiggleStep": 0.02,
+		"wiggleSpeed": 0.06,
+		"thickness": 11,
+		"thicknessMultiplier": 2.1,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			535, 175,
+			500, 201, 472, 175,
+			442, 138, 472, 105,
+			502,  84, 532, 105,
+			546, 118, 544, 139,
+			504, 139, 464, 139
+		],
+		"resolution": 35,
+		"wiggleAmount": 6,
+		"wiggleAmountStep": -0.013,
+		"wiggleStep": -0.025,
+		"wiggleSpeed": 0.06,
+		"thickness": 11,
+		"thicknessMultiplier": 1.3,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			591, 96,
+			591, 140, 591, 184,
+			591, 155, 591, 126,
+			613, 82, 652, 109
+		],
+		"resolution": 38,
+		"wiggleAmount": 4,
+		"wiggleAmountStep": 0.01,
+		"wiggleStep": -0.035,
+		"wiggleSpeed": 0.06,
+		"thickness": 11,
+		"thicknessMultiplier": 1,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			663, 177,
+			663, 178.5, 663, 180
+		],
+		"resolution": 11,
+		"wiggleAmount": 2,
+		"wiggleAmountStep": 0.06,
+		"wiggleStep": 0.05,
+		"wiggleSpeed": 0.06,
+		"thickness": 15,
+		"thicknessMultiplier": 1,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			717,  96,
+			717, 140, 717, 184
+		],
+		"resolution": 33,
+		"wiggleAmount": 4,
+		"wiggleAmountStep": 0.06,
+		"wiggleStep": 0.05,
+		"wiggleSpeed": 0.06,
+		"thickness": 11,
+		"thicknessMultiplier": 1,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			717, 47,
+			717, 48.5, 717, 50
+		],
+		"resolution": 11,
+		"wiggleAmount": 2,
+		"wiggleAmountStep": 0.06,
+		"wiggleStep": 0.05,
+		"wiggleSpeed": 0.06,
+		"thickness": 15,
+		"thicknessMultiplier": 1,
+		"offsetWiggleMultiplier": 5
+	}, {
+		"parts": [
+			814, 186,
+			860, 188, 858, 136,
+			854,  96, 814,  96,
+			770,  96, 770, 136,
+			770, 186, 814, 186
+		],
+		"resolution": 43,
+		"wiggleAmount": 4,
+		"wiggleAmountStep": 0,
+		"wiggleStep": 0.0274,
+		"wiggleSpeed": 0.073,
+		"thickness": 11,
+		"thicknessMultiplier": 1.5,
+		"offsetWiggleMultiplier": 5
+	}
+]
