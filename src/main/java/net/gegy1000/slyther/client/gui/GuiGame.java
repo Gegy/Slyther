@@ -3,6 +3,7 @@ package net.gegy1000.slyther.client.gui;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.game.Food;
 import net.gegy1000.slyther.client.game.Prey;
+import net.gegy1000.slyther.client.game.Sector;
 import net.gegy1000.slyther.client.game.Snake;
 import net.gegy1000.slyther.game.*;
 import org.lwjgl.input.Mouse;
@@ -29,7 +30,7 @@ public class GuiGame extends Gui {
         drawTexture(0.0F, 0.0F, loading ? backgroundX : client.viewX, client.viewY, renderResolution.getWidth() / gsc, renderResolution.getHeight() / gsc, 599, 519);
         GL11.glTranslatef(-client.viewX, -client.viewY, 0.0F);
         if (!loading) {
-            GL11.glTranslatef(client.mww2 /  gsc, client.mhh2 / gsc, 0.0F);
+            GL11.glTranslatef(client.mww2 / gsc, client.mhh2 / gsc, 0.0F);
         }
         Snake player = client.player;
         if (!loading) {
@@ -76,6 +77,18 @@ public class GuiGame extends Gui {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
+            if (true) {
+                GL11.glColor4f(0, 1, 0, 0.1F);
+                GL11.glDisable(GL11.GL_TEXTURE_2D);
+                for (Sector c : client.sectors) {
+                    GL11.glRectf(
+                            c.x * client.SECTOR_SIZE,
+                            c.y * client.SECTOR_SIZE,
+                            c.x * client.SECTOR_SIZE + client.SECTOR_SIZE - 4,
+                            c.y * client.SECTOR_SIZE + client.SECTOR_SIZE - 4
+                    );
+                }
+            }
             textureManager.bindTexture("/textures/food.png");
             float globalAlpha = 1.75F;
             if (client.gla != 1.0F) {
