@@ -26,10 +26,12 @@ public class ServerNetworkManager extends WebSocketServer {
     @Override
     public void onOpen(WebSocket connection, ClientHandshake handshake) {
         System.out.println("Initiating new connection.");
-        ConnectedClient client = new ConnectedClient(connection);
-        server.clients.add(client);
-        client.lastPacketTime = System.currentTimeMillis();
-        send(client, new MessageSetup());
+        server.scheduleTask(() -> {
+            ConnectedClient client = new ConnectedClient(server, connection);
+            server.clients.add(client);
+            client.lastPacketTime = System.currentTimeMillis();
+            return null;
+        });
     }
 
     @Override
@@ -49,7 +51,10 @@ public class ServerNetworkManager extends WebSocketServer {
             MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer);
             SlytherClientMessageBase message = MessageHandler.INSTANCE.getClientMessage(buffer);
             if (message != null) {
-                message.read(buffer, server, client); //TODO Tasks
+                server.scheduleTask(() -> {
+                    message.read(buffer, server, client);
+                    return null;
+                });
             } else {
                 System.err.println("Received unknown message " + Arrays.toString(buffer.array()));
             }
@@ -59,9 +64,5 @@ public class ServerNetworkManager extends WebSocketServer {
     @Override
     public void onError(WebSocket connection, Exception e) {
         server.removeClient(connection);
-    }
-
-    public void send(ConnectedClient client, SlytherServerMessageBase message) {
-        client.send(server, message);
     }
 }

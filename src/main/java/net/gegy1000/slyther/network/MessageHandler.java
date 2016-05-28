@@ -51,12 +51,13 @@ public enum MessageHandler {
             } else if (type == 253 || type == 254) {
                 return new MessageAccelerate(type == 253);
             } else {
+                buffer.skipBytes(-1);
                 return new MessageSetAngle();
             }
         } else if (buffer.limit() > 1) {
             int type = buffer.readUInt8();
             if (type == 's') {
-                return new MessageSetUsername();
+                return new MessageClientSetup();
             } else if (type == 252) {
                 return new MessageSetTurn();
             }

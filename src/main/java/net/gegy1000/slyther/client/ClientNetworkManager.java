@@ -4,7 +4,7 @@ import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
 import net.gegy1000.slyther.network.ServerHandler;
 import net.gegy1000.slyther.network.message.MessageClientPing;
-import net.gegy1000.slyther.network.message.MessageSetUsername;
+import net.gegy1000.slyther.network.message.MessageClientSetup;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import org.java_websocket.client.WebSocketClient;
@@ -75,7 +75,7 @@ public class ClientNetworkManager extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
         isOpen = true;
-        send(new MessageSetUsername(client.configuration.nickname, client.configuration.skin));
+        send(new MessageClientSetup(client.configuration.nickname, client.configuration.skin));
         ping();
         System.out.println("Connected to " + ip);
     }

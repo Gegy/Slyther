@@ -1,6 +1,7 @@
-package net.gegy1000.slyther.game;
+package net.gegy1000.slyther.client.game;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.game.Color;
 
 public class Food {
     public SlytherClient client;
@@ -21,17 +22,17 @@ public class Food {
     public float eatenFr;
     public boolean eaten;
     public Snake eater;
-    public int sx; // Sector X?
-    public int sy;
+    public int sectorX; // Sector X?
+    public int sectorY;
 
-    public Food(SlytherClient client, int id, float x, float y, float size, boolean u, Color color) {
+    public Food(SlytherClient client, int id, float x, float y, float size, boolean isNatural, Color color) {
         this.client = client;
         this.id = id;
         posX = x;
         posY = y;
         rx = x;
         ry = y;
-        rsp = u ? 2 : 1;
+        rsp = isNatural ? 2 : 1;
         cv = color;
         rad = 0.00001F; //rendering with rad not sz?
         sz = size;

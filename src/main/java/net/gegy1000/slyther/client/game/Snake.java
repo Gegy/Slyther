@@ -1,6 +1,7 @@
-package net.gegy1000.slyther.game;
+package net.gegy1000.slyther.client.game;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.game.*;
 import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
@@ -242,7 +243,7 @@ public class Snake {
     }
 
     public void update(float vfr, float vfrb, float vfrb2) {
-        float c = client.MAMU * vfr * scang * spang;
+        float turnSpeed = client.MAMU * vfr * scang * spang;
         float moveAmount = sp * vfr / 4;
         if (moveAmount > msl) {
             moveAmount = msl;
@@ -296,7 +297,7 @@ public class Snake {
             cfl = tl + fl;
         }
         if (dir == 1) {
-            ang -= c;
+            ang -= turnSpeed;
             if (ang < 0 || ang >= SlytherClient.PI_2) {
                 ang %= SlytherClient.PI_2;
             }
@@ -315,7 +316,7 @@ public class Snake {
                 dir = 0;
             }
         } else if (dir == 2) {
-            ang += c;
+            ang += turnSpeed;
             if (ang < 0 || ang >= SlytherClient.PI_2) {
                 ang %= SlytherClient.PI_2;
             }

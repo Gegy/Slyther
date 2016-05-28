@@ -13,6 +13,6 @@ public class MessageClientPing extends SlytherClientMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
-        client.send(server, new MessagePing());
+        client.send(new MessagePing());
     }
 }

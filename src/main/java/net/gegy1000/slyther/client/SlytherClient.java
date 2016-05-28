@@ -1,9 +1,14 @@
 package net.gegy1000.slyther.client;
 
+import net.gegy1000.slyther.client.game.Food;
+import net.gegy1000.slyther.client.game.Prey;
+import net.gegy1000.slyther.client.game.Sector;
+import net.gegy1000.slyther.client.game.Snake;
 import net.gegy1000.slyther.client.gui.Gui;
 import net.gegy1000.slyther.client.gui.GuiMainMenu;
 import net.gegy1000.slyther.client.render.RenderHandler;
-import net.gegy1000.slyther.game.*;
+import net.gegy1000.slyther.game.ConfigHandler;
+import net.gegy1000.slyther.game.LeaderboardEntry;
 import net.gegy1000.slyther.network.ServerHandler;
 import net.gegy1000.slyther.network.message.MessageAccelerate;
 import net.gegy1000.slyther.network.message.MessageSetAngle;
@@ -15,11 +20,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Queue;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -222,6 +223,7 @@ public class SlytherClient {
         gsc = INITIAL_GSC;
         lagMultiplier = 0.0F;
         wumsts = false;
+        zoomOffset = 0.0F;
 
         try {
             ServerPingManager.pingServers();
@@ -317,7 +319,8 @@ public class SlytherClient {
                     while (ServerHandler.INSTANCE.getPingedCount() < 5) ;
                     List<ServerHandler.Server> servers = ServerHandler.INSTANCE.getServerList();
                     Collections.sort(servers);
-                    while ((networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)), configuration.shouldRecord)) == null);
+                    while ((networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)), configuration.shouldRecord)) == null)
+                        ;
                 } else {
                     networkManager = ClientNetworkManager.create(SlytherClient.this, configuration.server, configuration.shouldRecord);
                 }

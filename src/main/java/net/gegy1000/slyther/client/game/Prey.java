@@ -1,6 +1,8 @@
-package net.gegy1000.slyther.game;
+package net.gegy1000.slyther.client.game;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.game.Color;
+import net.gegy1000.slyther.game.SkinColor;
 
 public class Prey {
     public SlytherClient client;

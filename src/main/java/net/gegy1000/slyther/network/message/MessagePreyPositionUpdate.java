@@ -1,13 +1,14 @@
 package net.gegy1000.slyther.network.message;
 
 import net.gegy1000.slyther.client.SlytherClient;
-import net.gegy1000.slyther.game.Prey;
+import net.gegy1000.slyther.client.game.Prey;
 import net.gegy1000.slyther.network.MessageByteBuffer;
+import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
     @Override
-    public void write(MessageByteBuffer buffer, SlytherServer server) {
+    public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
     }
 
     @Override

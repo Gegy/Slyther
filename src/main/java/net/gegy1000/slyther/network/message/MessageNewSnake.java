@@ -3,17 +3,71 @@ package net.gegy1000.slyther.network.message;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.ProfanityHandler;
 import net.gegy1000.slyther.game.Skin;
-import net.gegy1000.slyther.game.Snake;
+import net.gegy1000.slyther.client.game.Snake;
 import net.gegy1000.slyther.game.SnakePoint;
 import net.gegy1000.slyther.network.MessageByteBuffer;
+import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MessageNewSnake extends SlytherServerMessageBase {
+    private boolean removing;
+    private boolean dead;
+    private net.gegy1000.slyther.server.game.Snake snake;
+
+    public MessageNewSnake() {
+    }
+
+    public MessageNewSnake(net.gegy1000.slyther.server.game.Snake snake, boolean dead) {
+        this(snake);
+        this.dead = dead;
+        removing = true;
+    }
+
+    public MessageNewSnake(net.gegy1000.slyther.server.game.Snake snake) {
+        this.snake = snake;
+    }
+
     @Override
-    public void write(MessageByteBuffer buffer, SlytherServer server) {
+    public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
+        buffer.writeUInt16(snake.id);
+        if (removing) {
+            buffer.writeUInt8(dead ? 1 : 0);
+        } else {
+            buffer.writeUInt24( (int) (snake.ang / ((2.0F * Math.PI) / 0xFFFFFF)));
+            buffer.writeUInt8(0);
+            buffer.writeUInt24( (int) (snake.wang / ((2.0F * Math.PI) / 0xFFFFFF)));
+            buffer.writeUInt16((int) (snake.sp * 1000.0F));
+            buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
+            buffer.writeUInt8(snake.client.skin.ordinal());
+            int gameRadius = server.configuration.gameRadius;
+            buffer.writeUInt24((int) ((snake.posX + gameRadius) * 5.0F));
+            buffer.writeUInt24((int) ((snake.posY + gameRadius) * 5.0F));
+            String name = snake.client.name;
+            buffer.writeUInt8(name.length());
+            for (int i = 0; i < name.length(); i++) {
+                buffer.writeUInt8((byte) name.charAt(i));
+            }
+            boolean head = true;
+            float prevPosX = 0.0F;
+            float prevPosY = 0.0F;
+            for (SnakePoint point : snake.points) {
+                float posX = point.posX + gameRadius;
+                float posY = point.posY + gameRadius;
+                if (head) {
+                    buffer.writeUInt24((int) (posX * 5.0F));
+                    buffer.writeUInt24((int) (posY * 5.0F));
+                    head = false;
+                } else {
+                    buffer.writeUInt8((int) ((posX - prevPosX + 127) / 2.0F));
+                    buffer.writeUInt8((int) ((posY - prevPosY + 127) / 2.0F));
+                }
+                prevPosX = posX;
+                prevPosY = posY;
+            }
+        }
     }
 
     @Override
@@ -51,9 +105,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                     pointX += (buffer.readUInt8() - 127) / 2.0F;
                     pointY += (buffer.readUInt8() - 127) / 2.0F;
                 }
-                SnakePoint point = new SnakePoint();
-                point.posX = pointX;
-                point.posY = pointY;
+                SnakePoint point = new SnakePoint(pointX, pointY);
                 point.ebx = pointX - prevPointX;
                 point.eby = pointY - prevPointY;
                 points.add(point);

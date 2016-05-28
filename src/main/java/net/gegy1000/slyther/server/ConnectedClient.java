@@ -2,25 +2,94 @@ package net.gegy1000.slyther.server;
 
 import net.gegy1000.slyther.game.Skin;
 import net.gegy1000.slyther.network.MessageByteBuffer;
+import net.gegy1000.slyther.network.message.MessageSetup;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
+import net.gegy1000.slyther.server.game.Entity;
+import net.gegy1000.slyther.server.game.Snake;
 import org.java_websocket.WebSocket;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectedClient {
     public String name;
     public Skin skin;
+    public Snake snake;
     public WebSocket socket;
     public long lastPacketTime;
+    public SlytherServer server;
+    public float gsc = 0.9F;
+    public int protocolVersion;
+    public int rank;
+    public float viewDistance;
 
-    public ConnectedClient(WebSocket socket) {
+    public List<Entity> tracking = new ArrayList<>();
+
+    public ConnectedClient(SlytherServer server, WebSocket socket) {
+        this.server = server;
         this.socket = socket;
     }
 
-    public void send(SlytherServer server, SlytherServerMessageBase message) {
+    public void setup(String name, Skin skin, int protocolVersion) {
+        this.name = name;
+        this.skin = skin;
+        if (protocolVersion > 31) {
+            protocolVersion = 1;
+        }
+        this.protocolVersion = protocolVersion;
+        if (protocolVersion >= 8) {
+            send(new MessageSetup());
+            snake = server.createSnake(this);
+            track(snake);
+        }
+    }
+
+    public void track(Entity entity) {
+        if (!tracking.contains(entity)) {
+            tracking.add(entity);
+            entity.startTracking(this);
+        }
+    }
+
+    public void untrack(Entity entity) {
+        if (tracking.remove(entity)) {
+            entity.stopTracking(this);
+        }
+    }
+
+    public void update() {
+        if (snake != null) {
+            float newScale = 0.4F / Math.max(1.0F, (snake.points.size() + 16.0F) / 36.0F) + 0.5F;
+            if (gsc != newScale) {
+                if (gsc < newScale) {
+                    gsc += 0.0001F;
+                    if (gsc > newScale) {
+                        gsc = newScale;
+                    }
+                } else if (gsc > newScale) {
+                    gsc -= 0.0001F;
+                    if (gsc < newScale) {
+                        gsc = newScale;
+                    }
+                }
+            }
+            viewDistance = 800.0F / gsc;
+            for (Entity entity : server.getEntities()) {
+                if (entity.shouldTrack(this)) {
+                    track(entity);
+                } else {
+                    untrack(entity);
+                }
+            }
+        }
+    }
+
+    public void send(SlytherServerMessageBase message) {
         try {
             MessageByteBuffer buffer = new MessageByteBuffer();
             buffer.writeUInt16((int) (System.currentTimeMillis() - lastPacketTime));
-            buffer.writeUInt8(message.getMessageIds()[0]); //TODO Select
-            message.write(buffer, server);
+            buffer.writeUInt8(message.getSendMessageId());
+            message.write(buffer, server, this);
             socket.send(buffer.bytes());
         } catch (Exception e) {
             System.err.println("An error occurred while sending message " + message.getClass().getName());

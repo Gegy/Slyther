@@ -1,13 +1,52 @@
 package net.gegy1000.slyther.network.message;
 
 import net.gegy1000.slyther.client.SlytherClient;
-import net.gegy1000.slyther.game.Snake;
+import net.gegy1000.slyther.client.game.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
+import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessageUpdateSnake extends SlytherServerMessageBase {
+    private net.gegy1000.slyther.server.game.Snake snake;
+    private boolean dir;
+    private boolean ang;
+    private boolean wang;
+    private boolean sp;
+
+    public MessageUpdateSnake() {
+    }
+
+    public MessageUpdateSnake(net.gegy1000.slyther.server.game.Snake snake, boolean dir, boolean ang, boolean wang, boolean sp) {
+        this.snake = snake;
+        this.dir = dir;
+        this.ang = ang;
+        this.wang = wang;
+        this.sp = sp;
+    }
+
     @Override
-    public void write(MessageByteBuffer buffer, SlytherServer server) {
+    public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
+        buffer.writeUInt16(snake.id);
+        if (dir && ang && wang && sp) {
+            buffer.writeUInt8((int) (snake.ang / (2.0F * Math.PI / 256.0F)));
+            buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
+            buffer.writeUInt8((int) (snake.sp * 18.0F));
+        } else if (ang && sp) {
+            buffer.writeUInt8((int) (snake.ang / (2.0F * Math.PI / 256.0F)));
+            buffer.writeUInt8((int) (snake.sp * 18.0F));
+        } else if ((dir) && (snake.turnDirection == 1 || snake.turnDirection == 2) && wang && sp) {
+            buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
+            buffer.writeUInt8((int) (snake.sp * 18.0F));
+        } else if ((dir && snake.turnDirection == 2) && ang && wang) {
+            buffer.writeUInt8((int) (snake.ang / (2.0F * Math.PI / 256.0F)));
+            buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
+        } else if (ang) {
+            buffer.writeUInt8((int) (snake.ang / (2.0F * Math.PI / 256.0F)));
+        } else if ((dir && snake.turnDirection == 1) && wang) {
+            buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
+        } else if (sp) {
+            buffer.writeUInt8((int) (snake.sp * 18.0F));
+        }
     }
 
     @Override
@@ -92,5 +131,27 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
     @Override
     public int[] getMessageIds() {
         return new int[] { 'e', 'E', '3', '4', '5' };
+    }
+
+    @Override
+    public int getSendMessageId() {
+        if (dir && ang && wang && sp) {
+            return snake.turnDirection == 1 ? 'e' : 'E';
+        } else if (ang && sp) {
+            return 'e';
+        } else if ((dir && snake.turnDirection == 1) && wang && sp) {
+            return 'E';
+        } else if ((dir && snake.turnDirection == 2) && wang && sp) {
+            return '4';
+        } else if ((dir && snake.turnDirection == 2) && ang && wang) {
+            return '5';
+        } else if (ang) {
+            return 'e';
+        } else if ((dir && snake.turnDirection == 1) && wang) {
+            return 'E';
+        } else if (sp) {
+            return '3';
+        }
+        return 'e';
     }
 }

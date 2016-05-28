@@ -4,12 +4,36 @@ import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.LeaderboardEntry;
 import net.gegy1000.slyther.game.ProfanityHandler;
+import net.gegy1000.slyther.game.SkinHandler;
 import net.gegy1000.slyther.network.MessageByteBuffer;
+import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
+import net.gegy1000.slyther.server.game.Snake;
 
 public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
     @Override
-    public void write(MessageByteBuffer buffer, SlytherServer server) {
+    public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
+        int playerIndex = -1;
+        for (int i = 0; i < server.leaderboard.size(); i++) {
+            if (server.leaderboard.get(i).client.equals(client)) {
+                playerIndex = i;
+                break;
+            }
+        }
+        buffer.writeUInt8(playerIndex);
+        buffer.writeUInt16(client.rank);
+        buffer.writeUInt16(server.getSnakes().size());
+        for (LeaderboardEntry leaderboardEntry : server.leaderboard) {
+            Snake snake = leaderboardEntry.client.snake;
+            buffer.writeUInt16(snake.points.size());
+            buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
+            buffer.writeUInt8(SkinHandler.INSTANCE.getDetails(snake.client.skin).pattern[0].ordinal() % Color.values().length);
+            String name = leaderboardEntry.client.name;
+            buffer.writeUInt8(name.length());
+            for (int i = 0; i < name.length(); i++) {
+                buffer.writeUInt8((byte) name.charAt(i));
+            }
+        }
     }
 
     @Override

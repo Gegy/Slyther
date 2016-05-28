@@ -48,8 +48,9 @@ public enum SkinHandler {
         PATTERNS.put(Skin.COLORFUL_STRIPES, new SkinDetails(new SkinColor[] { LIGHT_RED, LIGHT_RED, WHITE, GREEN_BLUE, GREEN_BLUE, WHITE, LIGHT_BLUE_5, LIGHT_BLUE_5, WHITE, YELLOW, YELLOW, WHITE, LIGHT_RED, LIGHT_RED, WHITE, LIGHT_BLUE_5, LIGHT_BLUE_5, WHITE }));
         PATTERNS.put(Skin.PINK_WHITE_RED_STRIPE, new SkinDetails(new SkinColor[] { LIGHT_RED, LIGHT_RED, WHITE, WHITE, PINK, PINK, WHITE, WHITE }));
         PATTERNS.put(Skin.LIGHT_BLUE_WHITE_BLUE_STRIPE, new SkinDetails(new SkinColor[] { LIGHT_BLUE_5, LIGHT_BLUE_5, WHITE, WHITE, LIGHT_BLUE_4, LIGHT_BLUE_4, WHITE, WHITE }));
-        PATTERNS.put(Skin.BRIGHT_ORANGE, new SkinDetails(new SkinColor[] { ORANGE }));
+        PATTERNS.put(Skin.BRIGHT_ORANGE, new SkinDetails(new SkinColor[] { ORANGE })); //TODO antenna
         PATTERNS.put(Skin.BRIGHT_YELLOW, new SkinDetails(new SkinColor[] { LIGHT_YELLOW_2 }));
+        PATTERNS.put(Skin.PEWDIEPIE, new SkinDetails(new SkinColor[] { LIGHT_BLUE_1 })); //TODO
         if (patternFile.exists()) {
             try {
                 SkinPatternsContainer patterns = GSON.fromJson(new FileReader(patternFile), SkinPatternsContainer.class);

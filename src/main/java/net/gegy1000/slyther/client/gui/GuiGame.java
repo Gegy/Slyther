@@ -1,6 +1,9 @@
 package net.gegy1000.slyther.client.gui;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.Food;
+import net.gegy1000.slyther.client.game.Prey;
+import net.gegy1000.slyther.client.game.Snake;
 import net.gegy1000.slyther.game.*;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;

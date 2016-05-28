@@ -7,14 +7,14 @@ import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 import net.gegy1000.slyther.game.Skin;
 
-public class MessageSetUsername extends SlytherClientMessageBase {
+public class MessageClientSetup extends SlytherClientMessageBase {
     private String username;
     private Skin skin;
 
-    public MessageSetUsername() {
+    public MessageClientSetup() {
     }
 
-    public MessageSetUsername(String username, Skin skin) {
+    public MessageClientSetup(String username, Skin skin) {
         this.username = username;
         this.skin = skin;
         if (this.username.length() > 24) {
@@ -35,9 +35,10 @@ public class MessageSetUsername extends SlytherClientMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
-        buffer.readUInt8(); //TODO what is this?
-        client.skin = Skin.values()[buffer.readUInt8()];
-        client.name = buffer.readASCIIBytes();
+        int protocolVersion = buffer.readUInt8() + 1;
+        Skin skin = Skin.values()[buffer.readUInt8() % Skin.values().length];
+        String name = buffer.readASCIIBytes();
+        client.setup(name, skin, protocolVersion);
         System.out.println(client.name + " connected with skin " + client.skin);
     }
 }

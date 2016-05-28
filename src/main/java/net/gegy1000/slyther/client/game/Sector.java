@@ -1,4 +1,4 @@
-package net.gegy1000.slyther.game;
+package net.gegy1000.slyther.client.game;
 
 public class Sector {
     public int x;

@@ -1,14 +1,28 @@
 package net.gegy1000.slyther.network.message;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.Food;
 import net.gegy1000.slyther.game.Color;
-import net.gegy1000.slyther.game.Food;
 import net.gegy1000.slyther.network.MessageByteBuffer;
+import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessageNewFood extends SlytherServerMessageBase {
+    private net.gegy1000.slyther.server.game.Food food;
+
+    public MessageNewFood() {
+    }
+
+    public MessageNewFood(net.gegy1000.slyther.server.game.Food food) {
+        this.food = food;
+    }
+
     @Override
-    public void write(MessageByteBuffer buffer, SlytherServer server) {
+    public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
+        buffer.writeUInt8(food.color.ordinal());
+        buffer.writeUInt16((int) food.posX + server.configuration.gameRadius);
+        buffer.writeUInt16((int) food.posY + server.configuration.gameRadius);
+        buffer.writeUInt8(food.size);
     }
 
     @Override
@@ -20,8 +34,8 @@ public class MessageNewFood extends SlytherServerMessageBase {
             int id = y * client.GAME_RADIUS * 3 + x;
             float size = buffer.readUInt8() / 5.0F;
             Food food = new Food(client, id, x, y, size, messageId == 'b', color);
-            food.sx = (int) Math.floor(x / client.SECTOR_SIZE);
-            food.sy = (int) Math.floor(y / client.SECTOR_SIZE);
+            food.sectorX = (int) Math.floor((float) x / client.SECTOR_SIZE);
+            food.sectorY = (int) Math.floor((float) y / client.SECTOR_SIZE);
             if (!client.foods.contains(food)) {
                 client.foods.add(food);
             }
@@ -30,6 +44,11 @@ public class MessageNewFood extends SlytherServerMessageBase {
 
     @Override
     public int[] getMessageIds() {
-        return new int[]{'b', 'f'};
+        return new int[] { 'b', 'f' };
+    }
+
+    @Override
+    public int getSendMessageId() {
+        return food.isNatural ? 'f' : 'b';
     }
 }

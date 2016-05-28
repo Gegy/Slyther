@@ -2,23 +2,24 @@ package net.gegy1000.slyther.network.message;
 
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.network.MessageByteBuffer;
+import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessageSetup extends SlytherServerMessageBase {
     @Override
-    public void write(MessageByteBuffer buffer, SlytherServer server) {
-        buffer.writeUInt24(server.configuration.GAME_RADIUS);
-        buffer.writeUInt16(server.configuration.MSCPS);
-        buffer.writeUInt16(server.configuration.SECTOR_SIZE);
-        buffer.writeUInt16(server.configuration.SECTORS_ALONG_EDGE);
-        buffer.writeUInt8((int) (server.configuration.SPANG_DV * 10));
-        buffer.writeUInt16((int) (server.configuration.NSP_1 * 100));
-        buffer.writeUInt16((int) (server.configuration.NSP_2 * 100));
-        buffer.writeUInt16((int) (server.configuration.NSP_3 * 100));
-        buffer.writeUInt16((int) (server.configuration.MAMU * 1000));
-        buffer.writeUInt16((int) (server.configuration.MANU_2 * 1000));
-        buffer.writeUInt16((int) (server.configuration.CST * 1000));
-        buffer.writeUInt8(server.configuration.PROTOCOL_VERSION);
+    public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
+        buffer.writeUInt24(server.configuration.gameRadius);
+        buffer.writeUInt16(server.configuration.mscps);
+        buffer.writeUInt16(server.configuration.sectorSize);
+        buffer.writeUInt16(server.configuration.sectorsAlongEdge);
+        buffer.writeUInt8((int) (server.configuration.spangDv * 10));
+        buffer.writeUInt16((int) (server.configuration.nsp1 * 100));
+        buffer.writeUInt16((int) (server.configuration.nsp2 * 100));
+        buffer.writeUInt16((int) (server.configuration.nsp3 * 100));
+        buffer.writeUInt16((int) (server.configuration.mamu * 1000));
+        buffer.writeUInt16((int) (server.configuration.mamu2 * 1000));
+        buffer.writeUInt16((int) (server.configuration.cst * 1000));
+        buffer.writeUInt8(client.protocolVersion - 1);
     }
 
     @Override
@@ -34,7 +35,7 @@ public class MessageSetup extends SlytherServerMessageBase {
         float mamu = buffer.readUInt16() / 1000.0F;
         float manu2 = buffer.readUInt16() / 1000.0F;
         float cst = buffer.readUInt16() / 1000.0F;
-        int protocolVersion = buffer.readUInt8();
+        int protocolVersion = buffer.readUInt8() + 1;
 
         client.setup(gameRadius, mscps, sectorSize, sectorCountAlongEdge, spangDV, nsp1, nsp2, nsp3, mamu, manu2, cst, protocolVersion);
     }

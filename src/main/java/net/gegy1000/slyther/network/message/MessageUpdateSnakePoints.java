@@ -1,14 +1,40 @@
 package net.gegy1000.slyther.network.message;
 
 import net.gegy1000.slyther.client.SlytherClient;
-import net.gegy1000.slyther.game.Snake;
+import net.gegy1000.slyther.client.game.Snake;
 import net.gegy1000.slyther.game.SnakePoint;
 import net.gegy1000.slyther.network.MessageByteBuffer;
+import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
+    private net.gegy1000.slyther.server.game.Snake snake;
+    private boolean relative;
+
+    public MessageUpdateSnakePoints() {
+    }
+
+    public MessageUpdateSnakePoints(net.gegy1000.slyther.server.game.Snake snake, boolean relative) {
+        this.snake = snake;
+        this.relative = relative;
+    }
+
     @Override
-    public void write(MessageByteBuffer buffer, SlytherServer server) {
+    public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
+        buffer.writeUInt16(snake.id);
+        SnakePoint head = snake.points.get(snake.points.size() - 1);
+        SnakePoint endPoint = snake.points.get(0);
+        int gameRadius = server.configuration.gameRadius;
+        if (relative) {
+            buffer.writeUInt16((int) endPoint.posX + gameRadius);
+            buffer.writeUInt16((int) endPoint.posY + gameRadius);
+        } else {
+            buffer.writeUInt8((int) ((endPoint.posX - head.posX) + 128));
+            buffer.writeUInt8((int) ((endPoint.posY - head.posY) + 128));
+        }
+        if (!snake.dying) {
+            buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
+        }
     }
 
     @Override
@@ -40,9 +66,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
             if (alive) {
                 snake.fam = (double) buffer.readUInt24() / 0xFFFFFF;
             }
-            SnakePoint point = new SnakePoint();
-            point.posX = x;
-            point.posY = y;
+            SnakePoint point = new SnakePoint(x, y);
             point.ebx = point.posX - head.posX;
             point.eby = point.posY - head.posY;
             snake.pts.add(point);
@@ -152,5 +176,11 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
     @Override
     public int[] getMessageIds() {
         return new int[] { 'g', 'n', 'G', 'N' };
+    }
+
+    @Override
+    public int getSendMessageId() {
+        char id = snake.dying ? 'g' : 'n';
+        return relative ? id : Character.toUpperCase(id);
     }
 }

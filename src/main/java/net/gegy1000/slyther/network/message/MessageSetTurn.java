@@ -23,5 +23,6 @@ public class MessageSetTurn extends SlytherClientMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
+        client.snake.turnDirection = direction;
     }
 }
