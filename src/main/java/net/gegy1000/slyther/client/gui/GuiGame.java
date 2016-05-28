@@ -84,14 +84,14 @@ public class GuiGame extends Gui {
             for (int i = 0; i < client.foods.size(); i++) {
                 Food food = client.foods.get(i);
                 if (food != null) {
-                    if (food.rx >= client.fpx1 && food.rx <= client.fpx2 && food.ry >= client.fpy1 && food.ry <= client.fpy2) {
-                        Color color = food.cv;
-                        float size = (food.sz / 5.0F) * food.rad * 0.25F;
+                    if (food.renderX >= client.fpx1 && food.renderX <= client.fpx2 && food.renderY >= client.fpy1 && food.renderY <= client.fpy2) {
+                        Color color = food.color;
+                        float size = (food.size / 5.0F) * food.rad * 0.25F;
                         GL11.glPushMatrix();
                         GL11.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), globalAlpha * food.fr);
                         GL11.glScalef(size, size, 1.0F);
-                        float x = food.rx / size;
-                        float y = food.ry / size;
+                        float x = food.renderX / size;
+                        float y = food.renderY / size;
                         drawTexture(x - 64.0F, y - 64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                         GL11.glPopMatrix();
                     }
@@ -103,8 +103,8 @@ public class GuiGame extends Gui {
                     float posX = prey.posX + prey.fx;
                     float posY = prey.posY + prey.fy;
                     if (posX >= client.fpx1 && posX <= client.fpx2 && posY >= client.fpy1 && posY <= client.fpy2) {
-                        Color color = prey.cv;
-                        float size = (prey.sz / 10.0F) * prey.rad;
+                        Color color = prey.color;
+                        float size = (prey.size / 10.0F) * prey.rad;
                         GL11.glPushMatrix();
                         GL11.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), globalAlpha * prey.fr);
                         GL11.glScalef(size, size, 1.0F);
@@ -117,13 +117,13 @@ public class GuiGame extends Gui {
             }
             for (int i = 0; i < client.snakes.size(); i++) {
                 Snake snake = client.snakes.get(i);
-                snake.iiv = true;
-                /*for (int t = snake.pts.size() - 1; t >= 0; t--) {
-                    SnakePoint point = snake.pts.get(t);
+                snake.isInView = true;
+                /*for (int t = snake.points.size() - 1; t >= 0; t--) {
+                    SnakePoint point = snake.points.get(t);
                     float pointX = point.posX + point.fx;
                     float pointY = point.posY + point.fy;
                     if (pointX >= client.bpx1 && pointX <= client.bpx2 && pointY >= client.bpy1 && pointY <= client.bpy2) {
-                        snake.iiv = true;
+                        snake.isInView = true;
                         break;
                     }
                 }*/
@@ -135,7 +135,7 @@ public class GuiGame extends Gui {
                     float originX = snake.posX + snake.fx;
                     float originY = snake.posY + snake.fy;
                     float ehang = snake.ehang;
-                    float sc = snake.sc;
+                    float sc = snake.scale;
                     if (snake.sep != snake.wsep) {
                         if (snake.sep < snake.wsep) {
                             snake.sep += 0.01F;
@@ -149,7 +149,7 @@ public class GuiGame extends Gui {
                             }
                         }
                     }
-                    if (snake.iiv) {
+                    if (snake.isInView) {
                         List<Float> xs = new ArrayList<>();
                         List<Float> ys = new ArrayList<>();
                         float lastX;
@@ -173,8 +173,8 @@ public class GuiGame extends Gui {
                         float K = 0;
                         float O = snake.sep * client.qsm;
                         SkinColor[] pattern = snake.rbcs;
-                        for (int pointIndex = snake.pts.size() - 1; pointIndex >= 0; pointIndex--) {
-                            SnakePoint point = snake.pts.get(pointIndex);
+                        for (int pointIndex = snake.points.size() - 1; pointIndex >= 0; pointIndex--) {
+                            SnakePoint point = snake.points.get(pointIndex);
                             lastX = x;
                             lastY = y;
                             x = point.posX + point.fx;
@@ -236,7 +236,7 @@ public class GuiGame extends Gui {
                             float pointY = (ys.get(pointIndex));
                             SkinColor color = pattern[pointIndex % pattern.length];
                             float colorMultipler = 1.0F;
-                            if (snake.sp > snake.fsp) {
+                            if (snake.speed > snake.accelleratingSpeed) {
                                 float offset = (((pointIndex + client.ticks + client.vfr) / 2.0F) % 20.0F);
                                 if (offset > 10.0F) {
                                     offset = 10.0F - (offset - 10.0F);
@@ -246,7 +246,7 @@ public class GuiGame extends Gui {
                             GL11.glColor4f(color.red * colorMultipler, color.green * colorMultipler, color.blue * colorMultipler, 1.0F);
                             GL11.glPushMatrix();
                             GL11.glTranslatef(pointX, pointY, 0);
-                            GL11.glScalef(snake.sc * 0.25F, snake.sc * 0.25F, 1);
+                            GL11.glScalef(snake.scale * 0.25F, snake.scale * 0.25F, 1);
                             drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
                             GL11.glPopMatrix();
                         }
@@ -257,10 +257,10 @@ public class GuiGame extends Gui {
                             GL11.glTranslatef(originX, originY, 0.0F);
                             float eyeOffsetX = (float) (Math.cos(ehang) * eyeForward + Math.cos(ehang - Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
                             float eyeOffsetY = (float) (Math.sin(ehang) * eyeForward + Math.sin(ehang - Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
-                            drawCircle(eyeOffsetX, eyeOffsetY, snake.er * sc, snake.ec);
+                            drawCircle(eyeOffsetX, eyeOffsetY, snake.er * sc, snake.eyeColor);
                             eyeOffsetX = (float) (Math.cos(ehang) * eyeForward + Math.cos(ehang + Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
                             eyeOffsetY = (float) (Math.sin(ehang) * eyeForward + Math.sin(ehang + Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
-                            drawCircle(eyeOffsetX, eyeOffsetY, snake.er * sc, snake.ec);
+                            drawCircle(eyeOffsetX, eyeOffsetY, snake.er * sc, snake.eyeColor);
                             eyeOffsetX = (float) (Math.cos(ehang) * (eyeForward + 0.5F) + snake.rex * sc + Math.cos(ehang + Math.PI / 2.0F) * eyeSideDistance);
                             eyeOffsetY = (float) (Math.sin(ehang) * (eyeForward + 0.5F) + snake.rey * sc + Math.sin(ehang + Math.PI / 2.0F) * eyeSideDistance);
                             drawCircle(eyeOffsetX, eyeOffsetY, 3.5F * sc, snake.ppc);
@@ -273,49 +273,49 @@ public class GuiGame extends Gui {
                             GL11.glPushMatrix();
                             float e = (float) Math.cos(snake.ang);
                             float w = (float) Math.sin(snake.ang);
-                            ax = originX - 8 * e * snake.sc;
-                            ay = originY - 8 * w * snake.sc;
-                            snake.atx[0] = ax;
-                            snake.aty[0] = ay;
-                            float E = snake.sc * gsc;
-                            int fj = snake.atx.length - 1;
+                            ax = originX - 8 * e * snake.scale;
+                            ay = originY - 8 * w * snake.scale;
+                            snake.antennaX[0] = ax;
+                            snake.antennaY[0] = ay;
+                            float E = snake.scale * gsc;
+                            int fj = snake.antennaX.length - 1;
                             if (!snake.antennaShown) {
                                 snake.antennaShown = true;
                                 for (int t = 1; t <= fj; t++) {
-                                    snake.atx[t] = ax - e * t * 4 * snake.sc;
-                                    snake.aty[t] = ay - w * t * 4 * snake.sc;
+                                    snake.antennaX[t] = ax - e * t * 4 * snake.scale;
+                                    snake.antennaY[t] = ay - w * t * 4 * snake.scale;
                                 }
                             }
                             for (int t = 1; t <= fj; t++) {
-                                x = (float) (snake.atx[t - 1] + (Math.random() * 2.0F - 1));
-                                y = (float) (snake.aty[t - 1] + (Math.random() * 2.0F - 1));
-                                e = snake.atx[t] - x;
-                                w = snake.aty[t] - y;
+                                x = (float) (snake.antennaX[t - 1] + (Math.random() * 2.0F - 1));
+                                y = (float) (snake.antennaY[t - 1] + (Math.random() * 2.0F - 1));
+                                e = snake.antennaX[t] - x;
+                                w = snake.antennaY[t] - y;
                                 float ang = (float) Math.atan2(w, e);
-                                x += Math.cos(ang) * snake.sc * 4.0F;
-                                y += Math.sin(ang) * snake.sc * 4.0F;
-                                snake.atvx[t] += (x - snake.atx[t]) * 0.1F;
-                                snake.atvy[t] += (y - snake.aty[t]) * 0.1F;
-                                snake.atx[t] += snake.atvx[t];
-                                snake.aty[t] += snake.atvy[t];
-                                snake.atvx[t] *= 0.88F;
-                                snake.atvy[t] *= 0.88F;
-                                e = snake.atx[t] - snake.atx[t - 1];
-                                w = snake.aty[t] - snake.aty[t - 1];
+                                x += Math.cos(ang) * snake.scale * 4.0F;
+                                y += Math.sin(ang) * snake.scale * 4.0F;
+                                snake.antennaVelocityX[t] += (x - snake.antennaX[t]) * 0.1F;
+                                snake.antennaVelocityY[t] += (y - snake.antennaY[t]) * 0.1F;
+                                snake.antennaX[t] += snake.antennaVelocityX[t];
+                                snake.antennaY[t] += snake.antennaVelocityY[t];
+                                snake.antennaVelocityX[t] *= 0.88F;
+                                snake.antennaVelocityY[t] *= 0.88F;
+                                e = snake.antennaX[t] - snake.antennaX[t - 1];
+                                w = snake.antennaY[t] - snake.antennaY[t - 1];
                                 float J = (float) Math.sqrt(e * e + w * w);
-                                if (J > snake.sc * 4.0F) {
+                                if (J > snake.scale * 4.0F) {
                                     ang = (float) Math.atan2(w, e);
-                                    snake.atx[t] = (float) (snake.atx[t - 1] + Math.cos(ang) * 4 * snake.sc);
-                                    snake.aty[t] = (float) (snake.aty[t - 1] + Math.sin(ang) * 4 * snake.sc);
+                                    snake.antennaX[t] = (float) (snake.antennaX[t - 1] + Math.cos(ang) * 4 * snake.scale);
+                                    snake.antennaY[t] = (float) (snake.antennaY[t - 1] + Math.sin(ang) * 4 * snake.scale);
                                 }
                             }
-                            fj = snake.atx.length;
-                            float prevX = snake.atx[fj - 1];
-                            float prevY = snake.aty[fj - 1];
+                            fj = snake.antennaX.length;
+                            float prevX = snake.antennaX[fj - 1];
+                            float prevY = snake.antennaY[fj - 1];
                             beginConnectedLines(E * 5.0F, snake.atc1);
                             for (int t = 0; t < fj; t++) {
-                                x = snake.atx[t];
-                                y = snake.aty[t];
+                                x = snake.antennaX[t];
+                                y = snake.antennaY[t];
                                 if (Math.abs(x - prevX) + Math.abs(y - prevY) >= 1) {
                                     drawConnectedLine(prevX, prevY, x, y);
                                     prevX = x;
@@ -325,8 +325,8 @@ public class GuiGame extends Gui {
                             endConnectedLines();
                             beginConnectedLines(E * 4.0F, snake.atc2);
                             for (int t = 0; t < fj; t++) {
-                                x = snake.atx[t];
-                                y = snake.aty[t];
+                                x = snake.antennaX[t];
+                                y = snake.antennaY[t];
                                 if (Math.abs(x - prevX) + Math.abs(y - prevY) >= 1) {
                                     drawConnectedLine(prevX, prevY, x, y);
                                     prevX = x;
@@ -335,9 +335,9 @@ public class GuiGame extends Gui {
                             }
                             endConnectedLines();
                             if (snake.antennaTexture != null) {
-                                GL11.glTranslatef(snake.atx[fj - 1], snake.aty[fj - 1], 0.0F);
-                                if (snake.abrot) {
-                                    float vang = (float) (Math.atan2(snake.aty[fj - 1] - snake.aty[fj - 2], snake.atx[fj - 1] - snake.atx[fj - 2]) - snake.atba);
+                                GL11.glTranslatef(snake.antennaX[fj - 1], snake.antennaY[fj - 1], 0.0F);
+                                if (snake.antennaBottomRotate) {
+                                    float vang = (float) (Math.atan2(snake.antennaY[fj - 1] - snake.antennaY[fj - 2], snake.antennaX[fj - 1] - snake.antennaX[fj - 2]) - snake.atba);
                                     if (vang < 0 || vang >= SlytherClient.PI_2) {
                                         vang %= SlytherClient.PI_2;
                                     }
@@ -352,7 +352,7 @@ public class GuiGame extends Gui {
                                     GL11.glRotatef((float) Math.toDegrees(snake.atba), 0.0F, 0.0F, 1.0F);
                                 }
                                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                                GL11.glScalef(snake.sc * 0.25F, snake.sc * 0.25F, 1.0F);
+                                GL11.glScalef(snake.scale * 0.25F, snake.scale * 0.25F, 1.0F);
                                 textureManager.bindTexture("/textures/" + snake.antennaTexture + ".png");
                                 drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                             }

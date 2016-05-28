@@ -18,32 +18,32 @@ public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
         int y = buffer.readUInt16() * 3 + 1;
         Prey prey = client.getPrey(id);
         if (prey != null) {
-            float moveAmount = (client.etm / 8.0F * prey.sp / 4.0F) * client.lagMultiplier;
+            float moveAmount = (client.etm / 8.0F * prey.speed / 4.0F) * client.lagMultiplier;
             float prevX = prey.posX;
             float prevY = prey.posY;
             if (buffer.hasExactlyRemaining(9)) {
-                prey.dir = buffer.readUInt8() - 48;
+                prey.turningDirection = buffer.readUInt8() - 48;
                 prey.ang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
                 prey.wang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
-                prey.sp = buffer.readUInt16() / 1000.0F;
+                prey.speed = buffer.readUInt16() / 1000.0F;
             } else if (buffer.hasExactlyRemaining(5)) {
                 prey.ang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
-                prey.sp = buffer.readUInt16() / 1000.0F;
+                prey.speed = buffer.readUInt16() / 1000.0F;
             } else if (buffer.hasExactlyRemaining(6)) {
-                prey.dir = buffer.readUInt8() - 48;
+                prey.turningDirection = buffer.readUInt8() - 48;
                 prey.wang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
-                prey.sp = buffer.readUInt16() / 1000.0F;
+                prey.speed = buffer.readUInt16() / 1000.0F;
             } else if (buffer.hasExactlyRemaining(7)) {
-                prey.dir = buffer.readUInt8() - 48;
+                prey.turningDirection = buffer.readUInt8() - 48;
                 prey.ang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
                 prey.wang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
             } else if (buffer.hasExactlyRemaining(3)) {
                 prey.ang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
             } else if (buffer.hasExactlyRemaining(4)) {
-                prey.dir = buffer.readUInt8() - 48;
+                prey.turningDirection = buffer.readUInt8() - 48;
                 prey.wang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
             } else if (buffer.hasExactlyRemaining(2)) {
-                prey.sp = buffer.readUInt16() / 1000.0F;
+                prey.speed = buffer.readUInt16() / 1000.0F;
             }
             prey.posX = (float) (x + Math.cos(prey.ang) * moveAmount);
             prey.posY = (float) (y + Math.sin(prey.ang) * moveAmount);

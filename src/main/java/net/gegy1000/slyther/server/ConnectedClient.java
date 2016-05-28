@@ -59,7 +59,7 @@ public class ConnectedClient {
 
     public void update() {
         if (snake != null) {
-            float newScale = 0.4F / Math.max(1.0F, (snake.points.size() + 16.0F) / 36.0F) + 0.5F;
+            float newScale = 0.4F / Math.max(1.0F, (snake.sct + 16.0F) / 36.0F) + 0.5F;
             if (gsc != newScale) {
                 if (gsc < newScale) {
                     gsc += 0.0001F;

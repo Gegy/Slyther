@@ -11,18 +11,14 @@ public class Prey {
     public float posX;
     public float posY;
     public float rad;
-    public float sz;
-    public Color cv;
-    public int dir;
+    public float size;
+    public Color color;
+    public int turningDirection;
     public float wang;
     public float ang;
-    public float sp;
+    public float speed;
     public float fr;
     public int gfr;
-    public int rr;
-    public int gg;
-    public int bb;
-    public int cs;
     public float[] fxs;
     public float[] fys;
     public int fpos;
@@ -34,31 +30,26 @@ public class Prey {
     public Snake eater;
     public float gr;
 
-    public Prey(SlytherClient client, int id, float x, float y, float size, Color cv, int dir, float wang, float ang, float sp) {
+    public Prey(SlytherClient client, int id, float x, float y, float size, Color color, int turningDirection, float wang, float ang, float speed) {
         this.client = client;
         this.id = id;
         posX = x;
         posY = y;
         rad = 0.00001F;
-        sz = size;
-        this.cv = cv;
-        this.dir = dir;
+        this.size = size;
+        this.color = color;
+        this.turningDirection = turningDirection;
         this.wang = wang;
         this.ang = ang;
-        this.sp = sp;
+        this.speed = speed;
         gfr = (int) (64 * Math.random());
-        SkinColor color = SkinColor.values()[this.cv.ordinal()];
-        rr = (int) Math.min(255, color.red + Math.floor(20.0F * Math.random()));
-        gg = (int) Math.min(255, color.green + Math.floor(20.0F * Math.random()));
-        bb = (int) Math.min(255, color.blue + Math.floor(20.0F * Math.random()));
-        cs = ((rr & 0xFF) << 16) | ((gg & 0xFF) << 8) | (bb & 0xFF);
         fxs = new float[SlytherClient.RFC];
         fys = new float[SlytherClient.RFC];
     }
 
     public void update(float vfr, float vfrb) {
         float turnSpeed = client.MAMU2 * vfr;
-        float moveAmount = sp * vfr / 4;
+        float moveAmount = speed * vfr / 4;
         if (vfrb > 0) {
             if (ftg > 0) {
                 float h = vfrb;
@@ -84,7 +75,7 @@ public class Prey {
                 ftg = -1;
             }
         }
-        if (dir == 1) {
+        if (turningDirection == 1) {
             ang -= turnSpeed;
             if (ang < 0 || ang >= SlytherClient.PI_2) {
                 ang %= SlytherClient.PI_2;
@@ -101,9 +92,9 @@ public class Prey {
             }
             if (h > 0) {
                 ang = wang;
-                dir = 0;
+                turningDirection = 0;
             }
-        } else if (dir == 2) {
+        } else if (turningDirection == 2) {
             ang += turnSpeed;
             if (ang < 0 || ang >= SlytherClient.PI_2) {
                 ang %= SlytherClient.PI_2;
@@ -120,7 +111,7 @@ public class Prey {
             }
             if (h < 0) {
                 ang = wang;
-                dir = 0;
+                turningDirection = 0;
             }
         } else {
             ang = wang;

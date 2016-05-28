@@ -25,7 +25,7 @@ public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
         buffer.writeUInt16(server.getSnakes().size());
         for (LeaderboardEntry leaderboardEntry : server.leaderboard) {
             Snake snake = leaderboardEntry.client.snake;
-            buffer.writeUInt16(snake.points.size());
+            buffer.writeUInt16(snake.sct);
             buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
             buffer.writeUInt8(SkinHandler.INSTANCE.getDetails(snake.client.skin).pattern[0].ordinal() % Color.values().length);
             String name = leaderboardEntry.client.name;

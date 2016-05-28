@@ -8,12 +8,12 @@ public class Food {
     public int id;
     public float posX;
     public float posY;
-    public float rx;
-    public float ry;
+    public float renderX;
+    public float renderY;
     public int rsp;
-    public Color cv;
+    public Color color;
     public float rad;
-    public float sz;
+    public float size;
     public float lrrad;
     public float fr;
     public float gfr;
@@ -22,7 +22,7 @@ public class Food {
     public float eatenFr;
     public boolean eaten;
     public Snake eater;
-    public int sectorX; // Sector X?
+    public int sectorX;
     public int sectorY;
 
     public Food(SlytherClient client, int id, float x, float y, float size, boolean isNatural, Color color) {
@@ -30,15 +30,15 @@ public class Food {
         this.id = id;
         posX = x;
         posY = y;
-        rx = x;
-        ry = y;
+        renderX = x;
+        renderY = y;
         rsp = isNatural ? 2 : 1;
-        cv = color;
-        rad = 0.00001F; //rendering with rad not sz?
-        sz = size;
+        this.color = color;
+        rad = 0.00001F; //rendering with rad not size?
+        this.size = size;
         lrrad = rad;
         gfr = (int) (64.0F * Math.random());
-        gr = 0.64F + 0.1F * sz;
+        gr = 0.64F + 0.1F * this.size;
         wsp = (float) (0.0225F * (2.0F * Math.random() - 1.0F));
     }
 

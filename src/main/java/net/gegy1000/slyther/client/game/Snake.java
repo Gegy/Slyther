@@ -14,11 +14,11 @@ public class Snake {
     public int id;
     public float posX;
     public float posY;
-    public Skin rcv;
+    public Skin skin;
     public int er;
     public float pr;
     public float pma;
-    public int ec;
+    public int eyeColor;
     public float eca;
     public int ppa;
     public int ppc;
@@ -30,11 +30,11 @@ public class Snake {
     public int atc2;
     public boolean atwg;
     public float atia;
-    public boolean abrot;
-    public float[] atx;
-    public float[] aty;
-    public float[] atvx;
-    public float[] atvy;
+    public boolean antennaBottomRotate;
+    public float[] antennaX;
+    public float[] antennaY;
+    public float[] antennaVelocityX;
+    public float[] antennaVelocityY;
     public float[] atax;
     public float[] atay;
     public int blbx;
@@ -53,21 +53,15 @@ public class Snake {
     public int episz;
     public SkinColor[] rbcs;
     public SkinDetails skinDetails;
-    public SkinColor cv; // color value
+    public SkinColor color; // color value
     public int fnfr = 0;
     public int na;
     public float chl;
     public float tsp;
     public int sfr;
-    public int rr;
-    public int gg;
-    public int bb;
-    public int cs;
-    public int cs04;
-    public int csw;
-    public float sc;
-    public float ssp;
-    public float fsp; // Fast speed?
+    public float scale;
+    public float moveSpeed;
+    public float accelleratingSpeed; // Fast speed?
     public float msp;
     public float[] fxs;
     public float[] fys;
@@ -91,9 +85,9 @@ public class Snake {
     public float wang;
     public float rex;
     public float rey;
-    public float sp;
+    public float speed;
     public SnakePoint lnp; // Tail point or Head point (Last point entry)
-    public List<SnakePoint> pts;
+    public List<SnakePoint> points;
     public int sct;
     public int flpos;
     public float[] fls;
@@ -105,14 +99,14 @@ public class Snake {
     public float spang;
     public float deadAmt;
     public float aliveAmt;
-    public boolean md;
-    public boolean prevMd;
+    public boolean mouseDown;
+    public boolean wasMouseDown;
     public boolean dead;
-    public int dir;
+    public int turningDirection;
     public int edir;
     public float sep;
     public float wsep;
-    public boolean iiv;
+    public boolean isInView;
     public boolean antennaShown;
     public String antennaTexture;
 
@@ -123,15 +117,9 @@ public class Snake {
         posY = y;
         setSkin(skin);
         na = 1;
-        rr = (int) Math.min(255, cv.red + Math.floor(20.0F * Math.random()));
-        gg = (int) Math.min(255, cv.green + Math.floor(20.0F * Math.random()));
-        bb = (int) Math.min(255, cv.blue + Math.floor(20.0F * Math.random()));
-        cs = ((rr & 0xFF) << 16) | ((gg & 0xFF) << 8) | (bb & 0xFF);
-        cs04 = (int) ((Math.min(255, Math.max(0, Math.round(0.4 * rr))) & 0xFF) << 16 | Math.min(255, Math.max(0, Math.round(0.4 * gg) & 0xFF) << 8) | Math.min(255, Math.max(0, Math.round(0.4 * bb) & 0xFF)));
-        csw = (int) ((Math.min(255, Math.max(0, Math.round(0.5 * rr))) & 0xFF) << 16 | Math.min(255, Math.max(0, Math.round(0.5 * gg) & 0xFF) << 8) | Math.min(255, Math.max(0, Math.round(0.5 * bb) & 0xFF)));
-        sc = 1.0F;
-        ssp = client.NSP1 + client.NSP2 * sc;
-        fsp = ssp + 0.1F;
+        scale = 1.0F;
+        moveSpeed = client.NSP1 + client.NSP2 * scale;
+        accelleratingSpeed = moveSpeed + 0.1F;
         msp = client.NSP3;
         fxs = new float[SlytherClient.RFC];
         fys = new float[SlytherClient.RFC];
@@ -144,17 +132,17 @@ public class Snake {
         ang = angle;
         eang = angle;
         wang = angle;
-        sp = 2;
+        speed = 2;
 
         if (points != null) {
             lnp = points.get(points.size() - 1);
-            pts = points;
+            this.points = points;
             sct = points.size();
             if (points.get(0).dying) {
                 sct--;
             }
         } else {
-            pts = new ArrayList<>();
+            this.points = new ArrayList<>();
         }
 
         fls = new float[SlytherClient.LFC];
@@ -166,11 +154,11 @@ public class Snake {
     }
 
     public void setSkin(Skin skin) {
-        rcv = skin;
+        this.skin = skin;
         er = 6;
         pr = 3.5F;
         pma = 2.3F;
-        ec = 0xFFFFFF;
+        eyeColor = 0xFFFFFF;
         eca = 0.75F;
         ppa = 1;
 
@@ -184,17 +172,17 @@ public class Snake {
             atc2 = details.antennaSecondaryColor;
             atwg = details.atwg;
             atia = details.atia;
-            abrot = details.abrot;
+            antennaBottomRotate = details.abrot;
             int antennaLength = details.antennaLength;
-            atx = new float[antennaLength];
-            aty = new float[antennaLength];
-            atvx = new float[antennaLength];
-            atvy = new float[antennaLength];
+            antennaX = new float[antennaLength];
+            antennaY = new float[antennaLength];
+            antennaVelocityX = new float[antennaLength];
+            antennaVelocityY = new float[antennaLength];
             atax = new float[antennaLength];
             atay = new float[antennaLength];
             for (int i = 0; i < antennaLength; i++) {
-                atx[i] = posX;
-                aty[i] = posY;
+                antennaX[i] = posX;
+                antennaY[i] = posY;
             }
             blbx = details.blbx;
             blby = details.blby;
@@ -202,7 +190,7 @@ public class Snake {
             blbh = details.blbh;
             bsc = details.bsc;
             blba = details.blba;
-            ec = details.eyeColor;
+            eyeColor = details.eyeColor;
             eca = details.eca;
             oneEye = details.oneEye;
             ebiw = details.ebiw;
@@ -220,22 +208,23 @@ public class Snake {
         }
 
         rbcs = pattern;
-        cv = pattern[0];
+        color = pattern[0];
     }
 
+    //Set new length
     public void snl() {
-        double d = tl;
-        tl = sct + fam;
-        d = tl - d;
-        int b = flpos;
+        double tl = this.tl;
+        this.tl = sct + fam;
+        tl = this.tl - tl;
+        int flpos = this.flpos;
         for (int i = 0; i < SlytherClient.LFC; i++) {
-            fls[b] -= d * SlytherClient.LFAS[i];
-            b++;
-            if (b >= SlytherClient.LFC) {
-                b = 0;
+            fls[flpos] -= tl * SlytherClient.LFAS[i];
+            flpos++;
+            if (flpos >= SlytherClient.LFC) {
+                flpos = 0;
             }
         }
-        fl = fls[flpos];
+        fl = fls[this.flpos];
         fltg = SlytherClient.LFC;
         if (this == client.player) {
             client.wumsts = true;
@@ -244,35 +233,35 @@ public class Snake {
 
     public void update(float vfr, float vfrb, float vfrb2) {
         float turnSpeed = client.MAMU * vfr * scang * spang;
-        float moveAmount = sp * vfr / 4;
+        float moveAmount = speed * vfr / 4;
         if (moveAmount > msl) {
             moveAmount = msl;
         }
         if (client.allowUserInput) {
             if (this == client.player) {
-                boolean prev = md;
-                md = Mouse.isButtonDown(0) || Mouse.isButtonDown(1);
-                if (prev != md) {
-                    prevMd = prev;
+                boolean prev = mouseDown;
+                mouseDown = Mouse.isButtonDown(0) || Mouse.isButtonDown(1);
+                if (prev != mouseDown) {
+                    wasMouseDown = prev;
                 }
             }
         }
         if (!dead) {
-            if (tsp != sp) {
-                if (tsp < sp) {
+            if (tsp != speed) {
+                if (tsp < speed) {
                     tsp += 0.3F * vfr;
-                    if (tsp > sp) {
-                        tsp = sp;
+                    if (tsp > speed) {
+                        tsp = speed;
                     }
                 } else {
                     tsp -= 0.3F * vfr;
-                    if (tsp < sp) {
-                        tsp = sp;
+                    if (tsp < speed) {
+                        tsp = speed;
                     }
                 }
             }
-            if (tsp > fsp) {
-                sfr += (tsp - fsp) * vfr * 0.021F;
+            if (tsp > accelleratingSpeed) {
+                sfr += (tsp - accelleratingSpeed) * vfr * 0.021F;
             }
             if (fltg > 0) {
                 float h = vfrb;
@@ -296,7 +285,7 @@ public class Snake {
             }
             cfl = tl + fl;
         }
-        if (dir == 1) {
+        if (turningDirection == 1) {
             ang -= turnSpeed;
             if (ang < 0 || ang >= SlytherClient.PI_2) {
                 ang %= SlytherClient.PI_2;
@@ -313,9 +302,9 @@ public class Snake {
             }
             if (h > 0) {
                 ang = wang;
-                dir = 0;
+                turningDirection = 0;
             }
-        } else if (dir == 2) {
+        } else if (turningDirection == 2) {
             ang += turnSpeed;
             if (ang < 0 || ang >= SlytherClient.PI_2) {
                 ang %= SlytherClient.PI_2;
@@ -332,7 +321,7 @@ public class Snake {
             }
             if (h < 0) {
                 ang = wang;
-                dir = 0;
+                turningDirection = 0;
             }
         } else {
             ang = wang;
@@ -343,7 +332,7 @@ public class Snake {
                 ehl = 1;
             }
         }
-        SnakePoint point = pts.get(pts.size() - 1);
+        SnakePoint point = points.get(points.size() - 1);
         if (point != null) {
             wehang = (float) Math.atan2(posY + fy - point.posY - point.fy + point.eby * (1.0F - ehl), posX + fx - point.posX - point.fx + point.ebx * (1.0F - ehl));
         }
@@ -410,12 +399,12 @@ public class Snake {
             chl += moveAmount / msl;
         }
         if (vfrb > 0) {
-            for (int pointIndex = pts.size() - 1; pointIndex >= 0; pointIndex--) {
-                point = pts.get(pointIndex);
+            for (int pointIndex = points.size() - 1; pointIndex >= 0; pointIndex--) {
+                point = points.get(pointIndex);
                 if (point.dying) {
                     point.da += 0.0015F * vfrb;
                     if (point.da > 1) {
-                        pts.remove(pointIndex);
+                        points.remove(pointIndex);
                         point.dying = false;
                     }
                 }

@@ -36,7 +36,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
         if (removing) {
             buffer.writeUInt8(dead ? 1 : 0);
         } else {
-            buffer.writeUInt24( (int) (snake.ang / ((2.0F * Math.PI) / 0xFFFFFF)));
+            buffer.writeUInt24( (int) (snake.angle / ((2.0F * Math.PI) / 0xFFFFFF)));
             buffer.writeUInt8(0);
             buffer.writeUInt24( (int) (snake.wang / ((2.0F * Math.PI) / 0xFFFFFF)));
             buffer.writeUInt16((int) (snake.sp * 1000.0F));
@@ -115,8 +115,8 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                 client.viewX = pointX;
                 client.viewY = pointY;
                 client.player = snake;
-                snake.md = false;
-                snake.prevMd = false;
+                snake.mouseDown = false;
+                snake.wasMouseDown = false;
                 snake.name = client.configuration.nickname;
             } else {
                 snake.name = name;
@@ -125,24 +125,24 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                 }
             }
             snake.eang = snake.wang = wang;
-            snake.sp = sp;
+            snake.speed = sp;
             snake.spang = sp / client.SPANG_DIV;
             if (snake.spang > 1.0F) {
                 snake.spang = 1.0F;
             }
             snake.fam = fam;
-            snake.sc = Math.min(6.0F, 1.0F + (snake.sct - 2.0F) / 106.0F);
-            snake.scang = (float) (0.13F + 0.87F * Math.pow((7.0F - snake.sc) / 6.0F, 2.0F));
-            snake.ssp = client.NSP1 + client.NSP2 * snake.sc;
-            snake.fsp = snake.ssp + 0.1F;
-            snake.wsep = snake.sc * 6.0F;
+            snake.scale = Math.min(6.0F, 1.0F + (snake.sct - 2.0F) / 106.0F);
+            snake.scang = (float) (0.13F + 0.87F * Math.pow((7.0F - snake.scale) / 6.0F, 2.0F));
+            snake.moveSpeed = client.NSP1 + client.NSP2 * snake.scale;
+            snake.accelleratingSpeed = snake.moveSpeed + 0.1F;
+            snake.wsep = snake.scale * 6.0F;
             float max = SlytherClient.NSEP / client.gsc;
             if (snake.wsep < max) {
                 snake.wsep = max;
             }
             snake.sep = snake.wsep;
 
-            System.out.println("Added snake \"" + snake.name + "\" with skin " + snake.rcv);
+            System.out.println("Added snake \"" + snake.name + "\" with skin " + snake.skin);
             client.snakes.add(snake);
 
             snake.snl();

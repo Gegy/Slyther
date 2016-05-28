@@ -28,20 +28,20 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
     public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
         buffer.writeUInt16(snake.id);
         if (dir && ang && wang && sp) {
-            buffer.writeUInt8((int) (snake.ang / (2.0F * Math.PI / 256.0F)));
+            buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
             buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
             buffer.writeUInt8((int) (snake.sp * 18.0F));
         } else if (ang && sp) {
-            buffer.writeUInt8((int) (snake.ang / (2.0F * Math.PI / 256.0F)));
+            buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
             buffer.writeUInt8((int) (snake.sp * 18.0F));
         } else if ((dir) && (snake.turnDirection == 1 || snake.turnDirection == 2) && wang && sp) {
             buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
             buffer.writeUInt8((int) (snake.sp * 18.0F));
         } else if ((dir && snake.turnDirection == 2) && ang && wang) {
-            buffer.writeUInt8((int) (snake.ang / (2.0F * Math.PI / 256.0F)));
+            buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
             buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
         } else if (ang) {
-            buffer.writeUInt8((int) (snake.ang / (2.0F * Math.PI / 256.0F)));
+            buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
         } else if ((dir && snake.turnDirection == 1) && wang) {
             buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
         } else if (sp) {
@@ -91,7 +91,7 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
         Snake snake = client.getSnake(id);
         if (snake != null) {
             if (dir != -1) {
-                snake.dir = dir;
+                snake.turningDirection = dir;
             }
             if (ang != -1) {
                 float fa = (float) ((ang - snake.ang) % SlytherClient.PI_2);
@@ -119,7 +119,7 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
                 }
             }
             if (sp != -1) {
-                snake.sp = sp;
+                snake.speed = sp;
                 snake.spang = sp / client.SPANG_DIV;
                 if (snake.spang > 1.0F) {
                     snake.spang = 1.0F;

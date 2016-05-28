@@ -10,13 +10,16 @@ import net.gegy1000.slyther.server.SlytherServer;
 public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
     private net.gegy1000.slyther.server.game.Snake snake;
     private boolean relative;
+    private boolean incrementSct;
+    private static long lastTime;
 
     public MessageUpdateSnakePoints() {
     }
 
-    public MessageUpdateSnakePoints(net.gegy1000.slyther.server.game.Snake snake, boolean relative) {
+    public MessageUpdateSnakePoints(net.gegy1000.slyther.server.game.Snake snake, boolean relative, boolean incrementSct) {
         this.snake = snake;
         this.relative = relative;
+        this.incrementSct = incrementSct;
     }
 
     @Override
@@ -39,21 +42,21 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        boolean alive = messageId == 'n' || messageId == 'N';
+        boolean incrementSct = messageId == 'n' || messageId == 'N';
         int id = buffer.readUInt16();
         Snake snake = client.getSnake(id);
         if (snake != null) {
-            if (alive) {
+            if (incrementSct) {
                 snake.sct++;
             } else {
-                for (SnakePoint point : snake.pts) {
+                for (SnakePoint point : snake.points) {
                     if (!point.dying) {
                         point.dying = true;
                         break;
                     }
                 }
             }
-            SnakePoint head = snake.pts.get(snake.pts.size() - 1);
+            SnakePoint head = snake.points.get(snake.points.size() - 1);
             float x;
             float y;
             if (messageId == 'g' || messageId == 'n') {
@@ -63,14 +66,14 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
                 x = head.posX + (buffer.readUInt8() - 128);
                 y = head.posY + (buffer.readUInt8() - 128);
             }
-            if (alive) {
+            if (incrementSct) {
                 snake.fam = (double) buffer.readUInt24() / 0xFFFFFF;
             }
             SnakePoint point = new SnakePoint(x, y);
             point.ebx = point.posX - head.posX;
             point.eby = point.posY - head.posY;
-            snake.pts.add(point);
-            if (snake.iiv) {
+            snake.points.add(point);
+            if (snake.isInView) {
                 float fx = (snake.posX + snake.fx) - point.posX;
                 float fy = (snake.posY + snake.fy) - point.posY;
                 point.fx += fx;
@@ -81,12 +84,12 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
                 point.ems[point.eiu] = 1.0F;
                 point.eiu++;
             }
-            if (snake.pts.size() - 3 >= 1) {
-                SnakePoint prevPoint = snake.pts.get(snake.pts.size() - 3);
+            if (snake.points.size() - 3 >= 1) {
+                SnakePoint prevPoint = snake.points.get(snake.points.size() - 3);
                 float distMultiplier = 0;
                 int i = 1;
-                for (int pointIndex = snake.pts.size() - 4; pointIndex >= 0; pointIndex--) {
-                    point = snake.pts.get(pointIndex);
+                for (int pointIndex = snake.points.size() - 4; pointIndex >= 0; pointIndex--) {
+                    point = snake.points.get(pointIndex);
                     float fx = point.posX;
                     float fy = point.posY;
                     if (i <= 4) {
@@ -94,7 +97,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
                     }
                     point.posX += (prevPoint.posX - point.posX) * distMultiplier;
                     point.posY += (prevPoint.posY - point.posY) * distMultiplier;
-                    if (snake.iiv) {
+                    if (snake.isInView) {
                         fx -= point.posX;
                         fy -= point.posY;
                         point.fx += fx;
@@ -109,16 +112,16 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
                     i++;
                 }
             }
-            snake.sc = Math.min(6.0F, (snake.sct - 2.0F) / 106.0F + 1.0F);
-            snake.scang = (float) (Math.pow((7.0F - snake.sc) / 6.0F, 2.0F) * 0.87F + 0.13F);
-            snake.ssp = client.NSP1 + client.NSP2 * snake.sc;
-            snake.fsp = snake.ssp + 0.1F;
-            snake.wsep = snake.sc * 6.0F;
+            snake.scale = Math.min(6.0F, (snake.sct - 2.0F) / 106.0F + 1.0F);
+            snake.scang = (float) (Math.pow((7.0F - snake.scale) / 6.0F, 2.0F) * 0.87F + 0.13F);
+            snake.moveSpeed = client.NSP1 + client.NSP2 * snake.scale;
+            snake.accelleratingSpeed = snake.moveSpeed + 0.1F;
+            snake.wsep = snake.scale * 6.0F;
             float min = SlytherClient.NSEP / client.gsc;
             if (snake.wsep < min) {
                 snake.wsep = min;
             }
-            if (alive) {
+            if (incrementSct) {
                 snake.snl();
             }
             snake.lnp = point;
@@ -126,7 +129,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
                 client.ovxx = snake.posX + snake.fx;
                 client.ovyy = snake.posY + snake.fy;
             }
-            float moveAmount = client.etm / 8.0F * snake.sp / 4.0F;
+            float moveAmount = client.etm / 8.0F * snake.speed / 4.0F;
             moveAmount *= client.lagMultiplier;
             float prevChl = snake.chl - 1;
             snake.chl = moveAmount / snake.msl;
@@ -180,7 +183,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
 
     @Override
     public int getSendMessageId() {
-        char id = snake.dying ? 'g' : 'n';
+        char id = incrementSct ? 'n' : 'g';
         return relative ? id : Character.toUpperCase(id);
     }
 }

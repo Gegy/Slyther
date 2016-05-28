@@ -490,10 +490,10 @@ public class SlytherClient {
                 }
                 etm *= Math.pow(0.993, vfrb);
                 if (time - lastAccelerateUpdateTime > 150) {
-                    if (player.md != player.prevMd) {
+                    if (player.mouseDown != player.wasMouseDown) {
                         lastAccelerateUpdateTime = time;
-                        networkManager.send(new MessageAccelerate(player.md));
-                        player.prevMd = player.md;
+                        networkManager.send(new MessageAccelerate(player.mouseDown));
+                        player.wasMouseDown = player.mouseDown;
                     }
                 }
                 if (allowUserInput) {
@@ -541,10 +541,10 @@ public class SlytherClient {
                             Snake eater = food.eater;
                             float h = food.eatenFr * food.eatenFr;
                             food.rad = food.lrrad * (1.0F - food.eatenFr * h);
-                            food.rx = (int) (food.posX + (eater.posX + eater.fx + Math.cos(eater.ang + eater.fa) * (43.0F - 24.0F * h) * (1.0F - h) - food.posX) * h);
-                            food.ry = (int) (food.posY + (eater.posY + eater.fy + Math.cos(eater.ang + eater.fa) * (43.0F - 24.0F * h) * (1.0F - h) - food.posY) * h);
-                            food.rx += Math.cos(food.wsp * food.gfr) * (1.0F - food.eatenFr) * 6.0F;
-                            food.ry += Math.sin(food.wsp * food.gfr) * (1.0F - food.eatenFr) * 6.0F;
+                            food.renderX = (int) (food.posX + (eater.posX + eater.fx + Math.cos(eater.ang + eater.fa) * (43.0F - 24.0F * h) * (1.0F - h) - food.posX) * h);
+                            food.renderY = (int) (food.posY + (eater.posY + eater.fy + Math.cos(eater.ang + eater.fa) * (43.0F - 24.0F * h) * (1.0F - h) - food.posY) * h);
+                            food.renderX += Math.cos(food.wsp * food.gfr) * (1.0F - food.eatenFr) * 6.0F;
+                            food.renderY += Math.sin(food.wsp * food.gfr) * (1.0F - food.eatenFr) * 6.0F;
                         }
                     } else {
                         if (food.fr != 1.0F) {
@@ -558,8 +558,8 @@ public class SlytherClient {
                             }
                             food.lrrad = food.rad;
                         }
-                        food.rx = (int) (food.posX + 6.0F * Math.cos(food.wsp * food.gfr));
-                        food.ry = (int) (food.posY + 6.0F * Math.sin(food.wsp * food.gfr));
+                        food.renderX = (int) (food.posX + 6.0F * Math.cos(food.wsp * food.gfr));
+                        food.renderY = (int) (food.posY + 6.0F * Math.sin(food.wsp * food.gfr));
                     }
                 }
             }
