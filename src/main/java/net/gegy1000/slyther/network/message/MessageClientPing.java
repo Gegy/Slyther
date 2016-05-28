@@ -8,7 +8,7 @@ import net.gegy1000.slyther.server.SlytherServer;
 public class MessageClientPing extends SlytherClientMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherClient client) {
-        buffer.writeUInt8(252);
+        buffer.writeUInt8(251);
     }
 
     @Override
