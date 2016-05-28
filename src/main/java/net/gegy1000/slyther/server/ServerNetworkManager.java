@@ -62,15 +62,6 @@ public class ServerNetworkManager extends WebSocketServer {
     }
 
     public void send(ConnectedClient client, SlytherServerMessageBase message) {
-        try {
-            MessageByteBuffer buffer = new MessageByteBuffer();
-            buffer.writeUInt16((int) (System.currentTimeMillis() - client.lastPacketTime));
-            buffer.writeUInt8(message.getMessageIds()[0]); //TODO Select
-            message.write(buffer, server);
-            client.socket.send(buffer.bytes());
-        } catch (Exception e) {
-            System.err.println("An error occurred while sending message " + message.getClass().getName());
-            e.printStackTrace();
-        }
+        client.send(server, message);
     }
 }

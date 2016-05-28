@@ -83,7 +83,7 @@ public class ClientNetworkManager extends WebSocketClient {
     public void ping() {
         if (isOpen && !isReplaying) {
             if (!client.wfpr) {
-                send(new MessageClientPing());
+                send(new byte[] { (byte) 251 });
                 client.wfpr = true;
             }
         }
