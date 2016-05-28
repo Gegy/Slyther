@@ -32,6 +32,6 @@ public class MessageAddSector extends SlytherServerMessageBase {
 
     @Override
     public int[] getMessageIds() {
-        return new int[] { 'W', 'w' };
+        return new int[] { 'W' };
     }
 }
