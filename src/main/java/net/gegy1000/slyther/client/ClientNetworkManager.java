@@ -1,9 +1,10 @@
 package net.gegy1000.slyther.client;
 
+import net.gegy1000.slyther.network.INetworkManager;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
 import net.gegy1000.slyther.network.ServerHandler;
-import net.gegy1000.slyther.network.message.MessageClientSetup;
+import net.gegy1000.slyther.network.message.client.MessageClientSetup;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import org.java_websocket.client.WebSocketClient;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientNetworkManager extends WebSocketClient {
+public class ClientNetworkManager extends WebSocketClient implements INetworkManager {
     public static final byte[] PING_DATA = new byte[] { (byte) 251 };
     private SlytherClient client;
     private String ip;

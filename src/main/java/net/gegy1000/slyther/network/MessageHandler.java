@@ -1,6 +1,8 @@
 package net.gegy1000.slyther.network;
 
 import net.gegy1000.slyther.network.message.*;
+import net.gegy1000.slyther.network.message.client.*;
+import net.gegy1000.slyther.network.message.server.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +16,7 @@ public enum MessageHandler {
         registerServer(MessagePing.class);
         registerServer(MessageSetup.class);
         registerServer(MessageNewSnake.class);
-        registerServer(MessageUpdateSectorFoods.class);
+        registerServer(MessagePopulateSector.class);
         registerServer(MessageNewFood.class);
         registerServer(MessageNewPrey.class);
         registerServer(MessageUpdateSnake.class);

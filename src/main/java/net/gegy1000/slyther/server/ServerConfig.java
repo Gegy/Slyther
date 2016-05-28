@@ -1,6 +1,8 @@
 package net.gegy1000.slyther.server;
 
-public class ServerConfig {
+import net.gegy1000.slyther.game.IConfiguration;
+
+public class ServerConfig implements IConfiguration {
     public int gameRadius = 21600;
     public int mscps = 411;
     public int sectorSize = 480;

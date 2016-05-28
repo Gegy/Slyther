@@ -1,10 +1,9 @@
 package net.gegy1000.slyther.server;
 
+import net.gegy1000.slyther.network.INetworkManager;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
-import net.gegy1000.slyther.network.message.MessageSetup;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
-import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -14,7 +13,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-public class ServerNetworkManager extends WebSocketServer {
+public class ServerNetworkManager extends WebSocketServer implements INetworkManager {
     private SlytherServer server;
 
     public ServerNetworkManager(SlytherServer server, int port) throws UnknownHostException {

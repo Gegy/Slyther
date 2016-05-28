@@ -1,18 +1,18 @@
 package net.gegy1000.slyther.client;
 
-import net.gegy1000.slyther.client.game.Food;
-import net.gegy1000.slyther.client.game.Prey;
-import net.gegy1000.slyther.client.game.Sector;
-import net.gegy1000.slyther.client.game.Snake;
+import net.gegy1000.slyther.game.Game;
+import net.gegy1000.slyther.game.entity.Entity;
+import net.gegy1000.slyther.game.entity.Food;
+import net.gegy1000.slyther.game.entity.Prey;
+import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.client.gui.Gui;
 import net.gegy1000.slyther.client.gui.GuiMainMenu;
 import net.gegy1000.slyther.client.render.RenderHandler;
 import net.gegy1000.slyther.game.ConfigHandler;
-import net.gegy1000.slyther.game.LeaderboardEntry;
 import net.gegy1000.slyther.network.ServerHandler;
-import net.gegy1000.slyther.network.message.MessageAccelerate;
-import net.gegy1000.slyther.network.message.MessageSetAngle;
-import net.gegy1000.slyther.network.message.MessageSetTurn;
+import net.gegy1000.slyther.network.message.client.MessageAccelerate;
+import net.gegy1000.slyther.network.message.client.MessageSetAngle;
+import net.gegy1000.slyther.network.message.client.MessageSetTurn;
 import net.gegy1000.slyther.util.SystemUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -21,17 +21,13 @@ import org.lwjgl.opengl.GL11;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.LinkedBlockingDeque;
 
-public class SlytherClient {
+public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public int GAME_RADIUS;
     public int MSCPS;
     public int SECTOR_SIZE;
     public int SECTORS_ALONG_EDGE;
-    public float SPANG_DIV;
+    public float SPANG_DV;
     public float NSP1;
     public float NSP2;
     public float NSP3;
@@ -62,8 +58,6 @@ public class SlytherClient {
     public RenderHandler renderHandler;
 
     public ClientNetworkManager networkManager;
-
-    private Queue<FutureTask<?>> tasks = new LinkedBlockingDeque<>();
 
     public boolean wumsts;
     public Snake player;
@@ -109,11 +103,6 @@ public class SlytherClient {
 
     public float gsc = INITIAL_GSC; // Global Scale
 
-    public List<Snake> snakes = new ArrayList<>();
-    public List<Prey> preys = new ArrayList<>();
-    public List<Food> foods = new ArrayList<>();
-    public List<Sector> sectors = new ArrayList<>();
-
     public int fvpos;
     public float fvx;
     public float fvy;
@@ -127,8 +116,6 @@ public class SlytherClient {
     public int rank;
     public int bestRank;
     public int snakeCount;
-
-    public List<LeaderboardEntry> leaderboard = new ArrayList<>();
 
     public String longestPlayerName;
     public int longestPlayerScore;
@@ -151,8 +138,6 @@ public class SlytherClient {
     public float apy1;
     public float apx2;
     public float apy2;
-
-    public boolean[][] map = new boolean[80][80];
 
     public ClientConfig configuration;
 
@@ -211,10 +196,10 @@ public class SlytherClient {
             renderHandler.setup();
         }
 
-        snakes.clear();
-        foods.clear();
-        preys.clear();
-        sectors.clear();
+        getSnakes().clear();
+        getFoods().clear();
+        getPreys().clear();
+        getSectors().clear();
         ticks = 0;
         vfr = 0;
         player = null;
@@ -343,7 +328,7 @@ public class SlytherClient {
         GAME_RADIUS = gameRadius;
         SECTOR_SIZE = sectorSize;
         SECTORS_ALONG_EDGE = sectorCountAlongEdge;
-        SPANG_DIV = spangDV;
+        SPANG_DV = spangDV;
         NSP1 = nsp1;
         NSP2 = nsp2;
         NSP3 = nsp3;
@@ -524,63 +509,12 @@ public class SlytherClient {
                         }
                     }
                 }
-                for (Snake snake : new ArrayList<>(snakes)) {
-                    snake.update(vfr, vfrb, vfrb2);
-                }
-                for (Prey prey : new ArrayList<>(preys)) {
-                    prey.update(vfr, vfrb);
-                }
-                for (int i = foods.size() - 1; i >= 0; i--) {
-                    Food food = foods.get(i);
-                    food.gfr += vfr * food.gr;
-                    if (food.eaten) {
-                        food.eatenFr += vfr / 41.0F;
-                        if (food.eatenFr >= 1.0F || food.eater == null) {
-                            foods.remove(i);
-                        } else {
-                            Snake eater = food.eater;
-                            float h = food.eatenFr * food.eatenFr;
-                            food.rad = food.lrrad * (1.0F - food.eatenFr * h);
-                            food.renderX = (int) (food.posX + (eater.posX + eater.fx + Math.cos(eater.ang + eater.fa) * (43.0F - 24.0F * h) * (1.0F - h) - food.posX) * h);
-                            food.renderY = (int) (food.posY + (eater.posY + eater.fy + Math.cos(eater.ang + eater.fa) * (43.0F - 24.0F * h) * (1.0F - h) - food.posY) * h);
-                            food.renderX += Math.cos(food.wsp * food.gfr) * (1.0F - food.eatenFr) * 6.0F;
-                            food.renderY += Math.sin(food.wsp * food.gfr) * (1.0F - food.eatenFr) * 6.0F;
-                        }
-                    } else {
-                        if (food.fr != 1.0F) {
-                            food.fr += food.rsp * vfr / 150.0F;
-                            if (food.fr >= 1.0F) {
-                                food.fr = 1.0F;
-                                food.rad = 1.0F;
-                            } else {
-                                food.rad = (float) ((1.0F - Math.cos(Math.PI * food.fr)) * 0.5F);
-                                food.rad += 0.66F * (0.5F * (1.0F - Math.cos(Math.PI * food.rad)) - food.rad);
-                            }
-                            food.lrrad = food.rad;
-                        }
-                        food.renderX = (int) (food.posX + 6.0F * Math.cos(food.wsp * food.gfr));
-                        food.renderY = (int) (food.posY + 6.0F * Math.sin(food.wsp * food.gfr));
-                    }
+                for (Entity entity : new ArrayList<>(getEntities())) {
+                    entity.updateClient(vfr, vfrb, vfrb2);
                 }
             }
         }
         ticks++;
-    }
-
-    public void scheduleTask(Callable<?> callable) {
-        tasks.add(new FutureTask<>(callable));
-    }
-
-    private void runTasks() {
-        while (tasks.size() > 0) {
-            FutureTask<?> task = tasks.poll();
-            try {
-                task.run();
-                task.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     public void moveTo(float x, float y) {
@@ -599,7 +533,7 @@ public class SlytherClient {
     }
 
     public Snake getSnake(int id) {
-        for (Snake snake : snakes) {
+        for (Snake snake : getSnakes()) {
             if (snake.id == id) {
                 return snake;
             }
@@ -608,7 +542,7 @@ public class SlytherClient {
     }
 
     public Prey getPrey(int id) {
-        for (Prey prey : preys) {
+        for (Prey prey : getPreys()) {
             if (prey.id == id) {
                 return prey;
             }
@@ -617,7 +551,7 @@ public class SlytherClient {
     }
 
     public Food getFood(int id) {
-        for (Food food : foods) {
+        for (Food food : getFoods()) {
             if (food.id == id) {
                 return food;
             }
@@ -645,5 +579,60 @@ public class SlytherClient {
         }
         networkManager = null;
         setup();
+    }
+
+    @Override
+    public int getGameRadius() {
+        return GAME_RADIUS;
+    }
+
+    @Override
+    public int getMSCPS() {
+        return MSCPS;
+    }
+
+    @Override
+    public int getSectorSize() {
+        return SECTOR_SIZE;
+    }
+
+    @Override
+    public int getSectorsAlongEdge() {
+        return SECTORS_ALONG_EDGE;
+    }
+
+    @Override
+    public float getSpangDv() {
+        return SPANG_DV;
+    }
+
+    @Override
+    public float getNsp1() {
+        return NSP1;
+    }
+
+    @Override
+    public float getNsp2() {
+        return NSP2;
+    }
+
+    @Override
+    public float getNsp3() {
+        return NSP3;
+    }
+
+    @Override
+    public float getMamu() {
+        return MAMU;
+    }
+
+    @Override
+    public float getMamu2() {
+        return MAMU2;
+    }
+
+    @Override
+    public float getCST() {
+        return CST;
     }
 }

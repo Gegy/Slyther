@@ -1,45 +1,24 @@
 package net.gegy1000.slyther.server;
 
-import net.gegy1000.slyther.game.Color;
-import net.gegy1000.slyther.game.ConfigHandler;
-import net.gegy1000.slyther.game.LeaderboardEntry;
-import net.gegy1000.slyther.game.SnakePoint;
-import net.gegy1000.slyther.network.message.MessageUpdateLeaderboard;
-import net.gegy1000.slyther.server.game.Entity;
-import net.gegy1000.slyther.server.game.Food;
-import net.gegy1000.slyther.server.game.Sector;
-import net.gegy1000.slyther.server.game.Snake;
+import net.gegy1000.slyther.game.*;
+import net.gegy1000.slyther.game.entity.*;
+import net.gegy1000.slyther.network.message.server.MessageUpdateLeaderboard;
 import net.gegy1000.slyther.util.SystemUtils;
 import org.java_websocket.WebSocket;
 
 import java.io.File;
 import java.net.UnknownHostException;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.LinkedBlockingDeque;
 
-public class SlytherServer {
+public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
     public static final double PI_2 = Math.PI * 2;
-    public ServerConfig configuration;
-
-    public ServerNetworkManager networkManager;
 
     private static final File CONFIGURATION_FILE = new File(SystemUtils.getGameFolder(), "server/config.json");
     public List<ConnectedClient> clients = new ArrayList<>();
 
-    private List<Entity> entities = new ArrayList<>();
-    private List<Snake> snakes = new ArrayList<>();
-    private List<Sector> sectors = new ArrayList<>();
-    private List<Food> foods = new ArrayList<>();
-
-    public List<LeaderboardEntry> leaderboard = new ArrayList<>();
     private long lastLeaderboardUpdateTime;
 
     private int currentSnakeId;
-
-    private Queue<FutureTask<?>> tasks = new LinkedBlockingDeque<>();
 
     public final Random rng = new Random();
 
@@ -102,15 +81,12 @@ public class SlytherServer {
         for (ConnectedClient client : clients) {
             client.update();
         }
-        for (Snake snake : snakes) {
-            snake.update();
-        }
-        for (Sector sector : sectors) {
-            sector.update();
+        for (Entity entity : new ArrayList<>(getEntities())) {
+            entity.updateServer();
         }
         if (time - lastLeaderboardUpdateTime > configuration.leaderboardUpdateFrequency) {
             leaderboard.clear();
-            List<Snake> biggestSnakes = new ArrayList<>(snakes);
+            List<Snake> biggestSnakes = new ArrayList<>(getSnakes());
             Collections.sort(biggestSnakes);
             int i = 0;
             for (Snake snake : biggestSnakes) {
@@ -121,8 +97,8 @@ public class SlytherServer {
             for (Snake snake : biggestSnakes) {
                 leaderboard.add(new LeaderboardEntry(snake.client));
             }
-            for (Snake snake : snakes) {
-                snake.client.send(new MessageUpdateLeaderboard());
+            for (ConnectedClient client : clients) {
+                client.send(new MessageUpdateLeaderboard());
             }
             lastLeaderboardUpdateTime = time;
         }
@@ -134,7 +110,7 @@ public class SlytherServer {
         int posY = (rng.nextInt(spawnFuzz) - spawnFuzz / 2);
         List<SnakePoint> points = new ArrayList<>();
         points.add(new SnakePoint(posX, posY));
-        Snake snake = new Snake(this, currentSnakeId++, posX, posY, client, points);
+        Snake snake = new Snake(this, client.name, currentSnakeId++, posX, posY, client.skin, 0.0F, points);
         addEntity(snake);
         return snake;
     }
@@ -160,55 +136,6 @@ public class SlytherServer {
         return null;
     }
 
-    public void scheduleTask(Callable<?> callable) {
-        tasks.add(new FutureTask<>(callable));
-    }
-
-    private void runTasks() {
-        while (tasks.size() > 0) {
-            FutureTask<?> task = tasks.poll();
-            try {
-                task.run();
-                task.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    public void addEntity(Entity entity) {
-        if (!entities.contains(entity)) {
-            entities.add(entity);
-            if (entity instanceof Snake) {
-                snakes.add((Snake) entity);
-            } else if (entity instanceof Sector) {
-                sectors.add((Sector) entity);
-            } else if (entity instanceof Food) {
-                foods.add((Food) entity);
-            }
-        }
-    }
-
-    public void removeEntity(Entity entity) {
-        if (entities.remove(entity)) {
-            if (entity instanceof Snake) {
-                snakes.remove(entity);
-            } else if (entity instanceof Sector) {
-                sectors.remove(entity);
-            } else if (entity instanceof Food) {
-                foods.remove(entity);
-            }
-        }
-    }
-
-    public List<Entity> getEntities() {
-        return entities;
-    }
-
-    public List<Snake> getSnakes() {
-        return snakes;
-    }
-
     public List<ConnectedClient> getTrackingClients(Entity entity) {
         List<ConnectedClient> tracking = new ArrayList<>();
         for (ConnectedClient client : clients) {
@@ -217,5 +144,60 @@ public class SlytherServer {
             }
         }
         return tracking;
+    }
+
+    @Override
+    public int getGameRadius() {
+        return configuration.gameRadius;
+    }
+
+    @Override
+    public int getMSCPS() {
+        return configuration.mscps;
+    }
+
+    @Override
+    public int getSectorSize() {
+        return configuration.sectorSize;
+    }
+
+    @Override
+    public int getSectorsAlongEdge() {
+        return configuration.sectorsAlongEdge;
+    }
+
+    @Override
+    public float getSpangDv() {
+        return configuration.spangDv;
+    }
+
+    @Override
+    public float getNsp1() {
+        return configuration.nsp1;
+    }
+
+    @Override
+    public float getNsp2() {
+        return configuration.nsp2;
+    }
+
+    @Override
+    public float getNsp3() {
+        return configuration.nsp3;
+    }
+
+    @Override
+    public float getMamu() {
+        return configuration.mamu;
+    }
+
+    @Override
+    public float getMamu2() {
+        return configuration.mamu2;
+    }
+
+    @Override
+    public float getCST() {
+        return configuration.cst;
     }
 }
