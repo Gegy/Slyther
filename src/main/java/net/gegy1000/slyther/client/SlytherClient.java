@@ -185,7 +185,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         if (configuration == null) {
             try {
                 configuration = ConfigHandler.INSTANCE.readConfig(CONFIGURATION_FILE, ClientConfig.class);
-                ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
+                saveConfig();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -634,5 +634,13 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     @Override
     public float getCST() {
         return CST;
+    }
+
+    public void saveConfig() {
+        try {
+            ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -50,8 +50,12 @@ public class GuiMainMenu extends Gui {
             renderHandler.openGui(new GuiGame());
             return true;
         }));
-        elements.add(new ButtonElement(this, "Select Server", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F + 50.0F, 150.0F, 40.0F, (button) -> true));
-        elements.add(new ButtonElement(this, "Change Skin", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F + 100.0F, 150.0F, 40.0F, (button) -> true));
+        elements.add(new ButtonElement(this, "Change Skin", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F + 50.0F, 150.0F, 40.0F, (button) -> {
+            closeGui();
+            renderHandler.openGui(new GuiSelectSkin(this));
+            return true;
+        }));
+        elements.add(new ButtonElement(this, "Select Server", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F + 100.0F, 150.0F, 40.0F, (button) -> true));
         if (SlytherClient.RECORD_FILE.exists()) {
             elements.add(new ButtonElement(this, "Replay Last Game", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F + 150.0F, 150.0F, 40.0F, (button) -> {
                 closeGui();
