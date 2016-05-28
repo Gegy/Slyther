@@ -14,7 +14,7 @@ import net.gegy1000.slyther.server.SlytherServer;
 public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
-        int playerIndex = -1;
+        int playerIndex = 0;
         for (int i = 0; i < server.leaderboard.size(); i++) {
             if (server.leaderboard.get(i).client.equals(client)) {
                 playerIndex = i;

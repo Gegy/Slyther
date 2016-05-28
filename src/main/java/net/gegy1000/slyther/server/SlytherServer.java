@@ -111,6 +111,7 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
         List<SnakePoint> points = new ArrayList<>();
         points.add(new SnakePoint(posX, posY));
         Snake snake = new Snake(this, client.name, currentSnakeId++, posX, posY, client.skin, 0.0F, points);
+        snake.client = client;
         addEntity(snake);
         return snake;
     }

@@ -42,11 +42,11 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             buffer.writeUInt24( (int) (snake.wang / ((2.0F * Math.PI) / 0xFFFFFF)));
             buffer.writeUInt16((int) (snake.speed * 1000.0F));
             buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
-            buffer.writeUInt8(snake.client.skin.ordinal());
+            buffer.writeUInt8(snake.skin.ordinal());
             int gameRadius = server.configuration.gameRadius;
             buffer.writeUInt24((int) ((snake.posX + gameRadius) * 5.0F));
             buffer.writeUInt24((int) ((snake.posY + gameRadius) * 5.0F));
-            String name = snake.client.name;
+            String name = snake.name;
             buffer.writeUInt8(name.length());
             for (int i = 0; i < name.length(); i++) {
                 buffer.writeUInt8((byte) name.charAt(i));

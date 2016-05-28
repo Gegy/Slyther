@@ -2,7 +2,6 @@ package net.gegy1000.slyther.client.render;
 
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.gui.Gui;
-import net.gegy1000.slyther.client.gui.GuiGame;
 import net.gegy1000.slyther.client.gui.GuiMainMenu;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
