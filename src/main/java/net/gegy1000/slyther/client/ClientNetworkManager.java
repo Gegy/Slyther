@@ -3,7 +3,6 @@ package net.gegy1000.slyther.client;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
 import net.gegy1000.slyther.network.ServerHandler;
-import net.gegy1000.slyther.network.message.MessageClientPing;
 import net.gegy1000.slyther.network.message.MessageClientSetup;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -20,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClientNetworkManager extends WebSocketClient {
+    public static final byte[] PING_DATA = new byte[] { (byte) 251 };
     private SlytherClient client;
     private String ip;
 
@@ -36,15 +36,10 @@ public class ClientNetworkManager extends WebSocketClient {
         this.ip = ip;
         this.client = client;
         this.isReplaying = isReplaying;
-        if (this.isReplaying) {
-            if (!SlytherClient.RECORD_FILE.exists()) {
-                SlytherClient.RECORD_FILE.createNewFile();
-            }
+        if (this.isReplaying && SlytherClient.RECORD_FILE.exists()) {
             replayer = new GameReplayer(SlytherClient.RECORD_FILE, this);
-        } else {
-            if (!SlytherClient.RECORD_FILE.delete()) {
-                SlytherClient.RECORD_FILE.createNewFile();
-            }
+        } else if (shouldRecord && !SlytherClient.RECORD_FILE.delete()) {
+            SlytherClient.RECORD_FILE.createNewFile();
         }
         if (!isReplaying) {
             connect();
@@ -53,7 +48,7 @@ public class ClientNetworkManager extends WebSocketClient {
                 recorder.start();
             }
         } else {
-            this.isOpen = true;
+            isOpen = true;
         }
     }
 
@@ -82,9 +77,9 @@ public class ClientNetworkManager extends WebSocketClient {
 
     public void ping() {
         if (isOpen && !isReplaying) {
-            if (!client.wfpr) {
-                send(new MessageClientPing());
-                client.wfpr = true;
+            if (!client.waitingForPingReturn) {
+                send(PING_DATA);
+                client.waitingForPingReturn = true;
             }
         }
     }

@@ -69,6 +69,11 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
             if (incrementSct) {
                 snake.fam = (double) buffer.readUInt24() / 0xFFFFFF;
             }
+//            if (snake == client.player) {
+//                long time = System.currentTimeMillis();
+//                System.out.println("UpdateSnakePoints: sctincr: " + incrementSct + ", fam: " + snake.fam + ", Relative: " + !(messageId == 'g' || messageId == 'n') + ", sct: " + snake.sct + ", points count: " + snake.points.size() + ", length: " + (int) Math.floor(15.0F * (client.getFPSL(snake.sct) + snake.fam / client.getFMLT(snake.sct) - 1.0F) - 5.0F) + ", time diff: " + (time - lastTime) + "ms");
+//                lastTime = time;
+//            }
             SnakePoint point = new SnakePoint(x, y);
             point.ebx = point.posX - head.posX;
             point.eby = point.posY - head.posY;

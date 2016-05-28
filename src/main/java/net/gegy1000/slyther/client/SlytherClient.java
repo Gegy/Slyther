@@ -71,7 +71,7 @@ public class SlytherClient {
     public long ltm;
     public boolean lagging;
     public float lagMultiplier;
-    public boolean wfpr; // Waiting for ping return?
+    public boolean waitingForPingReturn; // Waiting for ping return?
     public long lastPacketTime;
     public float etm;
     public float lfr;
@@ -219,7 +219,7 @@ public class SlytherClient {
         vfr = 0;
         player = null;
         lagging = false;
-        wfpr = false;
+        waitingForPingReturn = false;
         gsc = INITIAL_GSC;
         lagMultiplier = 0.0F;
         wumsts = false;
@@ -391,7 +391,7 @@ public class SlytherClient {
             float vfrb;
             float avfr = vfr = (time - ltm) / 8;
             ltm = time;
-            if (!lagging && wfpr && time - lastPacketTime > 420) {
+            if (!lagging && waitingForPingReturn && time - lastPacketTime > 420) {
                 lagging = true;
             }
             if (lagging) {
@@ -481,7 +481,7 @@ public class SlytherClient {
                         networkManager.send(new MessageSetTurn((byte) direction));
                     }
                 }
-                if (!wfpr) {
+                if (!waitingForPingReturn) {
                     if (time - lastPingTime > 250) {
                         lastPingTime = time;
                         networkManager.ping();

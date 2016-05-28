@@ -13,7 +13,7 @@ public class MessagePing extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        client.wfpr = false;
+        client.waitingForPingReturn = false;
         if (client.lagging) {
             client.etm *= client.lagMultiplier;
             client.lagging = false;
