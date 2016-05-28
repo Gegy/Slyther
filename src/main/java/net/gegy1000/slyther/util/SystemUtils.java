@@ -3,11 +3,9 @@ package net.gegy1000.slyther.util;
 import java.io.File;
 
 public final class SystemUtils {
-    public enum OperatingSystem {
-        WINDOWS, LINUX, MACOSX, SOLARIS, UNKNOWN
-    }
+    private static final String HOME_NAME = ".slyther";
 
-    private static File GAME_FOLDER;
+    private static File gameFolder;
 
     public static OperatingSystem getOS() {
         String os = System.getProperty("os.name").toLowerCase();
@@ -27,18 +25,14 @@ public final class SystemUtils {
     }
 
     public static File getGameFolder() {
-        if (GAME_FOLDER == null) {
+        if (gameFolder == null) {
             String appdata = System.getenv("APPDATA");
-            if (appdata != null) {
-                GAME_FOLDER = new File(appdata, ".slyther");
+            if (appdata == null) {
+                gameFolder = new File(System.getProperty("user.home"), HOME_NAME);
             } else {
-                GAME_FOLDER = new File(System.getProperty("user.home"), ".slyther");
+                gameFolder = new File(appdata, HOME_NAME);
             }
         }
-        return GAME_FOLDER;
-    }
-
-    public static void setGameFolder(File file) {
-        GAME_FOLDER = file;
+        return gameFolder;
     }
 }
