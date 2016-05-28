@@ -6,3 +6,9 @@ out/
 gradle/
 .gradle/
 build/
+bin/
+.classpath
+.project
+.settings/
+dev/
+lib/
