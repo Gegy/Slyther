@@ -13,7 +13,7 @@ public class SnakePoint {
     public float ebx;
     public float eby;
     public boolean dying;
-    public float da;
+    public float deathAnimation;
     public int eiu;
     public int[] efs = new int[128];
     public float[] exs = new float[128];

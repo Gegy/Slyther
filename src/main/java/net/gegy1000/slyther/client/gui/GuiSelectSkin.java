@@ -40,12 +40,12 @@ public class GuiSelectSkin extends Gui {
         snake.scang = 1.0F;
         snake.moveSpeed = client.getNsp1() + client.getNsp2() * snake.scale;
         snake.accelleratingSpeed = snake.moveSpeed + 0.1F;
-        snake.wsep = snake.scale * 6.0F;
+        snake.wantedSeperation = snake.scale * 6.0F;
         float nsep = SlytherClient.NSEP;
-        if (snake.wsep < nsep) {
-            snake.wsep = nsep;
+        if (snake.wantedSeperation < nsep) {
+            snake.wantedSeperation = nsep;
         }
-        snake.sep = snake.wsep;
+        snake.partSeparation = snake.wantedSeperation;
         snake.snl();
         snake.aliveAmt = 1.0F;
         snake.rex = 1.66F;
@@ -87,8 +87,8 @@ public class GuiSelectSkin extends Gui {
         List<Float> ys = new ArrayList<>();
         float lastX;
         float lastY;
-        float lax;
-        float lay;
+        float lastPointX;
+        float lastPointY;
         float n = (snake.chl + snake.fchl) % 0.25F;
         if (n < 0) {
             n += 0.25F;
@@ -100,11 +100,11 @@ public class GuiSelectSkin extends Gui {
         float y = originY;
         float averageX = originX;
         float averageY = originY;
-        float ax = originX;
-        float ay = originY;
+        float pointX = originX;
+        float pointY = originY;
         float G = (float) (snake.cfl + (1.0F - Math.ceil((snake.chl + snake.fchl) / 0.25F) * 0.25F));
         float K = 0;
-        float O = snake.wsep * client.qsm;
+        float O = snake.wantedSeperation * client.qsm;
         SkinColor[] pattern = snake.pattern;
         for (int pointIndex = snake.points.size() - 1; pointIndex >= 0; pointIndex--) {
             SnakePoint point = snake.points.get(pointIndex);
@@ -118,28 +118,28 @@ public class GuiSelectSkin extends Gui {
                 averageX = (x + lastX) / 2.0F;
                 averageY = (y + lastY) / 2.0F;
                 for (float q = 0.0F; q < 1.0F; q += 0.25F) {
-                    float E = n + q;
-                    float e = lastAverageX + (lastX - lastAverageX) * E;
-                    float w = lastAverageY + (lastY - lastAverageY) * E;
-                    float J = lastX + (averageX - lastX) * E;
-                    float M = lastY + (averageY - lastY) * E;
-                    lax = ax;
-                    lay = ay;
-                    ax = e + (J - e) * E;
-                    ay = w + (M - w) * E;
+                    float positionScale = n + q;
+                    float e = lastAverageX + (lastX - lastAverageX) * positionScale;
+                    float w = lastAverageY + (lastY - lastAverageY) * positionScale;
+                    float J = lastX + (averageX - lastX) * positionScale;
+                    float M = lastY + (averageY - lastY) * positionScale;
+                    lastPointX = pointX;
+                    lastPointY = pointY;
+                    pointX = e + (J - e) * positionScale;
+                    pointY = w + (M - w) * positionScale;
                     if (G < 0) {
-                        ax += -(lax - ax) * G / 0.25F;
-                        ay += -(lay - ay) * G / 0.25F;
+                        pointX += -(lastPointX - pointX) * G / 0.25F;
+                        pointY += -(lastPointY - pointY) * G / 0.25F;
                     }
-                    float partDistance = (float) Math.sqrt(Math.pow(ax - lax, 2) + Math.pow(ay - lay, 2));
+                    float partDistance = (float) Math.sqrt(Math.pow(pointX - lastPointX, 2) + Math.pow(pointY - lastPointY, 2));
                     if (K + partDistance < O) {
                         K += partDistance;
                     } else {
                         K = -K;
                         for (int a = (int) ((partDistance - K) / O); a >= 1; a--) {
                             K += O;
-                            xs.add(lax + (ax - lax) * K / partDistance);
-                            ys.add(lay + (ay - lay) * K / partDistance);
+                            xs.add(lastPointX + (pointX - lastPointX) * K / partDistance);
+                            ys.add(lastPointY + (pointY - lastPointY) * K / partDistance);
                         }
                         K = partDistance - K;
                     }
@@ -155,12 +155,12 @@ public class GuiSelectSkin extends Gui {
                 }
             }
         }
-        xs.add(ax);
-        ys.add(ay);
+        xs.add(pointX);
+        ys.add(pointY);
         textureManager.bindTexture("/textures/snake_point.png");
         for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
-            float pointX = (xs.get(pointIndex));
-            float pointY = (ys.get(pointIndex));
+            pointX = (xs.get(pointIndex));
+            pointY = (ys.get(pointIndex));
             SkinColor color = pattern[pointIndex % pattern.length];
             GL11.glColor4f(color.red, color.green, color.blue, 1.0F);
             GL11.glPushMatrix();
@@ -192,17 +192,17 @@ public class GuiSelectSkin extends Gui {
             GL11.glPushMatrix();
             float e = (float) Math.cos(snake.angle);
             float w = (float) Math.sin(snake.angle);
-            ax = originX - 8 * e * snake.scale - 20;
-            ay = originY - 8 * w * snake.scale;
-            snake.antennaX[0] = ax;
-            snake.antennaY[0] = ay;
+            pointX = originX - 8 * e * snake.scale - 20;
+            pointY = originY - 8 * w * snake.scale;
+            snake.antennaX[0] = pointX;
+            snake.antennaY[0] = pointY;
             float antennaScale = snake.scale;
             int fj = snake.antennaX.length - 1;
             if (!snake.antennaShown) {
                 snake.antennaShown = true;
                 for (int t = 1; t <= fj; t++) {
-                    snake.antennaX[t] = ax - e * t * 4 * snake.scale;
-                    snake.antennaY[t] = ay - w * t * 4 * snake.scale;
+                    snake.antennaX[t] = pointX - e * t * 4 * snake.scale;
+                    snake.antennaY[t] = pointY - w * t * 4 * snake.scale;
                 }
             }
             for (int t = 1; t <= fj; t++) {

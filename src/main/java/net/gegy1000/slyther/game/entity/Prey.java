@@ -60,12 +60,12 @@ public class Prey extends Entity {
     }
 
     @Override
-    public void updateClient(float vfr, float vfrb, float vfrb2) {
-        float turnSpeed = game.getMamu2() * vfr;
-        float moveAmount = speed * vfr / 4;
-        if (vfrb > 0) {
+    public void updateClient(float delta, float lastDelta, float lastDelta2) {
+        float turnSpeed = game.getMamu2() * delta;
+        float moveAmount = speed * delta / 4;
+        if (lastDelta > 0) {
             if (ftg > 0) {
-                float h = vfrb;
+                float h = lastDelta;
                 if (h > ftg) {
                     h = ftg;
                 }
@@ -131,16 +131,16 @@ public class Prey extends Entity {
         }
         posX += Math.cos(ang) * moveAmount;
         posY += Math.sin(ang) * moveAmount;
-        gfr += vfr * gr;
+        gfr += delta * gr;
         if (eaten) {
             if (fr != 1.5F) {
-                fr += vfr / 150.0F;
+                fr += delta / 150.0F;
                 if (fr >= 1.5F) {
                     fr = 1.5F;
                 }
             }
-            eatenFR += vfr / 47.0F;
-            gfr += vfr;
+            eatenFR += delta / 47.0F;
+            gfr += delta;
             if (eatenFR >= 1 || eater == null) {
                 game.removeEntity(this);
             } else {
@@ -148,7 +148,7 @@ public class Prey extends Entity {
             }
         } else {
             if (fr != 1.0F) {
-                fr += vfr / 150.0F;
+                fr += delta / 150.0F;
                 if (fr >= 1.0F) {
                     fr = 1.0F;
                     rad = 1.0F;

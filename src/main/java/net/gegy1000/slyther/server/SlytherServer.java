@@ -20,6 +20,9 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
 
     private int currentSnakeId;
 
+    private float[] fpsls;
+    private float[] fmlts;
+
     public final Random rng = new Random();
 
     public SlytherServer() {
@@ -33,6 +36,17 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
             networkManager = new ServerNetworkManager(this, configuration.serverPort);
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }
+        int mscps = getMSCPS();
+        fmlts = new float[mscps];
+        fpsls = new float[mscps + 1];
+        for (int i = 0; i <= mscps; i++) {
+            if (i < mscps) {
+                fmlts[i] = (float) Math.pow(1.0F - i / (float) mscps, 2.25F);
+            }
+            if (i != 0) {
+                fpsls[i] = fpsls[i - 1] + 1.0F / fmlts[i - 1];
+            }
         }
         int gameRadius = configuration.gameRadius;
         int sectorSize = configuration.sectorSize;
@@ -200,5 +214,15 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
     @Override
     public float getCST() {
         return configuration.cst;
+    }
+
+    @Override
+    public float getFMLT(int i) {
+        return fmlts[Math.min(i, fmlts.length - 1)];
+    }
+
+    @Override
+    public float getFPSL(int i) {
+        return fpsls[Math.min(i, fpsls.length - 1)];
     }
 }

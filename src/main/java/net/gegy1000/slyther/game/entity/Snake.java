@@ -98,7 +98,7 @@ public class Snake extends Entity implements Comparable<Snake> {
     public float[] fls;
     public float fl;
     public int fltg;
-    public double tl;
+    public double totalLength;
     public double cfl;
     public float scang;
     public float spang;
@@ -111,8 +111,8 @@ public class Snake extends Entity implements Comparable<Snake> {
     public int turnDirection;
     public int prevTurnDirection;
     public int edir;
-    public float sep;
-    public float wsep;
+    public float partSeparation;
+    public float wantedSeperation;
     public boolean isInView;
     public boolean antennaShown;
     public String antennaTexture;
@@ -156,8 +156,8 @@ public class Snake extends Entity implements Comparable<Snake> {
         }
 
         fls = new float[SlytherClient.LFC];
-        tl = sct + fam;
-        cfl = tl;
+        totalLength = sct + fam;
+        cfl = totalLength;
         scang = 1;
         deadAmt = 0;
         aliveAmt = 0;
@@ -223,9 +223,9 @@ public class Snake extends Entity implements Comparable<Snake> {
 
     //Set new length
     public void snl() {
-        double tl = this.tl;
-        this.tl = sct + fam;
-        tl = this.tl - tl;
+        double tl = this.totalLength;
+        this.totalLength = sct + fam;
+        tl = this.totalLength - tl;
         int flpos = this.flpos;
         for (int i = 0; i < SlytherClient.LFC; i++) {
             fls[flpos] -= tl * SlytherClient.LFAS[i];
@@ -243,10 +243,10 @@ public class Snake extends Entity implements Comparable<Snake> {
     }
 
     @Override
-    public void updateClient(float vfr, float vfrb, float vfrb2) {
+    public void updateClient(float delta, float lastDelta, float lastDelta2) {
         SlytherClient client = (SlytherClient) game;
-        float turnSpeed = client.MAMU * vfr * scang * spang;
-        float moveAmount = speed * vfr / 4;
+        float turnSpeed = client.MAMU * delta * scang * spang;
+        float moveAmount = speed * delta / 4;
         if (moveAmount > msl) {
             moveAmount = msl;
         }
@@ -262,22 +262,22 @@ public class Snake extends Entity implements Comparable<Snake> {
         if (!dead) {
             if (tsp != speed) {
                 if (tsp < speed) {
-                    tsp += 0.3F * vfr;
+                    tsp += 0.3F * delta;
                     if (tsp > speed) {
                         tsp = speed;
                     }
                 } else {
-                    tsp -= 0.3F * vfr;
+                    tsp -= 0.3F * delta;
                     if (tsp < speed) {
                         tsp = speed;
                     }
                 }
             }
             if (tsp > accelleratingSpeed) {
-                sfr += (tsp - accelleratingSpeed) * vfr * 0.021F;
+                sfr += (tsp - accelleratingSpeed) * delta * 0.021F;
             }
             if (fltg > 0) {
-                float h = vfrb;
+                float h = lastDelta;
                 if (h > fltg) {
                     h = fltg;
                 }
@@ -296,7 +296,7 @@ public class Snake extends Entity implements Comparable<Snake> {
                     fl = 0;
                 }
             }
-            cfl = tl + fl;
+            cfl = totalLength + fl;
         }
         if (turnDirection == 1) {
             angle -= turnSpeed;
@@ -340,7 +340,7 @@ public class Snake extends Entity implements Comparable<Snake> {
             angle = wang;
         }
         if (ehl != 1) {
-            ehl += 0.03F * vfr;
+            ehl += 0.03F * delta;
             if (ehl >= 1) {
                 ehl = 1;
             }
@@ -368,7 +368,7 @@ public class Snake extends Entity implements Comparable<Snake> {
             }
         }
         if (edir == 1) {
-            ehang -= 0.1F * vfr;
+            ehang -= 0.1F * delta;
             if (ehang < 0 || ehang >= SlytherClient.PI_2) {
                 ehang %= SlytherClient.PI_2;
             }
@@ -387,7 +387,7 @@ public class Snake extends Entity implements Comparable<Snake> {
                 edir = 0;
             }
         } else if (edir == 2) {
-            ehang += 0.1F * vfr;
+            ehang += 0.1F * delta;
             if (ehang < 0 || ehang >= SlytherClient.PI_2) {
                 ehang %= SlytherClient.PI_2;
             }
@@ -411,12 +411,12 @@ public class Snake extends Entity implements Comparable<Snake> {
             posY += Math.sin(angle) * moveAmount;
             chl += moveAmount / msl;
         }
-        if (vfrb > 0) {
+        if (lastDelta > 0) {
             for (int pointIndex = points.size() - 1; pointIndex >= 0; pointIndex--) {
                 point = points.get(pointIndex);
                 if (point.dying) {
-                    point.da += 0.0015F * vfrb;
-                    if (point.da > 1) {
+                    point.deathAnimation += 0.0015F * lastDelta;
+                    if (point.deathAnimation > 1) {
                         points.remove(pointIndex);
                         point.dying = false;
                     }
@@ -426,7 +426,7 @@ public class Snake extends Entity implements Comparable<Snake> {
                     int fy = 0;
                     int cm = point.eiu - 1;
                     for (int qq = cm; qq >= 0; qq--) {
-                        point.efs[qq] = (int) (point.ems[qq] == 2 ? point.efs[qq] + vfrb2 : point.efs[qq] + vfrb);
+                        point.efs[qq] = (int) (point.ems[qq] == 2 ? point.efs[qq] + lastDelta : point.efs[qq] + lastDelta);
                         int h = point.efs[qq];
                         if (h >= SlytherClient.HFC) {
                             if (qq != cm) {
@@ -450,32 +450,32 @@ public class Snake extends Entity implements Comparable<Snake> {
         float ex = (float) (Math.cos(eang) * pma);
         float ey = (float) (Math.sin(eang) * pma);
         if (rex < ex) {
-            rex += vfr / 6.0F;
+            rex += delta / 6.0F;
             if (rex > ex) {
                 rex = ex;
             }
         }
         if (rey < ey) {
-            rey += vfr / 6.0F;
+            rey += delta / 6.0F;
             if (rey > ey) {
                 rey = ey;
             }
         }
         if (rex > ex) {
-            rex -= vfr / 6;
+            rex -= delta / 6;
             if (rex < ex) {
                 rex = ex;
             }
         }
         if (rey > ey) {
-            rey -= vfr / 6;
+            rey -= delta / 6;
             if (rey < ey) {
                 rey = ey;
             }
         }
-        if (vfrb > 0) {
+        if (lastDelta > 0) {
             if (ftg > 0) {
-                float h = vfrb;
+                float h = lastDelta;
                 if (h > ftg) {
                     h = ftg;
                 }
@@ -499,7 +499,7 @@ public class Snake extends Entity implements Comparable<Snake> {
                 fchl = 0;
             }
             if (fatg > 0) {
-                float h = vfrb;
+                float h = lastDelta;
                 if (h > fatg) {
                     h = fatg;
                 }
@@ -518,13 +518,13 @@ public class Snake extends Entity implements Comparable<Snake> {
             }
         }
         if (dead) {
-            deadAmt += 0.02F * vfr;
+            deadAmt += 0.02F * delta;
             if (deadAmt >= 1.0F) {
                 game.removeEntity(this);
             }
         } else {
             if (aliveAmt != 1) {
-                aliveAmt += 0.015F * vfr;
+                aliveAmt += 0.015F * delta;
                 if (aliveAmt > 1.0F) {
                     aliveAmt = 1.0F;
                 }
@@ -557,15 +557,15 @@ public class Snake extends Entity implements Comparable<Snake> {
         }
         boolean angleChange = angle != prevAngle;
         boolean wangChange = wang != prevWang;
-        boolean spChange = speed != prevSpeed;
+        boolean speedChange = speed != prevSpeed;
         boolean turnDirectionChange = turnDirection != prevTurnDirection;
-        if (angleChange || wangChange || spChange || turnDirectionChange) {
+        if (angleChange || wangChange || speedChange || turnDirectionChange) {
             prevAngle = angle;
             prevWang = wang;
             prevSpeed = speed;
             prevTurnDirection = turnDirection;
             for (ConnectedClient client : server.getTrackingClients(this)) {
-                client.send(new MessageUpdateSnake(this, turnDirectionChange, angleChange, wangChange, spChange));
+                client.send(new MessageUpdateSnake(this, turnDirectionChange, angleChange, wangChange, speedChange));
             }
         }
         if (prevPointCount != points.size()) {
@@ -630,9 +630,13 @@ public class Snake extends Entity implements Comparable<Snake> {
         }
     }
 
+    public int getLength() {
+        return (int) Math.floor(15.0F * (game.getFPSL(sct) + fam / game.getFMLT(sct) - 1.0F) - 5.0F);
+    }
+
     @Override
     public int compareTo(Snake snake) {
-        return Double.compare(fam, snake.fam);
+        return Integer.compare(getLength(), snake.getLength());
     }
 
     @Override
@@ -647,13 +651,6 @@ public class Snake extends Entity implements Comparable<Snake> {
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof Integer) {
-            return id == (Integer) object;
-        } else if (object instanceof Short) {
-            return id == (Short) object;
-        } else if (object instanceof Snake) {
-            return id == ((Snake) object).id;
-        }
-        return false;
+        return object instanceof Snake && id == ((Snake) object).id;
     }
 }

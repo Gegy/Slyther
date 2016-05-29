@@ -137,12 +137,12 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             snake.scang = (float) (0.13F + 0.87F * Math.pow((7.0F - snake.scale) / 6.0F, 2.0F));
             snake.moveSpeed = client.NSP1 + client.NSP2 * snake.scale;
             snake.accelleratingSpeed = snake.moveSpeed + 0.1F;
-            snake.wsep = snake.scale * 6.0F;
+            snake.wantedSeperation = snake.scale * 6.0F;
             float max = SlytherClient.NSEP / client.gsc;
-            if (snake.wsep < max) {
-                snake.wsep = max;
+            if (snake.wantedSeperation < max) {
+                snake.wantedSeperation = max;
             }
-            snake.sep = snake.wsep;
+            snake.partSeparation = snake.wantedSeperation;
 
             System.out.println("Added snake \"" + snake.name + "\" with skin " + snake.skin);
             client.addEntity(snake);

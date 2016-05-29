@@ -45,5 +45,5 @@ public abstract class Entity {
 
     public abstract void updateServer();
 
-    public abstract void updateClient(float vfr, float vfrb, float vfrb2);
+    public abstract void updateClient(float delta, float lastDelta, float lastDelta2);
 }

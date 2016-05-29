@@ -40,7 +40,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public static final int VFC = 62;
     public static final float NSEP = 4.5F;
     public static final float INITIAL_GSC = 0.9F;
-    public static float MQSM = 1.7F;
+    public static float MAX_QSM = 1.7F;
     public static final double PI_2 = Math.PI * 2.0;
     public static final float[] LFAS = new float[LFC];
     public static final float[] HFAS = new float[HFC];
@@ -50,7 +50,6 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public static final float[] AT2LT = new float[65536];
 
     private int fps;
-    private double delta;
 
     public RenderHandler renderHandler;
 
@@ -65,15 +64,14 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public boolean waitingForPingReturn; // Waiting for ping return?
     public long lastPacketTime;
     public float etm;
-    public float lfr;
-    public float fr;
-    public float lfr2;
-    public float fr2;
-    public float vfrb2;
+    public float lastTicks;
+    public float ticks;
+    public float lastTicks2;
+    public float ticks2;
     public boolean keyDownLeft;
     public boolean keyDownRight;
-    public float keyDownLeftFrb;
-    public float keyDownRightFrb;
+    public float keyDownLeftTicks;
+    public float keyDownRightTicks;
     public float gla = 1.0F;
     public float qsm = 1.0F;
     public long lastAccelerateUpdateTime;
@@ -165,8 +163,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         }
     }
 
-    public float vfr;
-    public int ticks;
+    public float delta;
     public boolean tickLoopInitialized;
     public boolean allowUserInput = true;
 
@@ -198,8 +195,9 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         getFoods().clear();
         getPreys().clear();
         getSectors().clear();
+        delta = 0;
         ticks = 0;
-        vfr = 0;
+        lastTicks = 0;
         player = null;
         lagging = false;
         waitingForPingReturn = false;
@@ -217,7 +215,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         if (!tickLoopInitialized) {
             tickLoopInitialized = true;
 
-            delta = 0;
+            double delta = 0;
             long previousTime = System.nanoTime();
             long timer = System.currentTimeMillis();
             int ups = 0;
@@ -360,10 +358,12 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         }
     }
 
+    @Override
     public float getFMLT(int i) {
         return fmlts[Math.min(i, fmlts.length - 1)];
     }
 
+    @Override
     public float getFPSL(int i) {
         return fpsls[Math.min(i, fpsls.length - 1)];
     }
@@ -373,9 +373,9 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
             networkManager.tick();
             runTasks();
             long time = System.currentTimeMillis();
-            vfr = 0;
-            float vfrb;
-            float avfr = vfr = (time - ltm) / 8;
+            delta = 0;
+            float lastDelta, lastDelta2;
+            float delta = (time - ltm) / 8;
             ltm = time;
             if (!lagging && waitingForPingReturn && time - lastPacketTime > 420) {
                 lagging = true;
@@ -393,75 +393,75 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                     }
                 }
             }
-            if (vfr > 120) {
-                vfr = 120;
+            if (delta > 120) {
+                delta = 120;
             }
-            vfr *= lagMultiplier;
+            delta *= lagMultiplier;
             etm *= lagMultiplier;
-            lfr = fr;
-            fr += vfr;
-            vfrb = (float) (Math.floor(fr) - Math.floor(lfr));
-            lfr2 = fr2;
-            fr2 += vfr * 2;
-            vfrb2 = (float) (Math.floor(fr2) - Math.floor(lfr2));
+            lastTicks = ticks;
+            ticks += delta;
+            lastDelta = (float) (Math.floor(ticks) - Math.floor(lastTicks));
+            lastTicks2 = ticks2;
+            ticks2 += delta * 2;
+            lastDelta2 = (float) (Math.floor(ticks2) - Math.floor(lastTicks2));
             if (keyDownLeft) {
-                keyDownLeftFrb += vfrb;
+                keyDownLeftTicks += lastDelta;
             }
             if (keyDownRight) {
-                keyDownRightFrb += vfrb;
+                keyDownRightTicks += lastDelta;
             }
             if (gla < 1.0F) {
-                gla += 0.0075F * vfr;
+                gla += 0.0075F * delta;
                 if (gla > 1.0F) {
                     gla = 1.0F;
                 }
             } else if (gla > 0.0F) {
-                gla -= 0.0075F * vfr;
+                gla -= 0.0075F * delta;
                 if (gla < 0.0F) {
                     gla = 0.0F;
                 }
             }
             if (qsm > 1.0F) {
-                qsm -= 0.00004F * vfr;
+                qsm -= 0.00004F * delta;
                 if (qsm < 1.0F) {
                     qsm = 1.0F;
                 }
-            } else if (qsm < MQSM) {
+            } else if (qsm < MAX_QSM) {
                 qsm += 0.00004F;
-                if (qsm > MQSM) {
-                    qsm = MQSM;
+                if (qsm > MAX_QSM) {
+                    qsm = MAX_QSM;
                 }
             }
             if (player != null) {
-                if (keyDownLeftFrb > 0 || keyDownRightFrb > 0) {
+                if (keyDownLeftTicks > 0 || keyDownRightTicks > 0) {
                     if (time - lastKeyTime > 150) {
                         lastKeyTime = time;
-                        if (keyDownRightFrb > 0) {
-                            if (keyDownRightFrb < keyDownLeftFrb) {
-                                keyDownLeftFrb -= keyDownRightFrb;
-                                keyDownRightFrb = 0;
+                        if (keyDownRightTicks > 0) {
+                            if (keyDownRightTicks < keyDownLeftTicks) {
+                                keyDownLeftTicks -= keyDownRightTicks;
+                                keyDownRightTicks = 0;
                             }
                         }
-                        if (keyDownLeftFrb > 0) {
-                            if (keyDownLeftFrb < keyDownRightFrb) {
-                                keyDownRightFrb -= keyDownLeftFrb;
-                                keyDownLeftFrb = 0;
+                        if (keyDownLeftTicks > 0) {
+                            if (keyDownLeftTicks < keyDownRightTicks) {
+                                keyDownRightTicks -= keyDownLeftTicks;
+                                keyDownLeftTicks = 0;
                             }
                         }
                         int direction;
-                        if (keyDownLeftFrb > 0) {
-                            direction = (int) keyDownLeftFrb;
+                        if (keyDownLeftTicks > 0) {
+                            direction = (int) keyDownLeftTicks;
                             if (direction > 127) {
                                 direction = 127;
                             }
-                            keyDownLeftFrb -= direction;
+                            keyDownLeftTicks -= direction;
                             player.eang -= MAMU * direction * player.scang * player.spang;
                         } else {
-                            direction = (int) keyDownRightFrb;
+                            direction = (int) keyDownRightTicks;
                             if (direction > 127) {
                                 direction = 127;
                             }
-                            keyDownRightFrb -= direction;
+                            keyDownRightTicks -= direction;
                             player.eang += MAMU * direction * player.scang * player.spang;
                         }
                         networkManager.send(new MessageSetTurn((byte) direction));
@@ -474,7 +474,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                         lastSendAngleTime = time;
                     }
                 }
-                etm *= Math.pow(0.993, vfrb);
+                etm *= Math.pow(0.993, lastDelta);
                 if (time - lastAccelerateUpdateTime > 150) {
                     if (player.mouseDown != player.wasMouseDown) {
                         lastAccelerateUpdateTime = time;
@@ -495,27 +495,26 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                             lastMouseX = mouseX;
                             lastMouseY = mouseY;
                             int dist = mouseX * mouseX + mouseY * mouseY;
-                            float ang;
+                            float angle;
                             if (dist > 256) {
-                                ang = (float) Math.atan2(mouseY, mouseX);
-                                player.eang = ang;
+                                angle = (float) Math.atan2(mouseY, mouseX);
+                                player.eang = angle;
                             } else {
-                                ang = player.wang;
+                                angle = player.wang;
                             }
-                            ang %= PI_2;
-                            if (ang < 0) {
-                                ang += PI_2;
+                            angle %= PI_2;
+                            if (angle < 0) {
+                                angle += PI_2;
                             }
-                            networkManager.send(new MessageSetAngle(ang));
+                            networkManager.send(new MessageSetAngle(angle));
                         }
                     }
                 }
                 for (Entity entity : new ArrayList<>(getEntities())) {
-                    entity.updateClient(vfr, vfrb, vfrb2);
+                    entity.updateClient(delta, lastDelta, lastDelta2);
                 }
             }
         }
-        ticks++;
     }
 
     public void moveTo(float x, float y) {

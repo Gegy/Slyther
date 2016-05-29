@@ -67,10 +67,10 @@ public class Food extends Entity {
     }
 
     @Override
-    public void updateClient(float vfr, float vfrb, float vfrb2) {
-        gfr += vfr * gr;
+    public void updateClient(float delta, float lastDelta, float lastDelta2) {
+        gfr += delta * gr;
         if (eaten) {
-            eatenFr += vfr / 41.0F;
+            eatenFr += delta / 41.0F;
             if (eatenFr >= 1.0F || eater == null) {
                 game.removeEntity(this);
             } else {
@@ -83,7 +83,7 @@ public class Food extends Entity {
             }
         } else {
             if (fr != 1.0F) {
-                fr += rsp * vfr / 150.0F;
+                fr += rsp * delta / 150.0F;
                 if (fr >= 1.0F) {
                     fr = 1.0F;
                     rad = 1.0F;

@@ -109,4 +109,7 @@ public abstract class Game<NET extends INetworkManager, CFG extends IConfigurati
     public abstract float getMamu();
     public abstract float getMamu2();
     public abstract float getCST();
+
+    public abstract float getFPSL(int sct);
+    public abstract float getFMLT(int sct);
 }

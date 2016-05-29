@@ -16,7 +16,7 @@ public class MessagePlayerDeath extends SlytherServerMessageBase {
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         int type = buffer.readUInt8();
         Snake player = client.player;
-        System.out.println("Final length: " + (int) Math.floor(15.0 * (client.getFPSL(player.sct) + player.fam / client.getFMLT(player.sct) - 1.0) - 5.0));
+        System.out.println("Final length: " + player.getLength());
     }
 
     @Override
