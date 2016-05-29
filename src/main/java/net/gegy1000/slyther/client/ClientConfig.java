@@ -8,4 +8,5 @@ public class ClientConfig implements IConfiguration {
     public Skin skin = Skin.RAINBOW;
     public String server;
     public boolean shouldRecord = true;
+    public boolean debugMode = false;
 }

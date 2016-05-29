@@ -76,7 +76,7 @@ public class GuiGame extends Gui {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
-            if (true) {
+            if (client.configuration.debugMode) {
                 GL11.glColor4f(0, 1, 0, 0.1F);
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 for (Sector sector : client.getSectors()) {

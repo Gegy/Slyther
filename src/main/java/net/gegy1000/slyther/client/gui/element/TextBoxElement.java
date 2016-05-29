@@ -12,24 +12,37 @@ public class TextBoxElement extends Element {
     private Function<TextBoxElement, Void> function;
     private boolean selected;
     private int tick;
+    private int selectionIndex;
 
     public TextBoxElement(Gui gui, String text, float posX, float posY, float width, float height, Function<TextBoxElement, Void> function) {
         super(gui, posX - (width / 2.0F), posY - (height / 2.0F), width, height);
         this.text = text;
         this.function = function;
+        this.selectionIndex = text.length();
     }
 
     @Override
     public void keyPressed(int key, char character) {
         if (selected) {
+            boolean modified = false;
             if (key == Keyboard.KEY_BACK) {
-                if (text.length() > 0) {
-                    text = text.substring(0, text.length() - 1);
+                if (text.length() > 0 && selectionIndex > 0) {
+                    text = text.substring(0, Math.max(0, selectionIndex - 1)) + text.substring(selectionIndex);
+                    selectionIndex--;
+                    modified = true;
                 }
             } else if (character != 167 && character >= 32 && character != 127) {
-                text += character;
+                text = text.substring(0, selectionIndex) + character + text.substring(selectionIndex);
+                selectionIndex++;
+                modified = true;
+            } else if (key == Keyboard.KEY_LEFT && selectionIndex > 0) {
+                selectionIndex--;
+            } else if (key == Keyboard.KEY_RIGHT && selectionIndex < text.length()) {
+                selectionIndex++;
             }
-            function.apply(this);
+            if (modified) {
+                function.apply(this);
+            }
         }
     }
 
@@ -54,13 +67,15 @@ public class TextBoxElement extends Element {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         gui.drawCenteredString(text, posX + (width / 2.0F), posY + (height / 2.0F), 1.0F, 0xFFFFFF);
         if (selected && tick % 40 > 20) {
-            gui.drawRect(posX + (width / 2.0F) + (gui.font.getWidth(text) / 2.0F), posY + (height / 2.0F) - (gui.font.getHeight() / 2.0F), 1.0F, gui.font.getHeight());
+            float x = gui.font.getWidth(text.substring(0, selectionIndex)) - gui.font.getWidth(text) / 2.0F;
+            gui.drawRect(posX + (width / 2.0F) + x, posY + (height / 2.0F) - (gui.font.getHeight() / 2.0F), 1.0F, gui.font.getHeight());
         }
     }
 
     @Override
     public boolean mouseClicked(float mouseX, float mouseY, int button) {
         selected = button == 0 && super.isSelected(mouseX, mouseY);
+        selectionIndex = text.length();
         return false;
     }
 
