@@ -96,6 +96,9 @@ public class ConnectedClient {
                     untrackSector(sector);
                 }
             }
+            for (Entity entity : server.getEntities()) {
+                entity.updateTrackers(this);
+            }
         }
     }
 

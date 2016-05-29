@@ -50,8 +50,7 @@ public abstract class Game<NET extends INetworkManager, CFG extends IConfigurati
     }
 
     public void removeSector(Sector sector) {
-        if (sectors.remove(sector)) {
-        }
+        sectors.remove(sector);
     }
 
     public void addEntity(Entity entity) {
