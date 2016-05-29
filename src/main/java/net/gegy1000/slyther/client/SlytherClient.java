@@ -176,6 +176,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public float zoomOffset;
 
     private static final File CONFIGURATION_FILE = new File(SystemUtils.getGameFolder(), "config.json");
+    public ServerHandler.Server server;
 
     public SlytherClient() throws Exception {
         setup();
@@ -301,11 +302,14 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         new Thread(() -> {
             try {
                 if (configuration.server == null) {
-                    while (ServerHandler.INSTANCE.getPingedCount() < 5) ;
-                    List<ServerHandler.Server> servers = ServerHandler.INSTANCE.getServerList();
-                    Collections.sort(servers);
-                    while ((networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)), configuration.shouldRecord)) == null)
-                        ;
+                    if (server == null) {
+                        while (ServerHandler.INSTANCE.getPingedCount() < 5) ;
+                        List<ServerHandler.Server> servers = ServerHandler.INSTANCE.getServerList();
+                        Collections.sort(servers);
+                        while ((networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)), configuration.shouldRecord)) == null);
+                    } else {
+                        networkManager = ClientNetworkManager.create(SlytherClient.this, server, configuration.shouldRecord);
+                    }
                 } else {
                     networkManager = ClientNetworkManager.create(SlytherClient.this, configuration.server, configuration.shouldRecord);
                 }

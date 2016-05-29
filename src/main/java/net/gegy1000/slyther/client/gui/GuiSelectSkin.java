@@ -72,7 +72,6 @@ public class GuiSelectSkin extends Gui {
     @Override
     public void render(float mouseX, float mouseY) {
         textureManager.bindTexture("/textures/background.png");
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         drawTexture(0.0F, 0.0F, backgroundX, 0, renderResolution.getWidth(), renderResolution.getHeight(), 599, 519);
         drawCenteredLargeString("Select Skin", renderResolution.getWidth() / 2.0F, 25.0F, 1.0F, 0xFFFFFF);
         GL11.glPushMatrix();
