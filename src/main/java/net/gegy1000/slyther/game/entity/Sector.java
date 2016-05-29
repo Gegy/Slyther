@@ -54,16 +54,14 @@ public class Sector {
     public void startTracking(ConnectedClient tracker) {
         tracker.send(new MessageAddSector(this));
         tracker.send(new MessagePopulateSector(this));
-        for (Food food : foods) {
-            tracker.tracking.add(food);
-        }
         for (Entity entity : game.getEntities()) {
-            if (!(entity instanceof Food)) {
-                int sectorX = (int) (entity.posX / game.getSectorSize());
-                int sectorY = (int) (entity.posY / game.getSectorSize());
-                if (sectorX == posX && sectorY == posY) {
+            int sectorX = (int) (entity.posX / game.getSectorSize());
+            int sectorY = (int) (entity.posY / game.getSectorSize());
+            if (sectorX == posX && sectorY == posY) {
+                if (entity instanceof Food) {
                     tracker.tracking.add(entity);
-                    entity.startTracking(tracker);
+                } else {
+                    tracker.track(entity);
                 }
             }
         }
@@ -72,11 +70,13 @@ public class Sector {
     public void stopTracking(ConnectedClient tracker) {
         tracker.send(new MessageRemoveSector(this));
         for (Entity entity : game.getEntities()) {
-            if (!(entity instanceof Food)) {
-                int sectorX = (int) (entity.posX / game.getSectorSize());
-                int sectorY = (int) (entity.posY / game.getSectorSize());
-                if (sectorX == posX && sectorY == posY) {
-                    game.removeEntity(entity);
+            int sectorX = (int) (entity.posX / game.getSectorSize());
+            int sectorY = (int) (entity.posY / game.getSectorSize());
+            if (sectorX == posX && sectorY == posY) {
+                if (entity instanceof Food) {
+                    tracker.tracking.remove(entity);
+                } else {
+                    tracker.untrack(entity);
                 }
             }
         }

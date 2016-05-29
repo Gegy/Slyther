@@ -1,10 +1,7 @@
 package net.gegy1000.slyther.client;
 
 import net.gegy1000.slyther.game.Game;
-import net.gegy1000.slyther.game.entity.Entity;
-import net.gegy1000.slyther.game.entity.Food;
-import net.gegy1000.slyther.game.entity.Prey;
-import net.gegy1000.slyther.game.entity.Snake;
+import net.gegy1000.slyther.game.entity.*;
 import net.gegy1000.slyther.client.gui.Gui;
 import net.gegy1000.slyther.client.gui.GuiMainMenu;
 import net.gegy1000.slyther.client.render.RenderHandler;
@@ -645,6 +642,23 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
             ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void removeSector(Sector sector) {
+        super.removeSector(sector);
+        int sectorSize = getSectorSize();
+        List<Entity> entitiesInSector = new ArrayList<>();
+        for (Entity entity : getEntities()) {
+            int sectorX = (int) (entity.posX / sectorSize);
+            int sectorY = (int) (entity.posY / sectorSize);
+            if (sectorX == sector.posX && sectorY == sector.posY) {
+                entitiesInSector.add(entity);
+            }
+        }
+        for (Entity entity : entitiesInSector) {
+            removeEntity(entity);
         }
     }
 }
