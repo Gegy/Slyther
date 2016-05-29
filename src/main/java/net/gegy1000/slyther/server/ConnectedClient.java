@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.server;
 
 import net.gegy1000.slyther.game.Skin;
+import net.gegy1000.slyther.game.entity.Sector;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.server.MessageSetup;
@@ -24,6 +25,7 @@ public class ConnectedClient {
     public float viewDistance;
 
     public List<Entity> tracking = new ArrayList<>();
+    public List<Sector> trackingSectors = new ArrayList<>();
 
     public ConnectedClient(SlytherServer server, WebSocket socket) {
         this.server = server;
@@ -51,9 +53,22 @@ public class ConnectedClient {
         }
     }
 
+    public void trackSector(Sector sector) {
+        if (!trackingSectors.contains(sector)) {
+            trackingSectors.add(sector);
+            sector.startTracking(this);
+        }
+    }
+
     public void untrack(Entity entity) {
         if (tracking.remove(entity)) {
             entity.stopTracking(this);
+        }
+    }
+
+    public void untrackSector(Sector sector) {
+        if (trackingSectors.remove(sector)) {
+            sector.stopTracking(this);
         }
     }
 
@@ -74,11 +89,11 @@ public class ConnectedClient {
                 }
             }
             viewDistance = 800.0F / gsc;
-            for (Entity entity : server.getEntities()) {
-                if (entity.shouldTrack(this)) {
-                    track(entity);
+            for (Sector sector : server.getSectors()) {
+                if (sector.shouldTrack(this)) {
+                    trackSector(sector);
                 } else {
-                    untrack(entity);
+                    untrackSector(sector);
                 }
             }
         }

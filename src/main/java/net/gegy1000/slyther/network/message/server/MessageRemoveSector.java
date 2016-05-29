@@ -1,14 +1,11 @@
 package net.gegy1000.slyther.network.message.server;
 
 import net.gegy1000.slyther.client.SlytherClient;
-import net.gegy1000.slyther.game.entity.Food;
 import net.gegy1000.slyther.game.entity.Sector;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
-
-import java.util.ArrayList;
 
 public class MessageRemoveSector extends SlytherServerMessageBase {
     private Sector sector;
@@ -23,8 +20,8 @@ public class MessageRemoveSector extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
         int offset = server.configuration.gameRadius / server.configuration.sectorSize;
-        buffer.writeUInt8((int) sector.posX + offset);
-        buffer.writeUInt8((int) sector.posY + offset);
+        buffer.writeUInt8(sector.posX + offset);
+        buffer.writeUInt8(sector.posY + offset);
     }
 
     @Override
@@ -38,7 +35,7 @@ public class MessageRemoveSector extends SlytherServerMessageBase {
                 break;
             }
         }
-        client.removeEntity(remove);
+        client.removeSector(remove);
     }
 
     @Override

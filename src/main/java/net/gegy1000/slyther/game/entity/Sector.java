@@ -11,17 +11,17 @@ import net.gegy1000.slyther.server.SlytherServer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Sector extends Entity {
+public class Sector {
+    public Game<?, ?> game;
+    public int posX;
+    public int posY;
     public List<Food> foods = new ArrayList<>();
     public long lastSpawnTime;
 
-    public Sector(Game game, float posX, float posY) {
-        super(game, posX, posY);
-    }
-
-    @Override
-    public void updateClient(float vfr, float vfrb, float vfrb2) {
-
+    public Sector(Game<?, ?> game, int posX, int posY) {
+        this.game = game;
+        this.posX = posX;
+        this.posY = posY;
     }
 
     public void updateServer() {
@@ -32,8 +32,8 @@ public class Sector extends Entity {
         if (foods.size() < server.configuration.maxSpawnFoodPerSector) {
             if (System.currentTimeMillis() - lastSpawnTime > server.configuration.respawnFoodDelay) {
                 int sectorSize = game.getSectorSize();
-                int sectorX = (int) (posX * sectorSize);
-                int sectorY = (int) (posY * sectorSize);
+                int sectorX = posX * sectorSize;
+                int sectorY = posY * sectorSize;
                 int posX = sectorX + server.rng.nextInt(sectorSize);
                 int posY = sectorY + server.rng.nextInt(sectorSize);
                 int size = server.rng.nextInt(server.configuration.maxNaturalFoodSize - server.configuration.minNaturalFoodSize) + server.configuration.minNaturalFoodSize;
@@ -44,7 +44,6 @@ public class Sector extends Entity {
         }
     }
 
-    @Override
     public boolean shouldTrack(ConnectedClient client) {
         int sectorSize = ((SlytherServer) game).configuration.sectorSize;
         float deltaX = posX * sectorSize + sectorSize / 2.0F - client.snake.posX;
@@ -52,31 +51,34 @@ public class Sector extends Entity {
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY) <= client.viewDistance;
     }
 
-    @Override
     public void startTracking(ConnectedClient tracker) {
         tracker.send(new MessageAddSector(this));
         tracker.send(new MessagePopulateSector(this));
         for (Food food : foods) {
             tracker.tracking.add(food);
         }
-    }
-
-    @Override
-    public void stopTracking(ConnectedClient tracker) {
-        tracker.send(new MessageRemoveSector(this));
-    }
-
-    @Override
-    public void addChildren() {
-        for (Food food : foods) {
-            game.addEntity(food);
+        for (Entity entity : game.getEntities()) {
+            if (!(entity instanceof Food)) {
+                int sectorX = (int) (entity.posX / game.getSectorSize());
+                int sectorY = (int) (entity.posY / game.getSectorSize());
+                if (sectorX == posX && sectorY == posY) {
+                    tracker.tracking.add(entity);
+                    entity.startTracking(tracker);
+                }
+            }
         }
     }
 
-    @Override
-    public void removeChildren() {
-        for (Food food : foods) {
-            game.removeEntity(food);
+    public void stopTracking(ConnectedClient tracker) {
+        tracker.send(new MessageRemoveSector(this));
+        for (Entity entity : game.getEntities()) {
+            if (!(entity instanceof Food)) {
+                int sectorX = (int) (entity.posX / game.getSectorSize());
+                int sectorY = (int) (entity.posY / game.getSectorSize());
+                if (sectorX == posX && sectorY == posY) {
+                    game.removeEntity(entity);
+                }
+            }
         }
     }
 

@@ -18,7 +18,7 @@ public class ServerConfig implements IConfiguration {
     public int leaderboardLength = 10;
     public long leaderboardUpdateFrequency = 5000;
     public int maxSpawnFoodPerSector = 10;
-    public int minNaturalFoodSize = 20;
-    public int maxNaturalFoodSize = 30;
+    public int minNaturalFoodSize = 5;
+    public int maxNaturalFoodSize = 8;
     public long respawnFoodDelay = 10000;
 }

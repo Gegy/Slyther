@@ -52,13 +52,6 @@ public class Food extends Entity {
     }
 
     @Override
-    public boolean shouldTrack(ConnectedClient client) {
-        float deltaX = posX - client.snake.posX;
-        float deltaY = posY - client.snake.posY;
-        return Math.sqrt(deltaX * deltaX + deltaY * deltaY) <= client.viewDistance;
-    }
-
-    @Override
     public void startTracking(ConnectedClient tracker) {
         tracker.send(new MessageNewFood(this));
     }

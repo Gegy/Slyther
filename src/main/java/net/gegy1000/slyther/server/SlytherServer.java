@@ -40,7 +40,7 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
             for (int y = -gameRadius; y < gameRadius; y += sectorSize) {
                 Sector sector = new Sector(this, x / sectorSize, y / sectorSize);
                 populateSector(sector);
-                addEntity(sector);
+                addSector(sector);
             }
         }
         double delta = 0;
@@ -62,8 +62,8 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
     }
 
     public void populateSector(Sector sector) {
-        int sectorX = (int) (sector.posX * configuration.sectorSize);
-        int sectorY = (int) (sector.posY * configuration.sectorSize);
+        int sectorX = sector.posX * configuration.sectorSize;
+        int sectorY = sector.posY * configuration.sectorSize;
         for (int i = 0; i < rng.nextInt(configuration.maxSpawnFoodPerSector); i++) {
             int posX = sectorX + rng.nextInt(configuration.sectorSize);
             int posY = sectorY + rng.nextInt(configuration.sectorSize);

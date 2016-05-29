@@ -20,13 +20,13 @@ public class MessageAddSector extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
         int offset = server.configuration.gameRadius / server.configuration.sectorSize;
-        buffer.writeUInt8((int) sector.posX + offset);
-        buffer.writeUInt8((int) sector.posY + offset);
+        buffer.writeUInt8(sector.posX + offset);
+        buffer.writeUInt8(sector.posY + offset);
     }
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        client.addEntity(new Sector(client, buffer.readUInt8(), buffer.readUInt8()));
+        client.addSector(new Sector(client, buffer.readUInt8(), buffer.readUInt8()));
     }
 
     @Override

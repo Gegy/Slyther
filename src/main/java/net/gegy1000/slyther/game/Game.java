@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public abstract class Game<NETWORK_MANAGER extends INetworkManager, CONFIGURATION extends IConfiguration> {
+public abstract class Game<NET extends INetworkManager, CFG extends IConfiguration> {
     private List<Entity> entities = new ArrayList<>();
     private List<Snake> snakes = new ArrayList<>();
     private List<Sector> sectors = new ArrayList<>();
@@ -21,9 +21,9 @@ public abstract class Game<NETWORK_MANAGER extends INetworkManager, CONFIGURATIO
     public List<LeaderboardEntry> leaderboard = new ArrayList<>();
     public boolean[][] map = new boolean[80][80];
 
-    public NETWORK_MANAGER networkManager;
+    public NET networkManager;
 
-    public CONFIGURATION configuration;
+    public CFG configuration;
 
     private Queue<FutureTask<?>> tasks = new LinkedBlockingDeque<>();
 
@@ -43,20 +43,26 @@ public abstract class Game<NETWORK_MANAGER extends INetworkManager, CONFIGURATIO
         }
     }
 
+    public void addSector(Sector sector) {
+        if (!sectors.contains(sector)) {
+            sectors.add(sector);
+        }
+    }
+
+    public void removeSector(Sector sector) {
+        if (sectors.remove(sector)) {
+        }
+    }
+
     public void addEntity(Entity entity) {
         if (!entities.contains(entity)) {
             entities.add(entity);
             if (entity instanceof Snake) {
                 snakes.add((Snake) entity);
-            } else if (entity instanceof Sector) {
-                sectors.add((Sector) entity);
             } else if (entity instanceof Food) {
                 foods.add((Food) entity);
             } else if (entity instanceof Prey) {
                 preys.add((Prey) entity);
-            }
-            if (entity != null) {
-                entity.addChildren();
             }
         }
     }
@@ -65,15 +71,10 @@ public abstract class Game<NETWORK_MANAGER extends INetworkManager, CONFIGURATIO
         if (entities.remove(entity)) {
             if (entity instanceof Snake) {
                 snakes.remove(entity);
-            } else if (entity instanceof Sector) {
-                sectors.remove(entity);
             } else if (entity instanceof Food) {
                 foods.remove(entity);
             } else if (entity instanceof Prey) {
                 preys.remove(entity);
-            }
-            if (entity != null) {
-                entity.removeChildren();
             }
         }
     }

@@ -8,6 +8,8 @@ public abstract class Entity {
     public Game game;
     public float posX;
     public float posY;
+    public int previousSectorX;
+    public int previousSectorY;
 
     public Entity(Game game, float posX, float posY) {
         this.game = game;
@@ -15,7 +17,28 @@ public abstract class Entity {
         this.posY = posY;
     }
 
-    public abstract boolean shouldTrack(ConnectedClient client);
+    public void updateTrackers(ConnectedClient client) {
+        int sectorX = (int) (posX / game.getSectorSize());
+        int sectorY = (int) (posY / game.getSectorSize());
+        if (sectorX != previousSectorX || sectorY != previousSectorY) {
+            Sector previousSector = null;
+            Sector newSector = null;
+            for (Sector sector : client.trackingSectors) {
+                if (sector.posX == sectorX && sector.posY == sectorY) {
+                    newSector = sector;
+                } else if (sector.posX == previousSectorX && sector.posY == previousSectorY) {
+                    previousSector = sector;
+                }
+            }
+            if (previousSector == null && newSector != null) {
+                client.track(this);
+            } else if (previousSector != null && newSector == null) {
+                client.untrack(this);
+            }
+            previousSectorX = sectorX;
+            previousSectorY = sectorY;
+        }
+    }
 
     public abstract void startTracking(ConnectedClient tracker);
     public abstract void stopTracking(ConnectedClient tracker);
@@ -23,10 +46,4 @@ public abstract class Entity {
     public abstract void updateServer();
 
     public abstract void updateClient(float vfr, float vfrb, float vfrb2);
-
-    public void addChildren() {
-    }
-
-    public void removeChildren() {
-    }
 }

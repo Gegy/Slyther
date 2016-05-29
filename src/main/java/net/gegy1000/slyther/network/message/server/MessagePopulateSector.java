@@ -32,21 +32,12 @@ public class MessagePopulateSector extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        boolean expectingSectorPosition = false;
-        int sectorX = 0;
-        int sectorY = 0;
         while (buffer.hasRemaining()) {
             Color color = Color.values()[buffer.readUInt8() % Color.values().length];
             int x = buffer.readUInt16();
             int y = buffer.readUInt16();
             float size = buffer.readUInt8() / 5.0F;
-            Food food = new Food(client, x, y, size, true, color);
-            if (!expectingSectorPosition) {
-                expectingSectorPosition = true;
-                sectorX = (int) Math.floor(x / client.SECTOR_SIZE);
-                sectorY = (int) Math.floor(y / client.SECTOR_SIZE);
-            }
-            client.addEntity(food);
+            client.addEntity(new Food(client, x, y, size, true, color));
         }
     }
 

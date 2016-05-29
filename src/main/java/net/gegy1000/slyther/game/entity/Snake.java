@@ -636,16 +636,6 @@ public class Snake extends Entity implements Comparable<Snake> {
     }
 
     @Override
-    public boolean shouldTrack(ConnectedClient client) {
-        for (SnakePoint point : points) {
-            if (point.shouldTrack(client)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
     public void startTracking(ConnectedClient tracker) {
         tracker.send(new MessageNewSnake(this));
     }

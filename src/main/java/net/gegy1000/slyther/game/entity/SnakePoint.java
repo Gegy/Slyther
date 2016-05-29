@@ -29,10 +29,4 @@ public class SnakePoint {
         prevPosX = posX;
         prevPosY = posY;
     }
-
-    public boolean shouldTrack(ConnectedClient client) {
-        float deltaX = posX - client.snake.posX;
-        float deltaY = posY - client.snake.posY;
-        return Math.sqrt(deltaX * deltaX + deltaY * deltaY) <= client.viewDistance;
-    }
 }
