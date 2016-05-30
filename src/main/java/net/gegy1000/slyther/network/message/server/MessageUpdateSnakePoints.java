@@ -70,8 +70,8 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
                 snake.fam = (double) buffer.readUInt24() / 0xFFFFFF;
             }
             SnakePoint point = new SnakePoint(x, y);
-            point.ebx = point.posX - head.posX;
-            point.eby = point.posY - head.posY;
+            point.deltaX = point.posX - head.posX;
+            point.deltaY = point.posY - head.posY;
             snake.points.add(point);
             if (snake.isInView) {
                 float fx = (snake.posX + snake.fx) - point.posX;

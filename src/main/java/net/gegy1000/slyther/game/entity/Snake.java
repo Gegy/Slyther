@@ -69,9 +69,9 @@ public class Snake extends Entity implements Comparable<Snake> {
     public double fam;
     public float angle;
     public float prevAngle;
-    public float eang;
-    public float wang;
-    public float prevWang;
+    public float eyeAngle;
+    public float wantedAngle;
+    public float prevWantedAngle;
     public float rex;
     public float rey;
     public float speed;
@@ -127,8 +127,8 @@ public class Snake extends Entity implements Comparable<Snake> {
         ehl = 1;
         msl = 42;
         this.angle = angle;
-        eang = angle;
-        wang = angle;
+        eyeAngle = angle;
+        wantedAngle = angle;
         speed = 2;
 
         if (points != null) {
@@ -282,7 +282,7 @@ public class Snake extends Entity implements Comparable<Snake> {
             if (angle < 0) {
                 angle += SlytherClient.PI_2;
             }
-            float h = (float) ((wang - angle) % SlytherClient.PI_2);
+            float h = (float) ((wantedAngle - angle) % SlytherClient.PI_2);
             if (h < 0) {
                 h += SlytherClient.PI_2;
             }
@@ -290,7 +290,7 @@ public class Snake extends Entity implements Comparable<Snake> {
                 h -= SlytherClient.PI_2;
             }
             if (h > 0) {
-                angle = wang;
+                angle = wantedAngle;
                 turnDirection = 0;
             }
         } else if (turnDirection == 2) {
@@ -301,7 +301,7 @@ public class Snake extends Entity implements Comparable<Snake> {
             if (angle < 0) {
                 angle += SlytherClient.PI_2;
             }
-            float h = (float) ((wang - angle) % SlytherClient.PI_2);
+            float h = (float) ((wantedAngle - angle) % SlytherClient.PI_2);
             if (h < 0) {
                 h += SlytherClient.PI_2;
             }
@@ -309,11 +309,11 @@ public class Snake extends Entity implements Comparable<Snake> {
                 h -= SlytherClient.PI_2;
             }
             if (h < 0) {
-                angle = wang;
+                angle = wantedAngle;
                 turnDirection = 0;
             }
         } else {
-            angle = wang;
+            angle = wantedAngle;
         }
         if (ehl != 1) {
             ehl += 0.03F * delta;
@@ -323,7 +323,7 @@ public class Snake extends Entity implements Comparable<Snake> {
         }
         SnakePoint point = points.get(points.size() - 1);
         if (point != null) {
-            wehang = (float) Math.atan2(posY + fy - point.posY - point.fy + point.eby * (1.0F - ehl), posX + fx - point.posX - point.fx + point.ebx * (1.0F - ehl));
+            wehang = (float) Math.atan2(posY + fy - point.posY - point.fy + point.deltaY * (1.0F - ehl), posX + fx - point.posX - point.fx + point.deltaX * (1.0F - ehl));
         }
         if (!dead) {
             if (ehang != wehang) {
@@ -423,8 +423,8 @@ public class Snake extends Entity implements Comparable<Snake> {
                 }
             }
         }
-        float ex = (float) (Math.cos(eang) * pma);
-        float ey = (float) (Math.sin(eang) * pma);
+        float ex = (float) (Math.cos(eyeAngle) * pma);
+        float ey = (float) (Math.sin(eyeAngle) * pma);
         if (rex < ex) {
             rex += delta / 6.0F;
             if (rex > ex) {
@@ -518,11 +518,11 @@ public class Snake extends Entity implements Comparable<Snake> {
         if (angle < 0) {
             angle += SlytherServer.PI_2;
         }
-        if (wang < 0 || angle >= SlytherServer.PI_2) {
-            wang %= SlytherServer.PI_2;
+        if (wantedAngle < 0 || angle >= SlytherServer.PI_2) {
+            wantedAngle %= SlytherServer.PI_2;
         }
-        if (wang < 0) {
-            wang += SlytherServer.PI_2;
+        if (wantedAngle < 0) {
+            wantedAngle += SlytherServer.PI_2;
         }
         float moveX = (float) (Math.cos(angle));
         float moveY = (float) (Math.sin(angle));
@@ -533,16 +533,16 @@ public class Snake extends Entity implements Comparable<Snake> {
             point.posY += moveY;
         }
         boolean angleChange = angle != prevAngle;
-        boolean wangChange = wang != prevWang;
+        boolean wantedAngleChange = wantedAngle != prevWantedAngle;
         boolean speedChange = speed != prevSpeed;
         boolean turnDirectionChange = turnDirection != prevTurnDirection;
-        if (angleChange || wangChange || speedChange || turnDirectionChange) {
+        if (angleChange || wantedAngleChange || speedChange || turnDirectionChange) {
             prevAngle = angle;
-            prevWang = wang;
+            prevWantedAngle = wantedAngle;
             prevSpeed = speed;
             prevTurnDirection = turnDirection;
             for (ConnectedClient client : server.getTrackingClients(this)) {
-                client.send(new MessageUpdateSnake(this, turnDirectionChange, angleChange, wangChange, speedChange));
+                client.send(new MessageUpdateSnake(this, turnDirectionChange, angleChange, wantedAngleChange, speedChange));
             }
         }
         if (prevPointCount != points.size()) {
@@ -556,9 +556,9 @@ public class Snake extends Entity implements Comparable<Snake> {
             spang = 1.0F;
         }
         float turnSpeed = game.getMamu() * scang * spang;
-        if (angle > wang) {
+        if (angle > wantedAngle) {
             turnDirection = 1;
-        } else if (angle < wang) {
+        } else if (angle < wantedAngle) {
             turnDirection = 2;
         }
         if (turnDirection == 1) {
@@ -569,7 +569,7 @@ public class Snake extends Entity implements Comparable<Snake> {
             if (angle < 0) {
                 angle += SlytherServer.PI_2;
             }
-            float turnAmount = (float) ((wang - angle) % SlytherServer.PI_2);
+            float turnAmount = (float) ((wantedAngle - angle) % SlytherServer.PI_2);
             if (turnAmount < 0) {
                 turnAmount += SlytherServer.PI_2;
             }
@@ -577,7 +577,7 @@ public class Snake extends Entity implements Comparable<Snake> {
                 turnAmount -= SlytherServer.PI_2;
             }
             if (turnAmount > 0) {
-                angle = wang;
+                angle = wantedAngle;
                 turnDirection = 0;
             }
         } else if (turnDirection == 2) {
@@ -588,7 +588,7 @@ public class Snake extends Entity implements Comparable<Snake> {
             if (angle < 0) {
                 angle += SlytherServer.PI_2;
             }
-            float turnAmount = (float) ((wang - angle) % SlytherServer.PI_2);
+            float turnAmount = (float) ((wantedAngle - angle) % SlytherServer.PI_2);
             if (turnAmount < 0) {
                 turnAmount += SlytherServer.PI_2;
             }
@@ -596,11 +596,11 @@ public class Snake extends Entity implements Comparable<Snake> {
                 turnAmount -= SlytherServer.PI_2;
             }
             if (turnAmount < 0) {
-                angle = wang;
+                angle = wantedAngle;
                 turnDirection = 0;
             }
         } else {
-            angle = wang;
+            angle = wantedAngle;
         }
         for (SnakePoint point : points) {
             point.update();

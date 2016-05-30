@@ -9,43 +9,43 @@ import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessageUpdateSnake extends SlytherServerMessageBase {
     private Snake snake;
-    private boolean dir;
-    private boolean ang;
-    private boolean wang;
-    private boolean sp;
+    private boolean turnDirection;
+    private boolean angle;
+    private boolean wantedAngle;
+    private boolean speed;
 
     public MessageUpdateSnake() {
     }
 
-    public MessageUpdateSnake(Snake snake, boolean dir, boolean ang, boolean wang, boolean sp) {
+    public MessageUpdateSnake(Snake snake, boolean turnDirection, boolean angle, boolean wantedAngle, boolean speed) {
         this.snake = snake;
-        this.dir = dir;
-        this.ang = ang;
-        this.wang = wang;
-        this.sp = sp;
+        this.turnDirection = turnDirection;
+        this.angle = angle;
+        this.wantedAngle = wantedAngle;
+        this.speed = speed;
     }
 
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
         buffer.writeUInt16(snake.id);
-        if (dir && ang && wang && sp) {
+        if (turnDirection && angle && wantedAngle && speed) {
             buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
-            buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
+            buffer.writeUInt8((int) (snake.wantedAngle / (2.0F * Math.PI / 256.0F)));
             buffer.writeUInt8((int) (snake.speed * 18.0F));
-        } else if (ang && sp) {
+        } else if (angle && speed) {
             buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
             buffer.writeUInt8((int) (snake.speed * 18.0F));
-        } else if ((dir) && (snake.turnDirection == 1 || snake.turnDirection == 2) && wang && sp) {
-            buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
+        } else if ((turnDirection) && (snake.turnDirection == 1 || snake.turnDirection == 2) && wantedAngle && speed) {
+            buffer.writeUInt8((int) (snake.wantedAngle / (2.0F * Math.PI / 256.0F)));
             buffer.writeUInt8((int) (snake.speed * 18.0F));
-        } else if ((dir && snake.turnDirection == 2) && ang && wang) {
+        } else if ((turnDirection && snake.turnDirection == 2) && angle && wantedAngle) {
             buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
-            buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
-        } else if (ang) {
+            buffer.writeUInt8((int) (snake.wantedAngle / (2.0F * Math.PI / 256.0F)));
+        } else if (angle) {
             buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
-        } else if ((dir && snake.turnDirection == 1) && wang) {
-            buffer.writeUInt8((int) (snake.wang / (2.0F * Math.PI / 256.0F)));
-        } else if (sp) {
+        } else if ((turnDirection && snake.turnDirection == 1) && wantedAngle) {
+            buffer.writeUInt8((int) (snake.wantedAngle / (2.0F * Math.PI / 256.0F)));
+        } else if (speed) {
             buffer.writeUInt8((int) (snake.speed * 18.0F));
         }
     }
@@ -53,49 +53,49 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         int id = buffer.readUInt16();
-        int dir = -1;
-        float ang = -1;
-        float wang = -1;
-        float sp = -1;
+        int turnDirection = -1;
+        float angle = -1;
+        float wantedAngle = -1;
+        float speed = -1;
         if (buffer.hasRemaining(3)) {
-            dir = messageId == 'e' ? 1 : 2;
-            ang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
-            wang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
-            sp = buffer.readUInt8() / 18.0F;
+            turnDirection = messageId == 'e' ? 1 : 2;
+            angle = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
+            wantedAngle = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
+            speed = buffer.readUInt8() / 18.0F;
         } else if (buffer.hasRemaining(2)) {
             if (messageId == 'e') {
-                ang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
-                sp = buffer.readUInt8() / 18.0F;
+                angle = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
+                speed = buffer.readUInt8() / 18.0F;
             } else if (messageId == 'E') {
-                dir = 1;
-                wang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
-                sp = buffer.readUInt8() / 18.0F;
+                turnDirection = 1;
+                wantedAngle = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
+                speed = buffer.readUInt8() / 18.0F;
             } else if (messageId == '4') {
-                dir = 2;
-                wang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
-                sp = buffer.readUInt8() / 18.0F;
+                turnDirection = 2;
+                wantedAngle = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
+                speed = buffer.readUInt8() / 18.0F;
             } else if (messageId == '5') {
-                dir = 2;
-                ang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
-                wang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
+                turnDirection = 2;
+                angle = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
+                wantedAngle = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
             }
         } else if (buffer.hasRemaining()) {
             if (messageId == 'e') {
-                ang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
+                angle = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
             } else if (messageId == 'E') {
-                dir = 1;
-                wang = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
+                turnDirection = 1;
+                wantedAngle = (float) (buffer.readUInt8() * (2.0F * Math.PI / 256.0F));
             } else if (messageId == '3') {
-                sp = buffer.readUInt8() / 18.0F;
+                speed = buffer.readUInt8() / 18.0F;
             }
         }
         Snake snake = client.getSnake(id);
         if (snake != null) {
-            if (dir != -1) {
-                snake.turnDirection = dir;
+            if (turnDirection != -1) {
+                snake.turnDirection = turnDirection;
             }
-            if (ang != -1) {
-                float fa = (float) ((ang - snake.angle) % SlytherClient.PI_2);
+            if (angle != -1) {
+                float fa = (float) ((angle - snake.angle) % SlytherClient.PI_2);
                 if (fa < 0) {
                     fa += SlytherClient.PI_2;
                 }
@@ -111,17 +111,17 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
                     }
                 }
                 snake.fatg = SlytherClient.AFC;
-                snake.angle = ang;
+                snake.angle = angle;
             }
-            if (wang != -1) {
-                snake.wang = wang;
+            if (wantedAngle != -1) {
+                snake.wantedAngle = wantedAngle;
                 if (snake != client.player) {
-                    snake.eang = wang;
+                    snake.eyeAngle = wantedAngle;
                 }
             }
-            if (sp != -1) {
-                snake.speed = sp;
-                snake.spang = sp / client.SPANG_DV;
+            if (speed != -1) {
+                snake.speed = speed;
+                snake.spang = speed / client.SPANG_DV;
                 if (snake.spang > 1.0F) {
                     snake.spang = 1.0F;
                 }
@@ -136,21 +136,21 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
 
     @Override
     public int getSendMessageId() {
-        if (dir && ang && wang && sp) {
+        if (turnDirection && angle && wantedAngle && speed) {
             return snake.turnDirection == 1 ? 'e' : 'E';
-        } else if (ang && sp) {
+        } else if (angle && speed) {
             return 'e';
-        } else if ((dir && snake.turnDirection == 1) && wang && sp) {
+        } else if ((turnDirection && snake.turnDirection == 1) && wantedAngle && speed) {
             return 'E';
-        } else if ((dir && snake.turnDirection == 2) && wang && sp) {
+        } else if ((turnDirection && snake.turnDirection == 2) && wantedAngle && speed) {
             return '4';
-        } else if ((dir && snake.turnDirection == 2) && ang && wang) {
+        } else if ((turnDirection && snake.turnDirection == 2) && angle && wantedAngle) {
             return '5';
-        } else if (ang) {
+        } else if (angle) {
             return 'e';
-        } else if ((dir && snake.turnDirection == 1) && wang) {
+        } else if ((turnDirection && snake.turnDirection == 1) && wantedAngle) {
             return 'E';
-        } else if (sp) {
+        } else if (speed) {
             return '3';
         }
         return 'e';

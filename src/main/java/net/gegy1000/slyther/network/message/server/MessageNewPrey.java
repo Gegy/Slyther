@@ -48,10 +48,10 @@ public class MessageNewPrey extends SlytherServerMessageBase {
             float y = buffer.readUInt24() / 5.0F;
             float size = buffer.readUInt8() / 5.0F;
             int turningDirection = buffer.readUInt8() - 48;
-            float wang = (float) (2.0F * buffer.readUInt24() * Math.PI / 0xFFFFFF);
+            float wantedAngle = (float) (2.0F * buffer.readUInt24() * Math.PI / 0xFFFFFF);
             float angle = (float) (2.0F * buffer.readUInt24() * Math.PI / 0xFFFFFF);
             float speed = buffer.readUInt16() / 1000.0F;
-            client.addEntity(new Prey(client, id, x, y, size, color, turningDirection, wang, angle, speed));
+            client.addEntity(new Prey(client, id, x, y, size, color, turningDirection, wantedAngle, angle, speed));
         }
     }
 

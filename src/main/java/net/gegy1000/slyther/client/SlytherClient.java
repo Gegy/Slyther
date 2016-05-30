@@ -92,7 +92,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public float viewX;
     public float viewY;
 
-    public float viewAng;
+    public float viewAngle;
     public float viewDist;
 
     public float ovxx; //oldViewX?
@@ -445,14 +445,14 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                                 direction = 127;
                             }
                             keyDownLeftTicks -= direction;
-                            player.eang -= MAMU * direction * player.scang * player.spang;
+                            player.eyeAngle -= MAMU * direction * player.scang * player.spang;
                         } else {
                             direction = (int) keyDownRightTicks;
                             if (direction > 127) {
                                 direction = 127;
                             }
                             keyDownRightTicks -= direction;
-                            player.eang += MAMU * direction * player.scang * player.spang;
+                            player.eyeAngle += MAMU * direction * player.scang * player.spang;
                         }
                         networkManager.send(new MessageSetTurn((byte) direction));
                     }
@@ -488,9 +488,9 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                             float angle;
                             if (dist > 256) {
                                 angle = (float) Math.atan2(mouseY, mouseX);
-                                player.eang = angle;
+                                player.eyeAngle = angle;
                             } else {
-                                angle = player.wang;
+                                angle = player.wantedAngle;
                             }
                             angle %= PI_2;
                             if (angle < 0) {
@@ -519,7 +519,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
             mouseMoved = false;
             lastTurnTime = time;
             float ang = (float) Math.atan2(y - player.posY, x - player.posX);
-            player.eang = ang;
+            player.eyeAngle = ang;
             ang %= PI_2;
             if (ang < 0) {
                 ang += PI_2;

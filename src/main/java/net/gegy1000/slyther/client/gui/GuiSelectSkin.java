@@ -26,7 +26,7 @@ public class GuiSelectSkin extends Gui {
         List<SnakePoint> points = new ArrayList<>();
         for (int i = 0; i < 22; i++) {
             SnakePoint point = new SnakePoint(i * 10.0F, 0.0F);
-            point.ebx = i == 0 ? 0.0F : 10.0F;
+            point.deltaX = i == 0 ? 0.0F : 10.0F;
             points.add(point);
         }
         snake = new Snake(client, "", 0, points.get(points.size() - 1).posX, 0.0F, client.configuration.skin, 0.0F, points);
@@ -192,7 +192,7 @@ public class GuiSelectSkin extends Gui {
             GL11.glTranslatef(originX, originY, 0.0F);
             float faceScale = 0.2F;
             GL11.glScalef(snake.scale * faceScale, snake.scale * faceScale, 1.0F);
-            GL11.glRotatef((float) Math.toDegrees(snake.angle + (snake.ehang / 10.0F)), 0.0F, 0.0F, 1.0F);
+            GL11.glRotatef((float) Math.toDegrees(snake.angle + (snake.eyeAngle / 10.0F)), 0.0F, 0.0F, 1.0F);
             GL11.glTranslatef(-5.0F / faceScale, 0.0F, 0.0F);
             textureManager.bindTexture("/textures/" + snake.faceTexture + ".png");
             drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);

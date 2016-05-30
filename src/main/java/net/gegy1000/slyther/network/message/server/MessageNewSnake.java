@@ -40,7 +40,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
         } else {
             buffer.writeUInt24( (int) (snake.angle / ((2.0F * Math.PI) / 0xFFFFFF)));
             buffer.writeUInt8(0);
-            buffer.writeUInt24( (int) (snake.wang / ((2.0F * Math.PI) / 0xFFFFFF)));
+            buffer.writeUInt24( (int) (snake.wantedAngle / ((2.0F * Math.PI) / 0xFFFFFF)));
             buffer.writeUInt16((int) (snake.speed * 1000.0F));
             buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
             buffer.writeUInt8(snake.skin.ordinal());
@@ -78,7 +78,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
         if (buffer.hasRemaining(4)) {
             float angle = (float) (buffer.readUInt24() * (2 * Math.PI / 0xFFFFFF));
             buffer.skipBytes(1);
-            float wang = (float) (buffer.readUInt24() * (2 * Math.PI / 0xFFFFFF));
+            float wantedAngle = (float) (buffer.readUInt24() * (2 * Math.PI / 0xFFFFFF));
             float speed = buffer.readUInt16() / 1000.0F;
             double fam = (double) buffer.readUInt24() / 0xFFFFFF;
             int ski = buffer.readUInt8();
@@ -108,8 +108,8 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                     pointY += (buffer.readUInt8() - 127) / 2.0F;
                 }
                 SnakePoint point = new SnakePoint(pointX, pointY);
-                point.ebx = pointX - prevPointX;
-                point.eby = pointY - prevPointY;
+                point.deltaX = pointX - prevPointX;
+                point.deltaY = pointY - prevPointY;
                 points.add(point);
             }
             if (client.player == null) {
@@ -127,7 +127,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                 snake.mouseDown = false;
                 snake.wasMouseDown = false;
             }
-            snake.eang = snake.wang = wang;
+            snake.eyeAngle = snake.wantedAngle = wantedAngle;
             snake.speed = speed;
             snake.spang = speed / client.SPANG_DV;
             if (snake.spang > 1.0F) {

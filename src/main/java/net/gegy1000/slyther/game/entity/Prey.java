@@ -12,8 +12,8 @@ public class Prey extends Entity {
     public float size;
     public Color color;
     public int turningDirection;
-    public float wang;
-    public float ang;
+    public float wantedAngle;
+    public float angle;
     public float speed;
     public float fr;
     public int gfr;
@@ -28,14 +28,14 @@ public class Prey extends Entity {
     public Snake eater;
     public float gr;
 
-    public Prey(Game<?, ?> game, int id, float posX, float posY, float size, Color color, int turningDirection, float wang, float ang, float speed) {
+    public Prey(Game<?, ?> game, int id, float posX, float posY, float size, Color color, int turningDirection, float wantedAngle, float angle, float speed) {
         super(game, posX, posY);
         this.id = id;
         this.size = size;
         this.color = color;
         this.turningDirection = turningDirection;
-        this.wang = wang;
-        this.ang = ang;
+        this.wantedAngle = wantedAngle;
+        this.angle = angle;
         this.speed = speed;
         rad = 0.00001F;
         gfr = (int) (64 * Math.random());
@@ -87,14 +87,14 @@ public class Prey extends Entity {
             }
         }
         if (turningDirection == 1) {
-            ang -= turnSpeed;
-            if (ang < 0 || ang >= SlytherClient.PI_2) {
-                ang %= SlytherClient.PI_2;
+            angle -= turnSpeed;
+            if (angle < 0 || angle >= SlytherClient.PI_2) {
+                angle %= SlytherClient.PI_2;
             }
-            if (ang < 0) {
-                ang += SlytherClient.PI_2;
+            if (angle < 0) {
+                angle += SlytherClient.PI_2;
             }
-            float h = (float) ((wang - ang) % SlytherClient.PI_2);
+            float h = (float) ((wantedAngle - angle) % SlytherClient.PI_2);
             if (h < 0) {
                 h += SlytherClient.PI_2;
             }
@@ -102,18 +102,18 @@ public class Prey extends Entity {
                 h -= SlytherClient.PI_2;
             }
             if (h > 0) {
-                ang = wang;
+                angle = wantedAngle;
                 turningDirection = 0;
             }
         } else if (turningDirection == 2) {
-            ang += turnSpeed;
-            if (ang < 0 || ang >= SlytherClient.PI_2) {
-                ang %= SlytherClient.PI_2;
+            angle += turnSpeed;
+            if (angle < 0 || angle >= SlytherClient.PI_2) {
+                angle %= SlytherClient.PI_2;
             }
-            if (ang < 0) {
-                ang += SlytherClient.PI_2;
+            if (angle < 0) {
+                angle += SlytherClient.PI_2;
             }
-            float h = (float) ((wang - ang) % SlytherClient.PI_2);
+            float h = (float) ((wantedAngle - angle) % SlytherClient.PI_2);
             if (h < 0) {
                 h += SlytherClient.PI_2;
             }
@@ -121,14 +121,14 @@ public class Prey extends Entity {
                 h -= SlytherClient.PI_2;
             }
             if (h < 0) {
-                ang = wang;
+                angle = wantedAngle;
                 turningDirection = 0;
             }
         } else {
-            ang = wang;
+            angle = wantedAngle;
         }
-        posX += Math.cos(ang) * moveAmount;
-        posY += Math.sin(ang) * moveAmount;
+        posX += Math.cos(angle) * moveAmount;
+        posY += Math.sin(angle) * moveAmount;
         gfr += delta * gr;
         if (eaten) {
             if (fr != 1.5F) {

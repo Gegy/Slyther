@@ -24,30 +24,30 @@ public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
             float prevY = prey.posY;
             if (buffer.hasExactlyRemaining(9)) {
                 prey.turningDirection = buffer.readUInt8() - 48;
-                prey.ang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
-                prey.wang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
+                prey.angle = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
+                prey.wantedAngle = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
                 prey.speed = buffer.readUInt16() / 1000.0F;
             } else if (buffer.hasExactlyRemaining(5)) {
-                prey.ang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
+                prey.angle = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
                 prey.speed = buffer.readUInt16() / 1000.0F;
             } else if (buffer.hasExactlyRemaining(6)) {
                 prey.turningDirection = buffer.readUInt8() - 48;
-                prey.wang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
+                prey.wantedAngle = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
                 prey.speed = buffer.readUInt16() / 1000.0F;
             } else if (buffer.hasExactlyRemaining(7)) {
                 prey.turningDirection = buffer.readUInt8() - 48;
-                prey.ang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
-                prey.wang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
+                prey.angle = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
+                prey.wantedAngle = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
             } else if (buffer.hasExactlyRemaining(3)) {
-                prey.ang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
+                prey.angle = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
             } else if (buffer.hasExactlyRemaining(4)) {
                 prey.turningDirection = buffer.readUInt8() - 48;
-                prey.wang = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
+                prey.wantedAngle = (float) (buffer.readUInt24() * Math.PI * 2.0F / 0xFFFFFF);
             } else if (buffer.hasExactlyRemaining(2)) {
                 prey.speed = buffer.readUInt16() / 1000.0F;
             }
-            prey.posX = (float) (x + Math.cos(prey.ang) * moveAmount);
-            prey.posY = (float) (y + Math.sin(prey.ang) * moveAmount);
+            prey.posX = (float) (x + Math.cos(prey.angle) * moveAmount);
+            prey.posY = (float) (y + Math.sin(prey.angle) * moveAmount);
             float moveX = prey.posX - prevX;
             float moveY = prey.posY - prevY;
             int fpos = prey.fpos;

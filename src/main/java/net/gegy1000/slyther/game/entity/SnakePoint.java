@@ -5,11 +5,10 @@ public class SnakePoint {
     public float posY;
     public float prevPosX;
     public float prevPosY;
-    public float wehang;
     public float fx;
     public float fy;
-    public float ebx;
-    public float eby;
+    public float deltaX;
+    public float deltaY;
     public boolean dying;
     public float deathAnimation;
     public int eiu;

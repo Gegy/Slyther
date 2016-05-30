@@ -59,7 +59,7 @@ public class GuiGame extends Gui {
             }
             client.viewX = player.posX + player.fx + client.fvx;
             client.viewY = player.posY + player.fy + client.fvy;
-            client.viewAng = (float) Math.atan2(client.viewY - client.GAME_RADIUS, client.viewX - client.GAME_RADIUS);
+            client.viewAngle = (float) Math.atan2(client.viewY - client.GAME_RADIUS, client.viewX - client.GAME_RADIUS);
             client.viewDist = (float) Math.sqrt((client.viewX - client.GAME_RADIUS) * (client.viewX - client.GAME_RADIUS) + (client.viewY - client.GAME_RADIUS) * (client.viewY - client.GAME_RADIUS));
             client.bpx1 = client.viewX - (client.mww2 / gsc - 84);
             client.bpy1 = client.viewY - (client.mhh2 / gsc - 84);
@@ -277,7 +277,7 @@ public class GuiGame extends Gui {
                         GL11.glTranslatef(originX, originY, 0.0F);
                         float faceScale = 0.2F;
                         GL11.glScalef(snake.scale * faceScale, snake.scale * faceScale, 1.0F);
-                        GL11.glRotatef((float) Math.toDegrees(snake.angle + (snake.ehang / 10.0F)), 0.0F, 0.0F, 1.0F);
+                        GL11.glRotatef((float) Math.toDegrees(snake.angle + (snake.eyeAngle / 10.0F)), 0.0F, 0.0F, 1.0F);
                         GL11.glTranslatef(-5.0F / faceScale, 0.0F, 0.0F);
                         textureManager.bindTexture("/textures/" + snake.faceTexture + ".png");
                         drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
