@@ -113,7 +113,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
                 }
             }
             snake.scale = Math.min(6.0F, (snake.sct - 2.0F) / 106.0F + 1.0F);
-            snake.scang = (float) (Math.pow((7.0F - snake.scale) / 6.0F, 2.0F) * 0.87F + 0.13F);
+            snake.scaleTurnMultiplier = (float) (Math.pow((7.0F - snake.scale) / 6.0F, 2.0F) * 0.87F + 0.13F);
             snake.moveSpeed = client.NSP1 + client.NSP2 * snake.scale;
             snake.accelleratingSpeed = snake.moveSpeed + 0.1F;
             snake.wantedSeperation = snake.scale * 6.0F;

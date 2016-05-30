@@ -445,14 +445,14 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                                 direction = 127;
                             }
                             keyDownLeftTicks -= direction;
-                            player.eyeAngle -= MAMU * direction * player.scang * player.spang;
+                            player.eyeAngle -= MAMU * direction * player.scaleTurnMultiplier * player.speedTurnMultiplier;
                         } else {
                             direction = (int) keyDownRightTicks;
                             if (direction > 127) {
                                 direction = 127;
                             }
                             keyDownRightTicks -= direction;
-                            player.eyeAngle += MAMU * direction * player.scang * player.spang;
+                            player.eyeAngle += MAMU * direction * player.scaleTurnMultiplier * player.speedTurnMultiplier;
                         }
                         networkManager.send(new MessageSetTurn((byte) direction));
                     }

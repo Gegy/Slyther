@@ -129,13 +129,13 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             }
             snake.eyeAngle = snake.wantedAngle = wantedAngle;
             snake.speed = speed;
-            snake.spang = speed / client.SPANG_DV;
-            if (snake.spang > 1.0F) {
-                snake.spang = 1.0F;
+            snake.speedTurnMultiplier = speed / client.SPANG_DV;
+            if (snake.speedTurnMultiplier > 1.0F) {
+                snake.speedTurnMultiplier = 1.0F;
             }
             snake.fam = fam;
             snake.scale = Math.min(6.0F, 1.0F + (snake.sct - 2.0F) / 106.0F);
-            snake.scang = (float) (0.13F + 0.87F * Math.pow((7.0F - snake.scale) / 6.0F, 2.0F));
+            snake.scaleTurnMultiplier = (float) (0.13F + 0.87F * Math.pow((7.0F - snake.scale) / 6.0F, 2.0F));
             snake.moveSpeed = client.NSP1 + client.NSP2 * snake.scale;
             snake.accelleratingSpeed = snake.moveSpeed + 0.1F;
             snake.wantedSeperation = snake.scale * 6.0F;

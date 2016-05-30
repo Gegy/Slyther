@@ -85,8 +85,8 @@ public class Snake extends Entity implements Comparable<Snake> {
     public int fltg;
     public double totalLength;
     public double cfl;
-    public float scang;
-    public float spang;
+    public float scaleTurnMultiplier;
+    public float speedTurnMultiplier;
     public float deadAmt;
     public float aliveAmt;
     public boolean mouseDown;
@@ -145,7 +145,7 @@ public class Snake extends Entity implements Comparable<Snake> {
         fls = new float[SlytherClient.LFC];
         totalLength = sct + fam;
         cfl = totalLength;
-        scang = 1;
+        scaleTurnMultiplier = 1;
         deadAmt = 0;
         aliveAmt = 0;
     }
@@ -221,7 +221,7 @@ public class Snake extends Entity implements Comparable<Snake> {
     @Override
     public boolean updateClient(float delta, float lastDelta, float lastDelta2) {
         SlytherClient client = (SlytherClient) game;
-        float turnSpeed = client.MAMU * delta * scang * spang;
+        float turnSpeed = client.MAMU * delta * scaleTurnMultiplier * speedTurnMultiplier;
         float moveAmount = speed * delta / 4;
         if (moveAmount > msl) {
             moveAmount = msl;
@@ -494,13 +494,13 @@ public class Snake extends Entity implements Comparable<Snake> {
             }
         }
         if (dead) {
-            deadAmt += 0.02F * delta;
+            deadAmt += delta * 0.02F;
             if (deadAmt >= 1.0F) {
                 game.removeEntity(this);
             }
         } else {
             if (aliveAmt != 1) {
-                aliveAmt += 0.015F * delta;
+                aliveAmt += delta * 0.015F;
                 if (aliveAmt > 1.0F) {
                     aliveAmt = 1.0F;
                 }
@@ -551,11 +551,11 @@ public class Snake extends Entity implements Comparable<Snake> {
             }
             prevPointCount = points.size();
         }
-        spang = speed / game.getSpangDv();
-        if (spang > 1.0F) {
-            spang = 1.0F;
+        speedTurnMultiplier = speed / game.getSpangDv();
+        if (speedTurnMultiplier > 1.0F) {
+            speedTurnMultiplier = 1.0F;
         }
-        float turnSpeed = game.getMamu() * scang * spang;
+        float turnSpeed = game.getMamu() * scaleTurnMultiplier * speedTurnMultiplier;
         if (angle > wantedAngle) {
             turnDirection = 1;
         } else if (angle < wantedAngle) {

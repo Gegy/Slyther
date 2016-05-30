@@ -121,9 +121,9 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
             }
             if (speed != -1) {
                 snake.speed = speed;
-                snake.spang = speed / client.SPANG_DV;
-                if (snake.spang > 1.0F) {
-                    snake.spang = 1.0F;
+                snake.speedTurnMultiplier = speed / client.SPANG_DV;
+                if (snake.speedTurnMultiplier > 1.0F) {
+                    snake.speedTurnMultiplier = 1.0F;
                 }
             }
         }
