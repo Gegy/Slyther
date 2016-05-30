@@ -1,5 +1,7 @@
 package net.gegy1000.slyther.client.render;
 
+import net.gegy1000.slyther.util.Log;
+
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -17,7 +19,7 @@ public class TextureManager {
             try {
                 return textures.put(path, TextureLoader.getTexture("png", TextureManager.class.getResourceAsStream(path)));
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.catching(e);
             }
         }
         return null;

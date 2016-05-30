@@ -3,7 +3,9 @@ package net.gegy1000.slyther.server;
 import net.gegy1000.slyther.game.*;
 import net.gegy1000.slyther.game.entity.*;
 import net.gegy1000.slyther.network.message.server.MessageUpdateLeaderboard;
+import net.gegy1000.slyther.util.Log;
 import net.gegy1000.slyther.util.SystemUtils;
+
 import org.java_websocket.WebSocket;
 
 import java.io.File;
@@ -30,12 +32,12 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
             configuration = ConfigHandler.INSTANCE.readConfig(CONFIGURATION_FILE, ServerConfig.class);
             ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.catching(e);
         }
         try {
             networkManager = new ServerNetworkManager(this, configuration.serverPort);
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            Log.catching(e);
         }
         int mscps = getMSCPS();
         fmlts = new float[mscps];
@@ -135,7 +137,7 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
             ConnectedClient client = getConnectedClient(socket);
             clients.remove(client);
             if (client != null) {
-                System.out.println(client.name + " disconnected.");
+                Log.info("{} disconnected.", client.name);
                 removeEntity(client.snake);
             }
             return null;

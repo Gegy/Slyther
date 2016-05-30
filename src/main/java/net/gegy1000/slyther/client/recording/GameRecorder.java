@@ -1,4 +1,4 @@
-package net.gegy1000.slyther.client;
+package net.gegy1000.slyther.client.recording;
 
 import java.io.Closeable;
 import java.io.DataOutput;
@@ -11,10 +11,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import net.gegy1000.slyther.util.UIUtils;
+
 import org.apache.commons.io.IOUtils;
 
 public class GameRecorder extends Thread implements Closeable {
-    private static final Msg POISON = new Msg();
+    private static final TimedMessage POISON = new TimedMessage();
 
     private Thread thread;
 
@@ -24,9 +26,9 @@ public class GameRecorder extends Thread implements Closeable {
 
     private DataOutput dout;
 
-    private BlockingQueue<Msg> messages = new LinkedBlockingQueue<>();
+    private BlockingQueue<TimedMessage> messages = new LinkedBlockingQueue<>();
 
-    private Queue<Msg> msgPool = new ConcurrentLinkedQueue<>();
+    private Queue<TimedMessage> msgPool = new ConcurrentLinkedQueue<>();
 
     private long lastTime;
 
@@ -47,11 +49,13 @@ public class GameRecorder extends Thread implements Closeable {
         try {
             fout = new FileOutputStream(file);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            UIUtils.displayException("Unable to open recording output file", e);
+            return;
         }
         dout = new DataOutputStream(fout);
+        lastTime = System.currentTimeMillis();
         try {
-            Msg msg;
+            TimedMessage msg;
             while ((msg = messages.take()) != POISON) {
                 dout.writeShort(msg.timeSinceLastMessage);
                 dout.writeShort(msg.payload.length);
@@ -59,14 +63,15 @@ public class GameRecorder extends Thread implements Closeable {
                 msgPool.add(msg);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            UIUtils.displayException("A problem occured while recording", e);
         } finally {
             IOUtils.closeQuietly(fout);
+            msgPool.clear();
         }
     }
 
     public void onMessage(byte[] payload) {
-        Msg msg = msgPool.isEmpty() ? new Msg() : msgPool.poll();
+        TimedMessage msg = msgPool.isEmpty() ? new TimedMessage() : msgPool.poll();
         long time = System.currentTimeMillis();
         msg.timeSinceLastMessage = (short) (time - lastTime);
         msg.payload = payload;
@@ -77,11 +82,5 @@ public class GameRecorder extends Thread implements Closeable {
     @Override
     public void close() {
         messages.add(POISON);
-        msgPool.clear();
-    }
-
-    private static class Msg {
-        short timeSinceLastMessage;
-        byte[] payload;
     }
 }

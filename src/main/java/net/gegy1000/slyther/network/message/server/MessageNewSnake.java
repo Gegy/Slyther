@@ -9,6 +9,7 @@ import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
+import net.gegy1000.slyther.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,7 +145,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             }
             snake.partSeparation = snake.wantedSeperation;
 
-            System.out.println("Added snake \"" + snake.name + "\" with skin " + snake.skin);
+            Log.debug("Added snake \"{}\" with skin {}", snake.name, snake.skin);
             client.addEntity(snake);
 
             snake.snl();

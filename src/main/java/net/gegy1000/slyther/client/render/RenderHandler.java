@@ -3,6 +3,8 @@ package net.gegy1000.slyther.client.render;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.gui.Gui;
 import net.gegy1000.slyther.client.gui.GuiMainMenu;
+import net.gegy1000.slyther.util.Log;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -43,12 +45,12 @@ public class RenderHandler {
                 font = new TrueTypeFont(awtFont.deriveFont(14.0F), true);
                 largeFont = new TrueTypeFont(awtFont.deriveFont(30.0F), true);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.catching(e);
             }
             init();
             openGui(new GuiMainMenu());
         } catch (LWJGLException e) {
-            e.printStackTrace();
+            Log.catching(e);
         }
     }
 

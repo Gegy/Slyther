@@ -1,30 +1,34 @@
 package net.gegy1000.slyther.game;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import net.gegy1000.slyther.util.Log;
 
 public final class ProfanityHandler {
+    private static final String FILTERS_URL = "http://slither.io/filters.txt";
+
     private ProfanityHandler() {}
 
     private static final Map<String, List<String>> FILTERS = new HashMap<>();
 
     static {
         try {
-            URL url = new URL("http://slither.io/filters.txt");
+            URL url = new URL(FILTERS_URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
             connection.setRequestProperty("User-Agent", "Slyther");
             Scanner scanner = new Scanner(connection.getInputStream());
             String currentCategory = "";
             while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+                String line = scanner.nextLine().trim();
                 if (line.endsWith(":")) {
-                    currentCategory = line.split(":")[0];
-                } else if (line.trim().length() > 0) {
+                    currentCategory = line.substring(0, line.lastIndexOf(':'));
+                } else if (line.length() > 0) {
                     List<String> filters = FILTERS.get(currentCategory);
                     if (filters == null) {
                         filters = new ArrayList<>();
@@ -35,7 +39,7 @@ public final class ProfanityHandler {
             }
             scanner.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.catching(e);
         }
     }
 

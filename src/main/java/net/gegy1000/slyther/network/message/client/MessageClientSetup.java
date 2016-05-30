@@ -6,6 +6,7 @@ import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
+import net.gegy1000.slyther.util.Log;
 import net.gegy1000.slyther.game.Skin;
 
 public class MessageClientSetup extends SlytherClientMessageBase {
@@ -40,6 +41,6 @@ public class MessageClientSetup extends SlytherClientMessageBase {
         Skin skin = Skin.values()[buffer.readUInt8() % Skin.values().length];
         String name = buffer.readASCIIBytes();
         client.setup(name, skin, protocolVersion);
-        System.out.println(client.name + " connected with skin " + client.skin);
+        Log.debug("{} connected with skin {}", client.name, client.skin);
     }
 }

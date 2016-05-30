@@ -42,14 +42,14 @@ jar {
 }
 
 processResources {
-    configurations.compile.each { nativesJar ->
-        from (zipTree(nativesJar)) {
+    configurations.compile.each {
+        from (zipTree(it)) {
             exclude "**/META-INF/"
         }
     }
     // native processing will probably change
-    configurations.natives.each { nativesJar ->
-        from (zipTree(nativesJar)) {
+    configurations.natives.each {
+        from (zipTree(it)) {
             exclude "**/META-INF/"
         }
     }

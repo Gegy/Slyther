@@ -26,7 +26,7 @@ public class Food extends Entity {
     public int sectorY;
     public boolean isNatural;
 
-    public Food(Game game, int posX, int posY, float size, boolean isNatural, Color color) {
+    public Food(Game<?, ?> game, int posX, int posY, float size, boolean isNatural, Color color) {
         super(game, posX, posY);
         this.posX = posX;
         this.posY = posY;
@@ -67,12 +67,12 @@ public class Food extends Entity {
     }
 
     @Override
-    public void updateClient(float delta, float lastDelta, float lastDelta2) {
+    public boolean updateClient(float delta, float lastDelta, float lastDelta2) {
         gfr += delta * gr;
         if (eaten) {
             eatenFr += delta / 41.0F;
             if (eatenFr >= 1.0F || eater == null) {
-                game.removeEntity(this);
+                return true;
             } else {
                 float eaterFrSq = eatenFr * eatenFr;
                 rad = lrrad * (1.0F - eatenFr * eaterFrSq);
@@ -96,5 +96,6 @@ public class Food extends Entity {
             renderX = (int) (posX + 6.0F * Math.cos(wsp * gfr));
             renderY = (int) (posY + 6.0F * Math.sin(wsp * gfr));
         }
+        return false;
     }
 }

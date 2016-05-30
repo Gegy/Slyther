@@ -62,10 +62,6 @@ public class MessageByteBuffer {
         buf.put(str.getBytes(Charsets.US_ASCII));
     }
 
-    public String readASCIIBytes() {
-        return new String(readBytes(buf.limit() - buf.position()), Charsets.US_ASCII);
-    }
-
     public int readUInt8() {
         return buf.get() & 0xFF;
     }
@@ -86,6 +82,10 @@ public class MessageByteBuffer {
         byte[] dst = new byte[length];
         buf.get(dst);
         return dst;
+    }
+
+    public String readASCIIBytes() {
+        return new String(readBytes(buf.limit() - buf.position()), Charsets.US_ASCII);
     }
 
     public void skipBytes(int n) {

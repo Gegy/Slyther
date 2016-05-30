@@ -1,4 +1,4 @@
 package net.gegy1000.slyther.network;
 
-public interface INetworkManager {
+public interface NetworkManager {
 }

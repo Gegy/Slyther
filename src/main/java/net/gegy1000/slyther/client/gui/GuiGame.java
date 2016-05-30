@@ -210,7 +210,7 @@ public class GuiGame extends Gui {
                                         K += partSeparation;
                                         float pax = lastPointX + (pointX - lastPointX) * K / partDistance;
                                         float pay = lastPointY + (pointY - lastPointY) * K / partDistance;
-                                        if (true || pax >= client.bpx1 && pax <= client.bpx2 && pay >= client.bpy1 && pay <= client.bpy2) {
+                                        if (true) {// pax >= client.bpx1 && pax <= client.bpx2 && pay >= client.bpy1 && pay <= client.bpy2) {
                                             xs.add(pax);
                                             ys.add(pay);
                                         }
@@ -229,7 +229,7 @@ public class GuiGame extends Gui {
                             }
                         }
                     }
-                    if (true || pointX >= client.bpx1 && pointX <= client.bpx2 && pointY >= client.bpy1 && pointY <= client.bpy2) {
+                    if (true) {// pointX >= client.bpx1 && pointX <= client.bpx2 && pointY >= client.bpy1 && pointY <= client.bpy2) {
                         xs.add(pointX);
                         ys.add(pointY);
                     }

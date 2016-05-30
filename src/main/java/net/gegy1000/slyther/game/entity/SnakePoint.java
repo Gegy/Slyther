@@ -1,7 +1,5 @@
 package net.gegy1000.slyther.game.entity;
 
-import net.gegy1000.slyther.server.ConnectedClient;
-
 public class SnakePoint {
     public float posX;
     public float posY;

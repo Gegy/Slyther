@@ -1,9 +1,12 @@
 package net.gegy1000.slyther.client.gui;
 
 import com.google.gson.GsonBuilder;
+
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.gui.element.ButtonElement;
 import net.gegy1000.slyther.client.gui.element.TextBoxElement;
+import net.gegy1000.slyther.util.Log;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -33,7 +36,7 @@ public class GuiMainMenu extends Gui {
                 .excludeFieldsWithModifiers(Modifier.TRANSIENT)
                 .create().fromJson(reader, LetterPart[].class);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.catching(e);
         }
     }
 

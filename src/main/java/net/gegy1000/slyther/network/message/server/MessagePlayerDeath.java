@@ -6,6 +6,7 @@ import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
+import net.gegy1000.slyther.util.Log;
 
 public class MessagePlayerDeath extends SlytherServerMessageBase {
     @Override
@@ -16,7 +17,7 @@ public class MessagePlayerDeath extends SlytherServerMessageBase {
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         int type = buffer.readUInt8();
         Snake player = client.player;
-        System.out.println("Final length: " + player.getLength());
+        Log.info("Final length: {}", player.getLength());
     }
 
     @Override

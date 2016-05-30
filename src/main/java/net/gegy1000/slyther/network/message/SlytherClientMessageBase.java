@@ -8,7 +8,7 @@ import net.gegy1000.slyther.server.SlytherServer;
 /**
  * Message being sent from the client
  */
-public abstract class SlytherClientMessageBase implements IMessage {
+public abstract class SlytherClientMessageBase implements Message {
     public abstract void write(MessageByteBuffer buffer, SlytherClient client);
 
     public abstract void read(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client);

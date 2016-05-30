@@ -3,6 +3,8 @@ package net.gegy1000.slyther.util;
 import java.io.File;
 
 public final class SystemUtils {
+    private SystemUtils() {}
+
     private static final String HOME_NAME = ".slyther";
 
     private static File gameFolder;

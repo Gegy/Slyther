@@ -3,9 +3,7 @@ package net.gegy1000.slyther.game.entity;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.Game;
-import net.gegy1000.slyther.network.message.server.MessageNewFood;
 import net.gegy1000.slyther.network.message.server.MessageNewPrey;
-import net.gegy1000.slyther.network.message.server.MessageRemoveFood;
 import net.gegy1000.slyther.server.ConnectedClient;
 
 public class Prey extends Entity {
@@ -30,7 +28,7 @@ public class Prey extends Entity {
     public Snake eater;
     public float gr;
 
-    public Prey(Game game, int id, float posX, float posY, float size, Color color, int turningDirection, float wang, float ang, float speed) {
+    public Prey(Game<?, ?> game, int id, float posX, float posY, float size, Color color, int turningDirection, float wang, float ang, float speed) {
         super(game, posX, posY);
         this.id = id;
         this.size = size;
@@ -60,7 +58,7 @@ public class Prey extends Entity {
     }
 
     @Override
-    public void updateClient(float delta, float lastDelta, float lastDelta2) {
+    public boolean updateClient(float delta, float lastDelta, float lastDelta2) {
         float turnSpeed = game.getMamu2() * delta;
         float moveAmount = speed * delta / 4;
         if (lastDelta > 0) {
@@ -142,7 +140,7 @@ public class Prey extends Entity {
             eatenFR += delta / 47.0F;
             gfr += delta;
             if (eatenFR >= 1 || eater == null) {
-                game.removeEntity(this);
+                return true;
             } else {
                 rad = (float) (1 - Math.pow(eatenFR, 3));
             }
@@ -158,5 +156,6 @@ public class Prey extends Entity {
                 }
             }
         }
+        return false;
     }
 }

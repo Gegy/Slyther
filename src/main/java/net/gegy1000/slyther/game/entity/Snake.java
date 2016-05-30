@@ -121,7 +121,7 @@ public class Snake extends Entity implements Comparable<Snake> {
 
     public ConnectedClient client;
 
-    public Snake(Game game, String name, int id, float posX, float posY, Skin skin, float angle, List<SnakePoint> points) {
+    public Snake(Game<?, ?> game, String name, int id, float posX, float posY, Skin skin, float angle, List<SnakePoint> points) {
         super(game, posX, posY);
         this.name = name;
         this.id = id;
@@ -243,7 +243,7 @@ public class Snake extends Entity implements Comparable<Snake> {
     }
 
     @Override
-    public void updateClient(float delta, float lastDelta, float lastDelta2) {
+    public boolean updateClient(float delta, float lastDelta, float lastDelta2) {
         SlytherClient client = (SlytherClient) game;
         float turnSpeed = client.MAMU * delta * scang * spang;
         float moveAmount = speed * delta / 4;
@@ -530,6 +530,7 @@ public class Snake extends Entity implements Comparable<Snake> {
                 }
             }
         }
+        return false;
     }
 
     @Override

@@ -6,6 +6,7 @@ import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
+import net.gegy1000.slyther.util.Log;
 
 public class MessageUpdateLongestPlayer extends SlytherServerMessageBase {
     @Override
@@ -34,7 +35,7 @@ public class MessageUpdateLongestPlayer extends SlytherServerMessageBase {
         client.longestPlayerName = name;
         client.longestPlayerScore = score;
         client.longestPlayerMessage = message;
-        System.out.println(client.longestPlayerName + " (" + client.longestPlayerScore + ") - \"" + client.longestPlayerMessage + "\"");
+        Log.debug("{} ({}) - \"{}\"", client.longestPlayerName, client.longestPlayerScore, client.longestPlayerMessage);
     }
 
     @Override

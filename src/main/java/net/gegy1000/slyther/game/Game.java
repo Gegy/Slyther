@@ -1,9 +1,10 @@
 package net.gegy1000.slyther.game;
 
 import net.gegy1000.slyther.game.entity.*;
-import net.gegy1000.slyther.network.INetworkManager;
+import net.gegy1000.slyther.network.NetworkManager;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Callable;
@@ -11,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public abstract class Game<NET extends INetworkManager, CFG extends IConfiguration> {
+public abstract class Game<NET extends NetworkManager, CFG extends Configuration> {
     private List<Entity> entities = new ArrayList<>();
     private List<Snake> snakes = new ArrayList<>();
     private List<Sector> sectors = new ArrayList<>();
@@ -76,6 +77,33 @@ public abstract class Game<NET extends INetworkManager, CFG extends IConfigurati
                 preys.remove(entity);
             }
         }
+    }
+
+    public Iterator<Entity> entityIterator() {
+        return new Iterator<Entity>() {
+            private int index;
+
+            private Entity lastEntity;
+
+            @Override
+            public boolean hasNext() {
+                return index < entities.size();
+            }
+
+            @Override
+            public Entity next() {
+                return lastEntity = entities.get(index++);
+            }
+
+            @Override
+            public void remove() {
+                if (lastEntity == null) {
+                    throw new IllegalStateException();
+                }
+                removeEntity(lastEntity);
+                index--;
+            }
+        };
     }
 
     public List<Entity> getEntities() {

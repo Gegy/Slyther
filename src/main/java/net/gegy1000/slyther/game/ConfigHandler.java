@@ -2,7 +2,6 @@ package net.gegy1000.slyther.game;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.gegy1000.slyther.util.SystemUtils;
 
 import java.io.File;
 import java.io.FileReader;

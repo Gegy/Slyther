@@ -2,16 +2,15 @@ package net.gegy1000.slyther.game.entity;
 
 import net.gegy1000.slyther.game.Game;
 import net.gegy1000.slyther.server.ConnectedClient;
-import net.gegy1000.slyther.server.SlytherServer;
 
 public abstract class Entity {
-    public Game game;
+    public Game<?, ?> game;
     public float posX;
     public float posY;
     public int previousSectorX;
     public int previousSectorY;
 
-    public Entity(Game game, float posX, float posY) {
+    public Entity(Game<?, ?> game, float posX, float posY) {
         this.game = game;
         this.posX = posX;
         this.posY = posY;
@@ -45,5 +44,5 @@ public abstract class Entity {
 
     public abstract void updateServer();
 
-    public abstract void updateClient(float delta, float lastDelta, float lastDelta2);
+    public abstract boolean updateClient(float delta, float lastDelta, float lastDelta2);
 }

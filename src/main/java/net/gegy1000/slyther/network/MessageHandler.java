@@ -3,6 +3,7 @@ package net.gegy1000.slyther.network;
 import net.gegy1000.slyther.network.message.*;
 import net.gegy1000.slyther.network.message.client.*;
 import net.gegy1000.slyther.network.message.server.*;
+import net.gegy1000.slyther.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,8 +41,8 @@ public enum MessageHandler {
                 SERVER_MESSAGES.put((byte) id, message);
             }
         } catch (Exception e) {
-            System.err.println("Error while registering message " + message.getName());
-            e.printStackTrace();
+            Log.error("Error while registering message {}", message.getName());
+            Log.catching(e);
         }
     }
 

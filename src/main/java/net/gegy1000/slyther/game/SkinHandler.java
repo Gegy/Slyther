@@ -2,6 +2,8 @@ package net.gegy1000.slyther.game;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import net.gegy1000.slyther.util.Log;
 import net.gegy1000.slyther.util.SystemUtils;
 
 import java.io.*;
@@ -60,7 +62,7 @@ public enum SkinHandler {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.catching(e);
             }
         }
         if (!patternFile.exists()) {
@@ -79,7 +81,7 @@ public enum SkinHandler {
                 out.print(GSON.toJson(patternsContainer));
                 out.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.catching(e);
             }
         }
     }

@@ -10,13 +10,15 @@ import net.gegy1000.slyther.network.ServerHandler;
 import net.gegy1000.slyther.network.message.client.MessageAccelerate;
 import net.gegy1000.slyther.network.message.client.MessageSetAngle;
 import net.gegy1000.slyther.network.message.client.MessageSetTurn;
+import net.gegy1000.slyther.util.Log;
 import net.gegy1000.slyther.util.SystemUtils;
+import net.gegy1000.slyther.util.UIUtils;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
@@ -170,7 +172,6 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public float zoomOffset;
 
     private static final File CONFIGURATION_FILE = new File(SystemUtils.getGameFolder(), "config.json");
-    public ServerHandler.Server server;
 
     public SlytherClient() throws Exception {
         setup();
@@ -182,7 +183,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                 configuration = ConfigHandler.INSTANCE.readConfig(CONFIGURATION_FILE, ClientConfig.class);
                 saveConfig();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.catching(e);
             }
         }
 
@@ -206,11 +207,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         wumsts = false;
         zoomOffset = 0.0F;
 
-        try {
-            ServerPingManager.pingServers();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ServerHandler.INSTANCE.pingServers();
 
         if (!tickLoopInitialized) {
             tickLoopInitialized = true;
@@ -297,19 +294,13 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         new Thread(() -> {
             try {
                 if (configuration.server == null) {
-                    if (server == null) {
-                        while (ServerHandler.INSTANCE.getPingedCount() < 5) ;
-                        List<ServerHandler.Server> servers = ServerHandler.INSTANCE.getServerList();
-                        Collections.sort(servers);
-                        while ((networkManager = ClientNetworkManager.create(SlytherClient.this, servers.get(new Random().nextInt(5)), configuration.shouldRecord)) == null);
-                    } else {
-                        networkManager = ClientNetworkManager.create(SlytherClient.this, server, configuration.shouldRecord);
-                    }
+                    ServerHandler.Server server = ServerHandler.INSTANCE.getServerForPlay();
+                    networkManager = ClientNetworkManager.create(SlytherClient.this, server, configuration.shouldRecord);
                 } else {
                     networkManager = ClientNetworkManager.create(SlytherClient.this, configuration.server, configuration.shouldRecord);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                UIUtils.displayException("Connection failed", e);
             }
         }).start();
     }
@@ -319,7 +310,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         try {
             networkManager = ClientNetworkManager.create(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.catching(e);
         }
     }
 
@@ -370,7 +361,6 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
 
     public void update() {
         if (networkManager != null) {
-            networkManager.tick();
             runTasks();
             long time = System.currentTimeMillis();
             delta = 0;
@@ -510,8 +500,12 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                         }
                     }
                 }
-                for (Entity entity : new ArrayList<>(getEntities())) {
-                    entity.updateClient(delta, lastDelta, lastDelta2);
+                Iterator<Entity> entityIter = entityIterator();
+                while (entityIter.hasNext()) {
+                    Entity entity = entityIter.next();
+                    if (entity.updateClient(delta, lastDelta, lastDelta2)) {
+                        entityIter.remove();
+                    }
                 }
             }
         }
@@ -640,7 +634,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         try {
             ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.catching(e);
         }
     }
 
