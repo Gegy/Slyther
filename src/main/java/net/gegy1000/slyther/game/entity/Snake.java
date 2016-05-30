@@ -39,24 +39,9 @@ public class Snake extends Entity implements Comparable<Snake> {
     public float[] antennaVelocityY;
     public float[] atax;
     public float[] atay;
-    public int blbx;
-    public int blby;
-    public int blbw;
-    public int blbh;
-    public float bsc;
-    public float blba;
-    public int ebi;
-    public int ebiw;
-    public int ebih;
-    public int ebisz;
-    public int epi;
-    public int epiw;
-    public int epih;
-    public int episz;
     public SkinColor[] pattern;
     public SkinDetails skinDetails;
     public SkinColor color; // color value
-    public int fnfr = 0;
     public int na;
     public float chl;
     public float tsp;
@@ -118,6 +103,8 @@ public class Snake extends Entity implements Comparable<Snake> {
     public String antennaTexture;
     public boolean dying;
     public int prevPointCount;
+    public float antennaScale = 1.0F;
+    public String faceTexture;
 
     public ConnectedClient client;
 
@@ -194,27 +181,16 @@ public class Snake extends Entity implements Comparable<Snake> {
                 antennaX[i] = posX;
                 antennaY[i] = posY;
             }
-            blbx = details.blbx;
-            blby = details.blby;
-            blbw = details.blbw;
-            blbh = details.blbh;
-            bsc = details.bsc;
-            blba = details.blba;
             eyeColor = details.eyeColor;
             eca = details.eca;
             oneEye = details.oneEye;
-            ebiw = details.ebiw;
-            ebih = details.ebih;
-            ebisz = details.ebisz;
-            epiw = details.epiw;
-            epih = details.epih;
-            episz = details.episz;
             pma = details.pma;
             swell = details.swell;
             antennaTexture = details.antennaTexture;
-
+            antennaScale = details.antennaScale;
             pattern = details.pattern;
             skinDetails = details;
+            faceTexture = details.faceTexture;
         }
 
         this.pattern = pattern;

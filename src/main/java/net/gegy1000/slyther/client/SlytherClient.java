@@ -60,7 +60,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public boolean wumsts;
     public Snake player;
 
-    public long ltm;
+    public long lastTickTime;
     public boolean lagging;
     public float lagMultiplier;
     public boolean waitingForPingReturn; // Waiting for ping return?
@@ -365,8 +365,8 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
             long time = System.currentTimeMillis();
             delta = 0;
             float lastDelta, lastDelta2;
-            float delta = (time - ltm) / 8;
-            ltm = time;
+            float delta = (time - lastTickTime) / 8;
+            lastTickTime = time;
             if (!lagging && waitingForPingReturn && time - lastPacketTime > 420) {
                 lagging = true;
             }
@@ -508,6 +508,8 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                     }
                 }
             }
+        } else {
+            ticks++;
         }
     }
 

@@ -26,7 +26,8 @@ public enum SkinColor {
     ORANGE(255, 86, 0),
     LIGHT_BLUE_6(101, 200, 232),
     GRAY_2(128, 132, 144),
-    GREEN(60, 192, 72);
+    GREEN(60, 192, 72),
+    LUMO_GREEN(0, 255, 83);
 
     public float red, green, blue;
 

@@ -40,5 +40,6 @@ public enum Skin {
     LIGHT_BLUE_WHITE_BLUE_STRIPE,
     BRIGHT_ORANGE,
     BRIGHT_YELLOW,
-    PEWDIEPIE
+    PEWDIEPIE,
+    JELLY
 }

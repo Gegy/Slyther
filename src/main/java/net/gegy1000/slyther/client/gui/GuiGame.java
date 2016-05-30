@@ -253,7 +253,7 @@ public class GuiGame extends Gui {
                         drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
                         GL11.glPopMatrix();
                     }
-                    if (!snake.oneEye) {
+                    if (snake.faceTexture == null && !snake.oneEye) {
                         GL11.glPushMatrix();
                         float eyeForward = 2.0F * scale;
                         float eyeSideDistance = 6.0F * scale;
@@ -270,6 +270,17 @@ public class GuiGame extends Gui {
                         eyeOffsetX = (float) (Math.cos(ehang) * (eyeForward + 0.5F) + snake.rex * scale + Math.cos(ehang - Math.PI / 2.0F) * eyeSideDistance);
                         eyeOffsetY = (float) (Math.sin(ehang) * (eyeForward + 0.5F) + snake.rey * scale + Math.sin(ehang - Math.PI / 2.0F) * eyeSideDistance);
                         drawCircle(eyeOffsetX, eyeOffsetY, 3.5F * scale, snake.ppc);
+                        GL11.glPopMatrix();
+                    } else if (snake.faceTexture != null) {
+                        GL11.glPushMatrix();
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                        GL11.glTranslatef(originX, originY, 0.0F);
+                        float faceScale = 0.2F;
+                        GL11.glScalef(snake.scale * faceScale, snake.scale * faceScale, 1.0F);
+                        GL11.glRotatef((float) Math.toDegrees(snake.angle + (snake.ehang / 10.0F)), 0.0F, 0.0F, 1.0F);
+                        GL11.glTranslatef(-5.0F / faceScale, 0.0F, 0.0F);
+                        textureManager.bindTexture("/textures/" + snake.faceTexture + ".png");
+                        drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                         GL11.glPopMatrix();
                     }
                     if (snake.antenna) {
@@ -355,7 +366,8 @@ public class GuiGame extends Gui {
                                 GL11.glRotatef((float) Math.toDegrees(snake.atba), 0.0F, 0.0F, 1.0F);
                             }
                             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                            GL11.glScalef(snake.scale * 0.25F, snake.scale * 0.25F, 1.0F);
+                            float antennaScale = snake.scale * snake.antennaScale * 0.25F;
+                            GL11.glScalef(antennaScale, antennaScale, 1.0F);
                             textureManager.bindTexture("/textures/" + snake.antennaTexture + ".png");
                             drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                         }
