@@ -5,6 +5,7 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,12 +36,6 @@ public class GameReplayer implements Runnable {
         this.file = file;
         server = new WebSocketServer(new InetSocketAddress(8004)) {
             @Override
-            public void run() {
-                Thread.currentThread().setName("ServerReplayer");
-                super.run();
-            }
-
-            @Override
             public void onOpen(WebSocket conn, ClientHandshake handshake) {
                 if (waitingForOpen) {
                     new Thread(GameReplayer.this, "Replayer").start();   
@@ -59,7 +54,11 @@ public class GameReplayer implements Runnable {
             public void onMessage(WebSocket conn, String message) {}
 
             @Override
-            public void onError(WebSocket conn, Exception ex) {}
+            public void onError(WebSocket conn, Exception ex) {
+                if (ex instanceof BindException) {
+                    Log.catching(ex);
+                }
+            }
         };
         server.start();
     }

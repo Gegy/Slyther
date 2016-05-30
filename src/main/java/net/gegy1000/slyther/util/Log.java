@@ -10,7 +10,6 @@ public final class Log {
     private static final Logger LOGGER = LogManager.getLogger("Slyther");
 
     public static void catching(Throwable t) {
-        LOGGER.catching(new Exception());
         LOGGER.catching(t);
     }
 

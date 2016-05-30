@@ -19,6 +19,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
@@ -283,9 +284,11 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
             }
             try {
                 ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
-            } catch (Exception e) {
+            } catch (IOException e) {
+                Log.error("Failed to save config");
+                Log.catching(e);
             }
-            System.exit(1);
+            Display.destroy();
         }
     }
 
@@ -310,7 +313,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         try {
             networkManager = ClientNetworkManager.create(this);
         } catch (Exception e) {
-            Log.catching(e);
+            UIUtils.displayException("Replay failed", e);
         }
     }
 

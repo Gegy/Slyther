@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 public enum ConfigHandler {
@@ -13,7 +14,7 @@ public enum ConfigHandler {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public <T> void saveConfig(File file, T configuration) throws Exception {
+    public <T> void saveConfig(File file, T configuration) throws IOException {
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             file.createNewFile();
