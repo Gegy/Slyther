@@ -4,15 +4,20 @@ import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.gui.Gui;
 import net.gegy1000.slyther.client.gui.GuiMainMenu;
 import net.gegy1000.slyther.util.Log;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.opengl.ImageIOImageData;
 
-import java.awt.Font;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +42,12 @@ public class RenderHandler {
             Display.setDisplayMode(new DisplayMode(854, 480));
             Display.setTitle("Slyther");
             Display.setResizable(true);
+            try {
+                ByteBuffer[] icons = new ByteBuffer[] { toBuffer("/textures/icon_16.png"), toBuffer("/textures/icon_32.png"), toBuffer("/textures/icon.png") };
+                Display.setIcon(icons);
+            } catch (Exception e) {
+                Log.catching(e);
+            }
             Display.create();
             Keyboard.create();
             Mouse.create();
@@ -52,6 +63,10 @@ public class RenderHandler {
         } catch (LWJGLException e) {
             Log.catching(e);
         }
+    }
+
+    private ByteBuffer toBuffer(String directory) throws IOException {
+        return new ImageIOImageData().imageToByteBuffer(ImageIO.read(RenderHandler.class.getResourceAsStream(directory)), false, false, null);
     }
 
     public void init() {
