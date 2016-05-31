@@ -1,11 +1,12 @@
 package net.gegy1000.slyther.game.entity;
 
+import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.Game;
 import net.gegy1000.slyther.network.message.server.MessageNewPrey;
 import net.gegy1000.slyther.server.ConnectedClient;
 
-public abstract class Prey<GME extends Game<?, ?, ?, ?, ?, ?>> extends Entity<GME> {
+public abstract class Prey<GME extends Game<?, ?>> extends Entity<GME> {
     public int id;
     public float size;
     public Color color;
@@ -16,6 +17,18 @@ public abstract class Prey<GME extends Game<?, ?, ?, ?, ?, ?>> extends Entity<GM
     public boolean eaten;
     public Snake eater;
 
+    public float gr;
+    public float fr;
+    public int gfr;
+    public float[] fxs;
+    public float[] fys;
+    public int fpos;
+    public int ftg;
+    public float fx;
+    public float fy;
+    public float rad;
+    public float eatenFR;
+
     public Prey(GME game, int id, float posX, float posY, float size, Color color, int turningDirection, float wantedAngle, float angle, float speed) {
         super(game, posX, posY);
         this.id = id;
@@ -25,6 +38,11 @@ public abstract class Prey<GME extends Game<?, ?, ?, ?, ?, ?>> extends Entity<GM
         this.wantedAngle = wantedAngle;
         this.angle = angle;
         this.speed = speed;
+
+        rad = 0.00001F;
+        gfr = (int) (64 * Math.random());
+        fxs = new float[SlytherClient.RFC];
+        fys = new float[SlytherClient.RFC];
     }
 
     @Override

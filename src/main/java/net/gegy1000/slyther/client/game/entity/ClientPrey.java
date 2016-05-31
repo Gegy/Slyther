@@ -5,24 +5,8 @@ import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.entity.Prey;
 
 public class ClientPrey extends Prey<SlytherClient> {
-    public float gr;
-    public float fr;
-    public int gfr;
-    public float[] fxs;
-    public float[] fys;
-    public int fpos;
-    public int ftg;
-    public float fx;
-    public float fy;
-    public float rad;
-    public float eatenFR;
-
     public ClientPrey(SlytherClient game, int id, float posX, float posY, float size, Color color, int turningDirection, float wantedAngle, float angle, float speed) {
         super(game, id, posX, posY, size, color, turningDirection, wantedAngle, angle, speed);
-        rad = 0.00001F;
-        gfr = (int) (64 * Math.random());
-        fxs = new float[SlytherClient.RFC];
-        fys = new float[SlytherClient.RFC];
     }
 
     @Override

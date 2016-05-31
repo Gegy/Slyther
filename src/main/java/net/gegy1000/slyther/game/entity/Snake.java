@@ -1,15 +1,14 @@
 package net.gegy1000.slyther.game.entity;
 
 import net.gegy1000.slyther.client.SlytherClient;
-import net.gegy1000.slyther.game.Game;
-import net.gegy1000.slyther.game.Skin;
+import net.gegy1000.slyther.game.*;
 import net.gegy1000.slyther.network.message.server.MessageNewSnake;
 import net.gegy1000.slyther.server.ConnectedClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Snake<GME extends Game<?, ?, ?, ?, ?, ?>> extends Entity<GME> implements Comparable<Snake> {
+public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implements Comparable<Snake> {
     public String name;
     public int id;
     public Skin skin;
@@ -34,7 +33,7 @@ public abstract class Snake<GME extends Game<?, ?, ?, ?, ?, ?>> extends Entity<G
     public float rey;
     public float speed;
     public float prevSpeed;
-    public SnakePoint lnp; // Tail point or Head point (Last point entry)
+    public SnakePoint lnp; //head point
     public List<SnakePoint> points;
     public int sct;
     public int flpos;
@@ -59,7 +58,52 @@ public abstract class Snake<GME extends Game<?, ?, ?, ?, ?, ?>> extends Entity<G
     public boolean dying;
     public int prevPointCount;
 
-    public Snake(GME game, String name, int id, float posX, float posY, float angle, List<SnakePoint> points) {
+    public boolean antenna;
+    public boolean oneEye;
+    public float swell;
+    public float atba;
+    public int atc1;
+    public int atc2;
+    public boolean atwg;
+    public float atia;
+    public boolean antennaBottomRotate;
+    public float[] antennaX;
+    public float[] antennaY;
+    public float[] antennaVelocityX;
+    public float[] antennaVelocityY;
+    public float[] atax;
+    public float[] atay;
+    public float antennaScale = 1.0F;
+    public String faceTexture;
+    public boolean isInView;
+    public boolean antennaShown;
+    public String antennaTexture;
+    public SkinColor[] pattern;
+    public SkinDetails skinDetails;
+    public SkinColor color;
+    public int er;
+    public float pr;
+    public float pma;
+    public int eyeColor;
+    public float eca;
+    public int ppa;
+    public int ppc;
+    public float[] fxs;
+    public float[] fys;
+    public float[] fchls;
+    public int fpos;
+    public int ftg;
+    public float fx;
+    public float fy;
+    public float fchl;
+    public float[] fas;
+    public int fapos;
+    public int fatg;
+    public float fa;
+    public float ehang;
+    public float wehang;
+
+    public Snake(GME game, String name, int id, float posX, float posY, Skin skin, float angle, List<SnakePoint> points) {
         super(game, posX, posY);
         this.name = name;
         this.id = id;
@@ -92,6 +136,61 @@ public abstract class Snake<GME extends Game<?, ?, ?, ?, ?, ?>> extends Entity<G
         scaleTurnMultiplier = 1;
         deadAmt = 0;
         aliveAmt = 0;
+
+        setSkin(skin);
+        fxs = new float[SlytherClient.RFC];
+        fys = new float[SlytherClient.RFC];
+        fchls = new float[SlytherClient.RFC];
+        fas = new float[SlytherClient.AFC];
+        ehang = angle;
+        wehang = angle;
+    }
+
+    public void setSkin(Skin skin) {
+        this.skin = skin;
+        er = 6;
+        pr = 3.5F;
+        pma = 2.3F;
+        eyeColor = 0xFFFFFF;
+        eca = 0.75F;
+        ppa = 1;
+
+        SkinDetails details = SkinHandler.INSTANCE.getDetails(skin);
+
+        SkinColor[] pattern = new SkinColor[] { SkinColor.values()[skin.ordinal() % SkinColor.values().length] };
+
+        if (details != null) {
+            antenna = details.hasAntenna;
+            atc1 = details.antennaPrimaryColor;
+            atc2 = details.antennaSecondaryColor;
+            atwg = details.atwg;
+            atia = details.atia;
+            antennaBottomRotate = details.abrot;
+            int antennaLength = details.antennaLength;
+            antennaX = new float[antennaLength];
+            antennaY = new float[antennaLength];
+            antennaVelocityX = new float[antennaLength];
+            antennaVelocityY = new float[antennaLength];
+            atax = new float[antennaLength];
+            atay = new float[antennaLength];
+            for (int i = 0; i < antennaLength; i++) {
+                antennaX[i] = posX;
+                antennaY[i] = posY;
+            }
+            eyeColor = details.eyeColor;
+            eca = details.eca;
+            oneEye = details.oneEye;
+            pma = details.pma;
+            swell = details.swell;
+            antennaTexture = details.antennaTexture;
+            antennaScale = details.antennaScale;
+            pattern = details.pattern;
+            skinDetails = details;
+            faceTexture = details.faceTexture;
+        }
+
+        this.pattern = pattern;
+        color = pattern[0];
     }
 
     //Set new length

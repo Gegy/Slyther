@@ -5,28 +5,8 @@ import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.entity.Food;
 
 public class ClientFood extends Food<SlytherClient> {
-    public ClientSnake eater;
-    public float lrrad;
-    public float fr;
-    public float gfr;
-    public float gr;
-    public float wsp;
-    public float eatenFr;
-    public float renderX;
-    public float renderY;
-    public int rsp;
-    public float rad;
-
     public ClientFood(SlytherClient game, int posX, int posY, float size, boolean isNatural, Color color) {
         super(game, posX, posY, size, isNatural, color);
-        renderX = posX;
-        renderY = posY;
-        rsp = isNatural ? 2 : 1;
-        rad = 0.00001F;
-        lrrad = rad;
-        gfr = (int) (64.0F * Math.random());
-        gr = 0.64F + 0.1F * this.size;
-        wsp = (float) (0.0225F * (2.0F * Math.random() - 1.0F));
     }
 
     @Override

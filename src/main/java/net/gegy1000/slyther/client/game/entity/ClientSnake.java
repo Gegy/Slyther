@@ -2,9 +2,6 @@ package net.gegy1000.slyther.client.game.entity;
 
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.Skin;
-import net.gegy1000.slyther.game.SkinColor;
-import net.gegy1000.slyther.game.SkinDetails;
-import net.gegy1000.slyther.game.SkinHandler;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.game.entity.SnakePoint;
 import org.lwjgl.input.Mouse;
@@ -12,107 +9,8 @@ import org.lwjgl.input.Mouse;
 import java.util.List;
 
 public class ClientSnake extends Snake<SlytherClient> {
-    public boolean antenna;
-    public boolean oneEye;
-    public float swell;
-    public float atba;
-    public int atc1;
-    public int atc2;
-    public boolean atwg;
-    public float atia;
-    public boolean antennaBottomRotate;
-    public float[] antennaX;
-    public float[] antennaY;
-    public float[] antennaVelocityX;
-    public float[] antennaVelocityY;
-    public float[] atax;
-    public float[] atay;
-    public float antennaScale = 1.0F;
-    public String faceTexture;
-    public boolean isInView;
-    public boolean antennaShown;
-    public String antennaTexture;
-    public SkinColor[] pattern;
-    public SkinDetails skinDetails;
-    public SkinColor color;
-    public int er;
-    public float pr;
-    public float pma;
-    public int eyeColor;
-    public float eca;
-    public int ppa;
-    public int ppc;
-    public float[] fxs;
-    public float[] fys;
-    public float[] fchls;
-    public int fpos;
-    public int ftg;
-    public float fx;
-    public float fy;
-    public float fchl;
-    public float[] fas;
-    public int fapos;
-    public int fatg;
-    public float fa;
-    public float ehang;
-    public float wehang;
-
     public ClientSnake(SlytherClient game, String name, int id, float posX, float posY, Skin skin, float angle, List<SnakePoint> points) {
-        super(game, name, id, posX, posY, angle, points);
-        setSkin(skin);
-        fxs = new float[SlytherClient.RFC];
-        fys = new float[SlytherClient.RFC];
-        fchls = new float[SlytherClient.RFC];
-        fas = new float[SlytherClient.AFC];
-        ehang = angle;
-        wehang = angle;
-    }
-
-    public void setSkin(Skin skin) {
-        this.skin = skin;
-        er = 6;
-        pr = 3.5F;
-        pma = 2.3F;
-        eyeColor = 0xFFFFFF;
-        eca = 0.75F;
-        ppa = 1;
-
-        SkinDetails details = SkinHandler.INSTANCE.getDetails(skin);
-
-        SkinColor[] pattern = new SkinColor[] { SkinColor.values()[skin.ordinal() % SkinColor.values().length] };
-
-        if (details != null) {
-            antenna = details.hasAntenna;
-            atc1 = details.antennaPrimaryColor;
-            atc2 = details.antennaSecondaryColor;
-            atwg = details.atwg;
-            atia = details.atia;
-            antennaBottomRotate = details.abrot;
-            int antennaLength = details.antennaLength;
-            antennaX = new float[antennaLength];
-            antennaY = new float[antennaLength];
-            antennaVelocityX = new float[antennaLength];
-            antennaVelocityY = new float[antennaLength];
-            atax = new float[antennaLength];
-            atay = new float[antennaLength];
-            for (int i = 0; i < antennaLength; i++) {
-                antennaX[i] = posX;
-                antennaY[i] = posY;
-            }
-            eyeColor = details.eyeColor;
-            eca = details.eca;
-            oneEye = details.oneEye;
-            pma = details.pma;
-            swell = details.swell;
-            antennaTexture = details.antennaTexture;
-            antennaScale = details.antennaScale;
-            pattern = details.pattern;
-            skinDetails = details;
-            faceTexture = details.faceTexture;
-        }
-
-        this.pattern = pattern;
-        color = pattern[0];
+        super(game, name, id, posX, posY, skin, angle, points);
     }
 
     @Override

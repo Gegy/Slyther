@@ -16,7 +16,7 @@ import java.io.File;
 import java.net.UnknownHostException;
 import java.util.*;
 
-public class SlytherServer extends Game<ServerNetworkManager, ServerConfig, ServerSnake, ServerSector, ServerFood, ServerPrey> {
+public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
     public static final double PI_2 = Math.PI * 2;
 
     private static final File CONFIGURATION_FILE = new File(SystemUtils.getGameFolder(), "server/config.json");

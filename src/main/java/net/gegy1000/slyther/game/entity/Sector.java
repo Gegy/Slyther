@@ -7,7 +7,7 @@ import net.gegy1000.slyther.network.message.server.MessageRemoveSector;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
-public abstract class Sector<GME extends Game<?, ?, ?, ?, ?, ?>> {
+public abstract class Sector<GME extends Game<?, ?>> {
     public GME game;
     public int posX;
     public int posY;

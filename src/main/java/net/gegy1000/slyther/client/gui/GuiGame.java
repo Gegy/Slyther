@@ -96,7 +96,7 @@ public class GuiGame extends Gui {
             if (client.gla != 1.0F) {
                 globalAlpha = 1.75F * client.gla;
             }
-            for (ClientFood food : client.getFoods()) {
+            for (Food food : client.getFoods()) {
                 if (food.renderX >= client.fpx1 && food.renderX <= client.fpx2 && food.renderY >= client.fpy1 && food.renderY <= client.fpy2) {
                     Color color = food.color;
                     float size = (food.size / 5.0F) * food.rad * 0.25F;
@@ -109,7 +109,7 @@ public class GuiGame extends Gui {
                     GL11.glPopMatrix();
                 }
             }
-            for (ClientPrey prey : client.getPreys()) {
+            for (Prey prey : client.getPreys()) {
                 float posX = prey.posX + prey.fx;
                 float posY = prey.posY + prey.fy;
                 if (posX >= client.fpx1 && posX <= client.fpx2 && posY >= client.fpy1 && posY <= client.fpy2) {
@@ -124,7 +124,7 @@ public class GuiGame extends Gui {
                     GL11.glPopMatrix();
                 }
             }
-            for (ClientSnake snake : client.getSnakes()) {
+            for (Snake snake : client.getSnakes()) {
                 snake.isInView = true;
                     /*for (int t = snake.points.size() - 1; t >= 0; t--) {
                         SnakePoint point = snake.points.get(t);
@@ -137,7 +137,7 @@ public class GuiGame extends Gui {
                     }*/
             }
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            for (ClientSnake snake : client.getSnakes()) {
+            for (Snake<?> snake : client.getSnakes()) {
                 float originX = snake.posX + snake.fx;
                 float originY = snake.posY + snake.fy;
                 float ehang = snake.ehang;

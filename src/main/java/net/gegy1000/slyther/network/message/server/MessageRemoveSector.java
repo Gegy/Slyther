@@ -29,8 +29,8 @@ public class MessageRemoveSector extends SlytherServerMessageBase {
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         int x = buffer.readUInt8();
         int y = buffer.readUInt8();
-        ClientSector remove = null;
-        for (ClientSector sector : client.getSectors()) {
+        Sector remove = null;
+        for (Sector sector : client.getSectors()) {
             if (sector.posX == x && sector.posY == y) {
                 remove = sector;
                 break;

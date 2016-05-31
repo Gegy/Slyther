@@ -14,7 +14,7 @@ public class ServerSnake extends Snake<SlytherServer> {
     public ConnectedClient client;
 
     public ServerSnake(SlytherServer game, ConnectedClient client, int id, float posX, float posY, float angle, List<SnakePoint> points) {
-        super(game, client.name, id, posX, posY, angle, points);
+        super(game, client.name, id, posX, posY, client.skin, angle, points);
     }
 
     @Override

@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class SlytherClient extends Game<ClientNetworkManager, ClientConfig, ClientSnake, ClientSector, ClientFood, ClientPrey> {
+public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public int GAME_RADIUS;
     public int MSCPS;
     public int SECTOR_SIZE;
@@ -649,7 +649,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig, Clie
     }
 
     @Override
-    public void removeSector(ClientSector sector) {
+    public void removeSector(Sector sector) {
         super.removeSector(sector);
         int sectorSize = getSectorSize();
         List<Entity> entitiesInSector = new ArrayList<>();

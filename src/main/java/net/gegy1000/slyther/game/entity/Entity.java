@@ -3,7 +3,7 @@ package net.gegy1000.slyther.game.entity;
 import net.gegy1000.slyther.game.Game;
 import net.gegy1000.slyther.server.ConnectedClient;
 
-public abstract class Entity<GME extends Game<?, ?, ?, ?, ?, ?>> {
+public abstract class Entity<GME extends Game<?, ?>> {
     public GME game;
     public float posX;
     public float posY;
