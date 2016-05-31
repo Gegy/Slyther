@@ -10,6 +10,7 @@ import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
+import net.gegy1000.slyther.server.game.entity.ServerSnake;
 
 public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
     @Override
@@ -25,7 +26,7 @@ public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
         buffer.writeUInt16(client.rank);
         buffer.writeUInt16(server.getSnakes().size());
         for (LeaderboardEntry leaderboardEntry : server.leaderboard) {
-            Snake snake = leaderboardEntry.client.snake;
+            ServerSnake snake = leaderboardEntry.client.snake;
             buffer.writeUInt16(snake.sct);
             buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
             buffer.writeUInt8(SkinHandler.INSTANCE.getDetails(snake.client.skin).pattern[0].ordinal() % Color.values().length);

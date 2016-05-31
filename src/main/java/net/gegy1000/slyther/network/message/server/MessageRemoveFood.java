@@ -1,19 +1,21 @@
 package net.gegy1000.slyther.network.message.server;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientFood;
 import net.gegy1000.slyther.game.entity.Food;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
+import net.gegy1000.slyther.server.game.entity.ServerFood;
 
 public class MessageRemoveFood extends SlytherServerMessageBase {
-    private Food food;
+    private ServerFood food;
 
     public MessageRemoveFood() {
     }
 
-    public MessageRemoveFood(Food food) {
+    public MessageRemoveFood(ServerFood food) {
         this.food = food;
     }
 
@@ -32,7 +34,7 @@ public class MessageRemoveFood extends SlytherServerMessageBase {
         int x = buffer.readUInt16();
         int y = buffer.readUInt16();
         int id = y * client.GAME_RADIUS * 3 + x;
-        Food food = client.getFood(id);
+        ClientFood food = client.getFood(id);
         if (food != null) {
             food.eaten = true;
             if (buffer.hasRemaining(2)) {

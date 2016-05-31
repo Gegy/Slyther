@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.network.message.server;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.game.entity.SnakePoint;
 import net.gegy1000.slyther.network.MessageByteBuffer;
@@ -9,7 +10,7 @@ import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
-    private Snake snake;
+    private Snake<?> snake;
     private boolean relative;
     private boolean incrementSct;
 
@@ -44,7 +45,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         boolean incrementSct = messageId == 'n' || messageId == 'N';
         int id = buffer.readUInt16();
-        Snake snake = client.getSnake(id);
+        ClientSnake snake = client.getSnake(id);
         if (snake != null) {
             if (incrementSct) {
                 snake.sct++;

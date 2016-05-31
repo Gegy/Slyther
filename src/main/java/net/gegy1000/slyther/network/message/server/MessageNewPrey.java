@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.network.message.server;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientPrey;
 import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.entity.Prey;
 import net.gegy1000.slyther.game.entity.Snake;
@@ -10,9 +11,9 @@ import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessageNewPrey extends SlytherServerMessageBase {
-    private Prey prey;
+    private Prey<?> prey;
 
-    public MessageNewPrey(Prey prey) {
+    public MessageNewPrey(Prey<?> prey) {
         this.prey = prey;
     }
 
@@ -31,7 +32,7 @@ public class MessageNewPrey extends SlytherServerMessageBase {
             Prey prey = client.getPrey(id);
             client.removeEntity(prey);
         } else if (buffer.hasExactlyRemaining(2)) {
-            Prey prey = client.getPrey(id);
+            ClientPrey prey = client.getPrey(id);
             if (prey != null) {
                 Snake eater = client.getSnake(buffer.readUInt16());
                 prey.eaten = true;
@@ -51,7 +52,7 @@ public class MessageNewPrey extends SlytherServerMessageBase {
             float wantedAngle = (float) (2.0F * buffer.readUInt24() * Math.PI / 0xFFFFFF);
             float angle = (float) (2.0F * buffer.readUInt24() * Math.PI / 0xFFFFFF);
             float speed = buffer.readUInt16() / 1000.0F;
-            client.addEntity(new Prey(client, id, x, y, size, color, turningDirection, wantedAngle, angle, speed));
+            client.addEntity(new ClientPrey(client, id, x, y, size, color, turningDirection, wantedAngle, angle, speed));
         }
     }
 

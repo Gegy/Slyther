@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.network.message.server;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -89,7 +90,7 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
                 speed = buffer.readUInt8() / 18.0F;
             }
         }
-        Snake snake = client.getSnake(id);
+        ClientSnake snake = client.getSnake(id);
         if (snake != null) {
             if (turnDirection != -1) {
                 snake.turnDirection = turnDirection;

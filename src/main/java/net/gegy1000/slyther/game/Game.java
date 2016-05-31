@@ -12,12 +12,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public abstract class Game<NET extends NetworkManager, CFG extends Configuration> {
+public abstract class Game<NET extends NetworkManager, CFG extends Configuration, SNK extends Snake<?>, SCT extends Sector<?>, FD extends Food<?>, PRY extends Prey<?>> {
     private List<Entity> entities = new ArrayList<>();
-    private List<Snake> snakes = new ArrayList<>();
-    private List<Sector> sectors = new ArrayList<>();
-    private List<Food> foods = new ArrayList<>();
-    private List<Prey> preys = new ArrayList<>();
+    private List<SNK> snakes = new ArrayList<>();
+    private List<SCT> sectors = new ArrayList<>();
+    private List<FD> foods = new ArrayList<>();
+    private List<PRY> preys = new ArrayList<>();
 
     public List<LeaderboardEntry> leaderboard = new ArrayList<>();
     public boolean[][] map = new boolean[80][80];
@@ -44,13 +44,13 @@ public abstract class Game<NET extends NetworkManager, CFG extends Configuration
         }
     }
 
-    public void addSector(Sector sector) {
+    public void addSector(SCT sector) {
         if (!sectors.contains(sector)) {
             sectors.add(sector);
         }
     }
 
-    public void removeSector(Sector sector) {
+    public void removeSector(SCT sector) {
         sectors.remove(sector);
     }
 
@@ -58,11 +58,11 @@ public abstract class Game<NET extends NetworkManager, CFG extends Configuration
         if (!entities.contains(entity)) {
             entities.add(entity);
             if (entity instanceof Snake) {
-                snakes.add((Snake) entity);
+                snakes.add((SNK) entity);
             } else if (entity instanceof Food) {
-                foods.add((Food) entity);
+                foods.add((FD) entity);
             } else if (entity instanceof Prey) {
-                preys.add((Prey) entity);
+                preys.add((PRY) entity);
             }
         }
     }
@@ -110,19 +110,19 @@ public abstract class Game<NET extends NetworkManager, CFG extends Configuration
         return entities;
     }
 
-    public List<Snake> getSnakes() {
+    public List<SNK> getSnakes() {
         return snakes;
     }
 
-    public List<Food> getFoods() {
+    public List<FD> getFoods() {
         return foods;
     }
 
-    public List<Sector> getSectors() {
+    public List<SCT> getSectors() {
         return sectors;
     }
 
-    public List<Prey> getPreys() {
+    public List<PRY> getPreys() {
         return preys;
     }
 

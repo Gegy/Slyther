@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.network.message.server;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientSector;
 import net.gegy1000.slyther.game.entity.Sector;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -28,8 +29,8 @@ public class MessageRemoveSector extends SlytherServerMessageBase {
     public void read(MessageByteBuffer buffer, SlytherClient client) {
         int x = buffer.readUInt8();
         int y = buffer.readUInt8();
-        Sector remove = null;
-        for (Sector sector : client.getSectors()) {
+        ClientSector remove = null;
+        for (ClientSector sector : client.getSectors()) {
             if (sector.posX == x && sector.posY == y) {
                 remove = sector;
                 break;

@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.network.message.server;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientFood;
 import net.gegy1000.slyther.game.entity.Food;
 import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.network.MessageByteBuffer;
@@ -33,7 +34,7 @@ public class MessageNewFood extends SlytherServerMessageBase {
             int x = buffer.readUInt16();
             int y = buffer.readUInt16();
             float size = buffer.readUInt8() / 5.0F;
-            client.addEntity(new Food(client, x, y, size, messageId == 'b', color));
+            client.addEntity(new ClientFood(client, x, y, size, messageId == 'b', color));
         }
     }
 

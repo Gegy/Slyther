@@ -3,14 +3,14 @@ package net.gegy1000.slyther.game.entity;
 import net.gegy1000.slyther.game.Game;
 import net.gegy1000.slyther.server.ConnectedClient;
 
-public abstract class Entity {
-    public Game<?, ?> game;
+public abstract class Entity<GME extends Game<?, ?, ?, ?, ?, ?>> {
+    public GME game;
     public float posX;
     public float posY;
     public int previousSectorX;
     public int previousSectorY;
 
-    public Entity(Game<?, ?> game, float posX, float posY) {
+    public Entity(GME game, float posX, float posY) {
         this.game = game;
         this.posX = posX;
         this.posY = posY;
@@ -42,7 +42,5 @@ public abstract class Entity {
     public abstract void startTracking(ConnectedClient tracker);
     public abstract void stopTracking(ConnectedClient tracker);
 
-    public abstract void updateServer();
-
-    public abstract boolean updateClient(float delta, float lastDelta, float lastDelta2);
+    public abstract boolean update(float delta, float lastDelta, float lastDelta2);
 }

@@ -1,5 +1,9 @@
 package net.gegy1000.slyther.client;
 
+import net.gegy1000.slyther.client.game.entity.ClientFood;
+import net.gegy1000.slyther.client.game.entity.ClientPrey;
+import net.gegy1000.slyther.client.game.entity.ClientSector;
+import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.game.Game;
 import net.gegy1000.slyther.game.entity.*;
 import net.gegy1000.slyther.client.gui.Gui;
@@ -22,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
+public class SlytherClient extends Game<ClientNetworkManager, ClientConfig, ClientSnake, ClientSector, ClientFood, ClientPrey> {
     public int GAME_RADIUS;
     public int MSCPS;
     public int SECTOR_SIZE;
@@ -59,7 +63,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public ClientNetworkManager networkManager;
 
     public boolean wumsts;
-    public Snake player;
+    public ClientSnake player;
 
     public long lastTickTime;
     public boolean lagging;
@@ -289,6 +293,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                 Log.catching(e);
             }
             Display.destroy();
+            System.exit(1);
         }
     }
 
@@ -506,7 +511,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
                 Iterator<Entity> entityIter = entityIterator();
                 while (entityIter.hasNext()) {
                     Entity entity = entityIter.next();
-                    if (entity.updateClient(delta, lastDelta, lastDelta2)) {
+                    if (entity.update(delta, lastDelta, lastDelta2)) {
                         entityIter.remove();
                     }
                 }
@@ -531,28 +536,28 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         }
     }
 
-    public Snake getSnake(int id) {
+    public ClientSnake getSnake(int id) {
         for (Snake snake : getSnakes()) {
             if (snake.id == id) {
-                return snake;
+                return (ClientSnake) snake;
             }
         }
         return null;
     }
 
-    public Prey getPrey(int id) {
+    public ClientPrey getPrey(int id) {
         for (Prey prey : getPreys()) {
             if (prey.id == id) {
-                return prey;
+                return (ClientPrey) prey;
             }
         }
         return null;
     }
 
-    public Food getFood(int id) {
+    public ClientFood getFood(int id) {
         for (Food food : getFoods()) {
             if (food.id == id) {
-                return food;
+                return (ClientFood) food;
             }
         }
         return null;
@@ -644,7 +649,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     }
 
     @Override
-    public void removeSector(Sector sector) {
+    public void removeSector(ClientSector sector) {
         super.removeSector(sector);
         int sectorSize = getSectorSize();
         List<Entity> entitiesInSector = new ArrayList<>();

@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.network.message.server;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientSector;
 import net.gegy1000.slyther.game.entity.Sector;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -8,12 +9,12 @@ import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessageAddSector extends SlytherServerMessageBase {
-    private Sector sector;
+    private Sector<?> sector;
 
     public MessageAddSector() {
     }
 
-    public MessageAddSector(Sector sector) {
+    public MessageAddSector(Sector<?> sector) {
         this.sector = sector;
     }
 
@@ -26,7 +27,7 @@ public class MessageAddSector extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client) {
-        client.addSector(new Sector(client, buffer.readUInt8(), buffer.readUInt8()));
+        client.addSector(new ClientSector(client, buffer.readUInt8(), buffer.readUInt8()));
     }
 
     @Override

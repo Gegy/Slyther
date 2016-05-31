@@ -1,6 +1,9 @@
 package net.gegy1000.slyther.client.gui;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientFood;
+import net.gegy1000.slyther.client.game.entity.ClientPrey;
+import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.LeaderboardEntry;
 import net.gegy1000.slyther.game.SkinColor;
@@ -31,7 +34,7 @@ public class GuiGame extends Gui {
         if (!loading) {
             GL11.glTranslatef(client.mww2 / gsc, client.mhh2 / gsc, 0.0F);
         }
-        Snake player = client.player;
+        ClientSnake player = client.player;
         if (!loading) {
             float newScale = 0.4F / Math.max(1.0F, (player.sct + 16.0F) / 36.0F) + 0.5F;
             if (client.gsc != newScale) {
@@ -93,7 +96,7 @@ public class GuiGame extends Gui {
             if (client.gla != 1.0F) {
                 globalAlpha = 1.75F * client.gla;
             }
-            for (Food food : client.getFoods()) {
+            for (ClientFood food : client.getFoods()) {
                 if (food.renderX >= client.fpx1 && food.renderX <= client.fpx2 && food.renderY >= client.fpy1 && food.renderY <= client.fpy2) {
                     Color color = food.color;
                     float size = (food.size / 5.0F) * food.rad * 0.25F;
@@ -106,7 +109,7 @@ public class GuiGame extends Gui {
                     GL11.glPopMatrix();
                 }
             }
-            for (Prey prey : client.getPreys()) {
+            for (ClientPrey prey : client.getPreys()) {
                 float posX = prey.posX + prey.fx;
                 float posY = prey.posY + prey.fy;
                 if (posX >= client.fpx1 && posX <= client.fpx2 && posY >= client.fpy1 && posY <= client.fpy2) {
@@ -121,20 +124,20 @@ public class GuiGame extends Gui {
                     GL11.glPopMatrix();
                 }
             }
-            for (Snake snake : client.getSnakes()) {
+            for (ClientSnake snake : client.getSnakes()) {
                 snake.isInView = true;
-                /*for (int t = snake.points.size() - 1; t >= 0; t--) {
-                    SnakePoint point = snake.points.get(t);
-                    float pointX = point.posX + point.fx;
-                    float pointY = point.posY + point.fy;
-                    if (pointX >= client.bpx1 && pointX <= client.bpx2 && pointY >= client.bpy1 && pointY <= client.bpy2) {
-                        snake.isInView = true;
-                        break;
-                    }
-                }*/
+                    /*for (int t = snake.points.size() - 1; t >= 0; t--) {
+                        SnakePoint point = snake.points.get(t);
+                        float pointX = point.posX + point.fx;
+                        float pointY = point.posY + point.fy;
+                        if (pointX >= client.bpx1 && pointX <= client.bpx2 && pointY >= client.bpy1 && pointY <= client.bpy2) {
+                            snake.isInView = true;
+                            break;
+                        }
+                    }*/
             }
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            for (Snake snake : client.getSnakes()) {
+            for (ClientSnake snake : client.getSnakes()) {
                 float originX = snake.posX + snake.fx;
                 float originY = snake.posY + snake.fy;
                 float ehang = snake.ehang;

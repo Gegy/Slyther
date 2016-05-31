@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.network.message.server;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientPrey;
 import net.gegy1000.slyther.game.entity.Prey;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -17,7 +18,7 @@ public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
         int id = buffer.readUInt16();
         int x = buffer.readUInt16() * 3 + 1;
         int y = buffer.readUInt16() * 3 + 1;
-        Prey prey = client.getPrey(id);
+        ClientPrey prey = client.getPrey(id);
         if (prey != null) {
             float moveAmount = (client.etm / 8.0F * prey.speed / 4.0F) * client.lagMultiplier;
             float prevX = prey.posX;

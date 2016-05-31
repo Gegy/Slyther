@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.network.message.server;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.game.ProfanityHandler;
 import net.gegy1000.slyther.game.Skin;
 import net.gegy1000.slyther.game.entity.Snake;
@@ -17,7 +18,7 @@ import java.util.List;
 public class MessageNewSnake extends SlytherServerMessageBase {
     private boolean removing;
     private boolean dead;
-    private Snake snake;
+    private Snake<?> snake;
 
     public MessageNewSnake() {
     }
@@ -119,7 +120,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                     name = "";
                 }
             }
-            Snake snake = new Snake(client, name, id, x, y, skin, angle, points);
+            ClientSnake snake = new ClientSnake(client, name, id, x, y, skin, angle, points);
             if (client.player == null) {
                 client.viewX = pointX;
                 client.viewY = pointY;

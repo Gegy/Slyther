@@ -10,6 +10,7 @@ import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.network.message.server.MessageSetup;
+import net.gegy1000.slyther.server.game.entity.ServerSnake;
 import net.gegy1000.slyther.util.Log;
 
 import org.java_websocket.WebSocket;
@@ -17,7 +18,7 @@ import org.java_websocket.WebSocket;
 public class ConnectedClient {
     public String name;
     public Skin skin;
-    public Snake snake;
+    public ServerSnake snake;
     public WebSocket socket;
     public long lastPacketTime;
     public SlytherServer server;

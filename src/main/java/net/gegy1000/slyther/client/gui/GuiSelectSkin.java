@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.client.gui;
 
 import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.client.gui.element.ArrowElement;
 import net.gegy1000.slyther.client.gui.element.ButtonElement;
 import net.gegy1000.slyther.game.Skin;
@@ -16,7 +17,7 @@ import java.util.List;
 public class GuiSelectSkin extends Gui {
     private int backgroundX;
     private GuiMainMenu menu;
-    private Snake snake;
+    private ClientSnake snake;
 
     public GuiSelectSkin(GuiMainMenu menu) {
         this.menu = menu;
@@ -29,7 +30,7 @@ public class GuiSelectSkin extends Gui {
             point.deltaX = i == 0 ? 0.0F : 10.0F;
             points.add(point);
         }
-        snake = new Snake(client, "", 0, points.get(points.size() - 1).posX, 0.0F, client.configuration.skin, 0.0F, points);
+        snake = new ClientSnake(client, "", 0, points.get(points.size() - 1).posX, 0.0F, client.configuration.skin, 0.0F, points);
         snake.speed = 4.8F;
         snake.speedTurnMultiplier = snake.speed / client.getSpangDv();
         if (snake.speedTurnMultiplier > 1) {
