@@ -8,6 +8,7 @@ import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.LeaderboardEntry;
 import net.gegy1000.slyther.game.SkinColor;
 import net.gegy1000.slyther.game.entity.*;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -437,7 +438,13 @@ public class GuiGame extends Gui {
 
     @Override
     public void keyPressed(int key, char character) {
-
+        if (key == Keyboard.KEY_BACK || key == Keyboard.KEY_ESCAPE) {
+            client.networkManager.close(1000, "Forcefully closed by player");
+            client.player = null;
+            client.networkManager = null;
+            closeGui();
+            client.openGui(new GuiMainMenu());
+        }
     }
 
     @Override
