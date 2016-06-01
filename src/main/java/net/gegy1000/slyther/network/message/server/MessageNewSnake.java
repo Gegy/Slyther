@@ -154,7 +154,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             boolean dead = buffer.readUInt8() == 1;
             Snake snake = client.getSnake(id);
             if (snake != null) {
-                snake.id = -1234;
+                Log.debug("Remove snake \"{}\" with skin {}, dead {}", snake.name, snake.skin, dead);
                 if (dead) {
                     snake.dead = true;
                     snake.deadAmt = 0;
