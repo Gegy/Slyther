@@ -30,11 +30,19 @@ public class GuiGame extends Gui {
         float gsc = client.gsc + client.zoomOffset;
         GL11.glScalef(gsc, gsc, 1.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        drawTexture(0.0F, 0.0F, loading ? backgroundX : client.viewX, client.viewY, renderResolution.getWidth() / gsc, renderResolution.getHeight() / gsc, 599, 519);
-        GL11.glTranslatef(-client.viewX, -client.viewY, 0.0F);
         if (!loading) {
             GL11.glTranslatef(client.mww2 / gsc, client.mhh2 / gsc, 0.0F);
         }
+        float sectionWidth = renderResolution.getWidth() / gsc / 2.0F;
+        float sectionHeight = renderResolution.getHeight() / gsc / 2.0F;
+        for (int x = -1; x < 1; x++) {
+            for (int y = -1; y < 1; y++) {
+                float offsetX = x * sectionWidth;
+                float offsetY = y * sectionHeight;
+                drawTexture(offsetX, offsetY, (loading ? backgroundX : client.viewX) + offsetX, client.viewY + offsetY, sectionWidth, sectionHeight, 599, 519);
+            }
+        }
+        GL11.glTranslatef(-client.viewX, -client.viewY, 0.0F);
         ClientSnake player = client.player;
         if (!loading) {
             float newScale = 0.4F / Math.max(1.0F, (player.sct + 16.0F) / 36.0F) + 0.5F;
