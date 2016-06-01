@@ -268,23 +268,23 @@ public class ClientSnake extends Snake<SlytherClient> {
                 fy = 0;
                 fchl = 0;
             }
-            if (fatg > 0) {
-                float h = lastDelta;
-                if (h > fatg) {
-                    h = fatg;
+            if (foodAnglesToGo > 0) {
+                float amount = lastDelta;
+                if (amount > foodAnglesToGo) {
+                    amount = foodAnglesToGo;
                 }
-                fatg -= h;
-                for (int qq = 0; qq < h; qq++) {
-                    fa = fas[fapos];
-                    fas[fapos] = 0;
-                    fapos++;
-                    if (fapos >= SlytherClient.AFC) {
-                        fapos = 0;
+                foodAnglesToGo -= amount;
+                for (int i = 0; i < amount; i++) {
+                    foodAngle = foodAngles[foodAngleIndex];
+                    foodAngles[foodAngleIndex] = 0;
+                    foodAngleIndex++;
+                    if (foodAngleIndex >= SlytherClient.AFC) {
+                        foodAngleIndex = 0;
                     }
                 }
-            } else if (fatg == 0) {
-                fatg = -1;
-                fa = 0;
+            } else if (foodAnglesToGo == 0) {
+                foodAnglesToGo = -1;
+                foodAngle = 0;
             }
         }
         if (dead) {

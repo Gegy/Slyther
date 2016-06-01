@@ -1,6 +1,5 @@
 package net.gegy1000.slyther.server.game.entity;
 
-import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.game.entity.SnakePoint;
 import net.gegy1000.slyther.network.message.server.MessageUpdateSnake;

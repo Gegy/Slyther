@@ -19,8 +19,8 @@ public class ClientFood extends Food<SlytherClient> {
             } else {
                 float eaterFrSq = eatenFr * eatenFr;
                 rad = lrrad * (1.0F - eatenFr * eaterFrSq);
-                renderX = (int) (posX + (eater.posX + eater.fx + Math.cos(eater.angle + eater.fa) * (43.0F - 24.0F * eaterFrSq) * (1.0F - eaterFrSq) - posX) * eaterFrSq);
-                renderY = (int) (posY + (eater.posY + eater.fy + Math.cos(eater.angle + eater.fa) * (43.0F - 24.0F * eaterFrSq) * (1.0F - eaterFrSq) - posY) * eaterFrSq);
+                renderX = (int) (posX + (eater.posX + eater.fx + Math.cos(eater.angle + eater.foodAngle) * (43.0F - 24.0F * eaterFrSq) * (1.0F - eaterFrSq) - posX) * eaterFrSq);
+                renderY = (int) (posY + (eater.posY + eater.fy + Math.cos(eater.angle + eater.foodAngle) * (43.0F - 24.0F * eaterFrSq) * (1.0F - eaterFrSq) - posY) * eaterFrSq);
                 renderX += Math.cos(wsp * gfr) * (1.0F - eatenFr) * 6.0F;
                 renderY += Math.sin(wsp * gfr) * (1.0F - eatenFr) * 6.0F;
             }

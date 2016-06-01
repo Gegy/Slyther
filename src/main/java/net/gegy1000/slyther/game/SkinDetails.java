@@ -6,7 +6,6 @@ public class SkinDetails {
     public int antennaLength;
     public int antennaPrimaryColor;
     public int antennaSecondaryColor;
-    public float eca = 0.75F;
     public int eyeColor = 0xFFFFFF;
     public boolean abrot;
     public float atia;

@@ -653,7 +653,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         super.removeSector(sector);
         int sectorSize = getSectorSize();
         List<Entity> entitiesInSector = new ArrayList<>();
-        for (Entity entity : getEntities()) {
+        for (Entity entity : getFoods()) {
             int sectorX = (int) (entity.posX / sectorSize);
             int sectorY = (int) (entity.posY / sectorSize);
             if (sectorX == sector.posX && sectorY == sector.posY) {

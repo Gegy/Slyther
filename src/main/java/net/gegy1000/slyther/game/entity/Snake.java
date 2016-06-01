@@ -13,7 +13,6 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     public int id;
     public Skin skin;
 
-    public int na;
     public float chl;
     public float tsp;
     public int sfr;
@@ -33,7 +32,6 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     public float rey;
     public float speed;
     public float prevSpeed;
-    public SnakePoint lnp; //head point
     public List<SnakePoint> points;
     public int sct;
     public int flpos;
@@ -60,10 +58,10 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
 
     public boolean antenna;
     public boolean oneEye;
-    public float swell;
-    public float atba;
-    public int atc1;
-    public int atc2;
+    public float headSwell;
+    public float antennaBottomAngle;
+    public int antennaPrimaryColor;
+    public int antennaSecondaryColor;
     public boolean atwg;
     public float atia;
     public boolean antennaBottomRotate;
@@ -81,13 +79,11 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     public SkinColor[] pattern;
     public SkinDetails skinDetails;
     public SkinColor color;
-    public int er;
-    public float pr;
+    public int eyeRadius;
+    public float pupilRadius;
     public float pma;
     public int eyeColor;
-    public float eca;
-    public int ppa;
-    public int ppc;
+    public int pupilColor = 0x000000;
     public float[] fxs;
     public float[] fys;
     public float[] fchls;
@@ -96,10 +92,10 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     public float fx;
     public float fy;
     public float fchl;
-    public float[] fas;
-    public int fapos;
-    public int fatg;
-    public float fa;
+    public float[] foodAngles;
+    public int foodAngleIndex;
+    public int foodAnglesToGo;
+    public float foodAngle;
     public float ehang;
     public float wehang;
 
@@ -107,20 +103,18 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
         super(game, posX, posY);
         this.name = name;
         this.id = id;
-        na = 1;
+        this.angle = angle;
         scale = 1.0F;
         moveSpeed = game.getNsp1() + game.getNsp2() * scale;
         accelleratingSpeed = moveSpeed + 0.1F;
         msp = game.getNsp3();
         ehl = 1;
         msl = 42;
-        this.angle = angle;
         eyeAngle = angle;
         wantedAngle = angle;
         speed = 2;
 
         if (points != null) {
-            lnp = points.get(points.size() - 1);
             this.points = points;
             sct = points.size();
             if (points.get(0).dying) {
@@ -141,19 +135,17 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
         fxs = new float[SlytherClient.RFC];
         fys = new float[SlytherClient.RFC];
         fchls = new float[SlytherClient.RFC];
-        fas = new float[SlytherClient.AFC];
+        foodAngles = new float[SlytherClient.AFC];
         ehang = angle;
         wehang = angle;
     }
 
     public void setSkin(Skin skin) {
         this.skin = skin;
-        er = 6;
-        pr = 3.5F;
+        eyeRadius = 6;
+        pupilRadius = 3.5F;
         pma = 2.3F;
         eyeColor = 0xFFFFFF;
-        eca = 0.75F;
-        ppa = 1;
 
         SkinDetails details = SkinHandler.INSTANCE.getDetails(skin);
 
@@ -161,8 +153,8 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
 
         if (details != null) {
             antenna = details.hasAntenna;
-            atc1 = details.antennaPrimaryColor;
-            atc2 = details.antennaSecondaryColor;
+            antennaPrimaryColor = details.antennaPrimaryColor;
+            antennaSecondaryColor = details.antennaSecondaryColor;
             atwg = details.atwg;
             atia = details.atia;
             antennaBottomRotate = details.abrot;
@@ -178,10 +170,9 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
                 antennaY[i] = posY;
             }
             eyeColor = details.eyeColor;
-            eca = details.eca;
             oneEye = details.oneEye;
             pma = details.pma;
-            swell = details.swell;
+            headSwell = details.swell;
             antennaTexture = details.antennaTexture;
             antennaScale = details.antennaScale;
             pattern = details.pattern;

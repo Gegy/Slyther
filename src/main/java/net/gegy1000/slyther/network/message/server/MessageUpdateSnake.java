@@ -96,22 +96,22 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
                 snake.turnDirection = turnDirection;
             }
             if (angle != -1) {
-                float fa = (float) ((angle - snake.angle) % SlytherClient.PI_2);
-                if (fa < 0) {
-                    fa += SlytherClient.PI_2;
+                float foodAngle = (float) ((angle - snake.angle) % SlytherClient.PI_2);
+                if (foodAngle < 0) {
+                    foodAngle += SlytherClient.PI_2;
                 }
-                if (fa > Math.PI) {
-                    fa -= SlytherClient.PI_2;
+                if (foodAngle > Math.PI) {
+                    foodAngle -= SlytherClient.PI_2;
                 }
-                int fapos = snake.fapos;
+                int index = snake.foodAngleIndex;
                 for (int i = 0; i < SlytherClient.AFC; i++) {
-                    snake.fas[fapos] = fa * SlytherClient.AFAS[i];
-                    fapos++;
-                    if (fapos >= SlytherClient.AFC) {
-                        fapos = 0;
+                    snake.foodAngles[index] = foodAngle * SlytherClient.AFAS[i];
+                    index++;
+                    if (index >= SlytherClient.AFC) {
+                        index = 0;
                     }
                 }
-                snake.fatg = SlytherClient.AFC;
+                snake.foodAnglesToGo = SlytherClient.AFC;
                 snake.angle = angle;
             }
             if (wantedAngle != -1) {

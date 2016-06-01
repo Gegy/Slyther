@@ -125,7 +125,6 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
             if (incrementSct) {
                 snake.snl();
             }
-            snake.lnp = point;
             if (snake == client.player) {
                 client.ovxx = snake.posX + snake.fx;
                 client.ovyy = snake.posY + snake.fy;
