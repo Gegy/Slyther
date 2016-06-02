@@ -23,11 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClientNetworkManager extends WebSocketClient implements NetworkManager {
+    public static final int SHUTDOWN_CODE = 1;
+
     public static final byte[] PING_DATA = new byte[] { (byte) 251 };
     private SlytherClient client;
     private String ip;
-
-    private boolean isOpen = false;
 
     public int bytesPerSecond;
 
@@ -41,9 +41,6 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
         this.isReplaying = isReplaying;
         if (!isReplaying && shouldRecord && !SlytherClient.RECORD_FILE.delete()) {
             SlytherClient.RECORD_FILE.createNewFile();
-        }
-        if (!isReplaying) {
-            isOpen = true;
         }
         connect();
         if (shouldRecord) {
@@ -76,14 +73,13 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
-        isOpen = true;
         send(new MessageClientSetup(client.configuration.nickname, client.configuration.skin));
         ping();
         Log.info("Connected to {}", ip);
     }
 
     public void ping() {
-        if (isOpen && !isReplaying) {
+        if (isOpen() && !isReplaying) {
             if (!client.waitingForPingReturn) {
                 send(PING_DATA);
                 client.waitingForPingReturn = true;
@@ -135,19 +131,21 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
     @Override
     public void onClose(int code, String reason, boolean remote) {
         Log.info("Connection closed with code {} for reason \"{}\"", code, reason);
-        isOpen = false;
-        client.reset();
+        if (code != SHUTDOWN_CODE) {
+            client.reset();   
+        }
+        if (recorder != null) {
+            recorder.close();
+        }
     }
 
     @Override
     public void onError(Exception e) {
         Log.catching(e);
-        isOpen = false;
-        client.reset();
     }
 
     public void send(SlytherClientMessageBase message) {
-        if (isOpen && !isReplaying) {
+        if (isOpen() && !isReplaying) {
             try {
                 MessageByteBuffer buffer = new MessageByteBuffer();
                 message.write(buffer, client);

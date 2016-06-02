@@ -24,10 +24,14 @@ public enum ConfigHandler {
         out.close();
     }
 
-    public <T> T readConfig(File file, Class<T> configClass) throws Exception {
+    public <T> T readConfig(File file, Class<T> configClass) throws IOException {
         if (file.exists()) {
             return GSON.fromJson(new FileReader(file), configClass);
         }
-        return configClass.getDeclaredConstructor().newInstance();
+        try {
+            return configClass.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

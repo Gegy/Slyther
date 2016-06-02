@@ -61,13 +61,13 @@ public class ServerPingerDispatcher implements Runnable {
             } catch (InterruptedException e) {
                 Log.catching(e);
             } finally {
-                pingers.forEach(ServerPinger::close);
+                pingers.forEach(p -> p.closeConnection(1006, ""));
                 finishedPingers.clear();
                 if (pinged < MIN_FOR_PLAY) {
                     ServerHandler.INSTANCE.serversAvailable.unlock();   
                 }
                 if (timeout.isAlive()) {
-                    timeout.interrupt();   
+                    timeout.interrupt();
                 }
             }
         }

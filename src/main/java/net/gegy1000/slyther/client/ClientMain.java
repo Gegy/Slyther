@@ -25,7 +25,8 @@ public class ClientMain {
     public static void main(String[] args) throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         loadNatives();
-        new SlytherClient();
+        SlytherClient client = new SlytherClient();
+        client.run();
     }
 
     public static void loadNatives(){

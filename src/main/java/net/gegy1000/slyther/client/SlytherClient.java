@@ -2,7 +2,6 @@ package net.gegy1000.slyther.client;
 
 import net.gegy1000.slyther.client.game.entity.ClientFood;
 import net.gegy1000.slyther.client.game.entity.ClientPrey;
-import net.gegy1000.slyther.client.game.entity.ClientSector;
 import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.game.Game;
 import net.gegy1000.slyther.game.entity.*;
@@ -26,7 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
+public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> implements Runnable {
     public int GAME_RADIUS;
     public int MSCPS;
     public int SECTOR_SIZE;
@@ -171,32 +170,119 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     }
 
     public float delta;
-    public boolean tickLoopInitialized;
+
     public boolean allowUserInput = true;
 
     public float zoomOffset;
 
     private static final File CONFIGURATION_FILE = new File(SystemUtils.getGameFolder(), "config.json");
 
-    public SlytherClient() throws Exception {
+    public SlytherClient() {
+        try {
+            configuration = ConfigHandler.INSTANCE.readConfig(CONFIGURATION_FILE, ClientConfig.class);
+            saveConfig();
+        } catch (IOException e) {
+            UIUtils.displayException("Unable to read config", e);
+            Log.catching(e);
+        }
+        renderHandler = new RenderHandler(this);
+        renderHandler.setup();
         setup();
     }
 
-    private void setup() {
-        if (configuration == null) {
-            try {
-                configuration = ConfigHandler.INSTANCE.readConfig(CONFIGURATION_FILE, ClientConfig.class);
-                saveConfig();
-            } catch (Exception e) {
-                Log.catching(e);
+    @Override
+    public void run() {
+        double delta = 0;
+        long previousTime = System.nanoTime();
+        long timer = System.currentTimeMillis();
+        int ups = 0;
+        double nanoUpdates = 1000000000.0 / 60.0;
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glShadeModel(GL11.GL_SMOOTH);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_LIGHTING);
+
+        GL11.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+        GL11.glClearDepth(1);
+
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        setupDisplay();
+
+        boolean doResize = false;
+
+        while (!Display.isCloseRequested()) {
+            if (Display.wasResized() && doResize) {
+                setupDisplay();
             }
-        }
+            doResize = true;
 
-        if (renderHandler == null) {
-            renderHandler = new RenderHandler(this);
-            renderHandler.setup();
-        }
+            long currentTime = System.nanoTime();
+            delta += (currentTime - previousTime) / nanoUpdates;
+            previousTime = currentTime;
 
+            while (delta >= 1) {
+                update();
+                renderHandler.update();
+                delta--;
+                ups++;
+            }
+
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+            GL11.glPushMatrix();
+
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+
+            renderHandler.render();
+
+            fps++;
+
+            if (System.currentTimeMillis() - timer > 1000) {
+                int bytesPerSecond = 0;
+                if (networkManager != null) {
+                    bytesPerSecond = networkManager.bytesPerSecond;
+                    networkManager.bytesPerSecond = 0;
+                }
+                Display.setTitle("Slyther - FPS: " + fps + " - UPS: " + ups + " - BPS: " + bytesPerSecond);
+                fps = 0;
+
+                timer += 1000;
+                ups = 0;
+            }
+
+            GL11.glPopMatrix();
+            Display.sync(60);
+            Display.update();
+        }
+        if (networkManager != null && networkManager.isOpen()) {
+            networkManager.closeConnection(ClientNetworkManager.SHUTDOWN_CODE, "");
+        }
+        try {
+            ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
+        } catch (IOException e) {
+            Log.error("Failed to save config");
+            Log.catching(e);
+        }
+        Display.destroy();
+    }
+
+    private void setupDisplay() {
+        int width = Display.getWidth();
+        int height = Display.getHeight();
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glScissor(0, 0, width, height);
+        GL11.glViewport(0, 0, width, height);
+        renderHandler.init();
+        mww2 = renderHandler.renderResolution.getWidth() / 2.0F;
+        mhh2 = renderHandler.renderResolution.getHeight() / 2.0F;
+    }
+
+    private void setup() {
         getSnakes().clear();
         getFoods().clear();
         getPreys().clear();
@@ -211,90 +297,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
         lagMultiplier = 0.0F;
         wumsts = false;
         zoomOffset = 0.0F;
-
         ServerHandler.INSTANCE.pingServers();
-
-        if (!tickLoopInitialized) {
-            tickLoopInitialized = true;
-
-            double delta = 0;
-            long previousTime = System.nanoTime();
-            long timer = System.currentTimeMillis();
-            int ups = 0;
-            double nanoUpdates = 1000000000.0 / 60.0;
-
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glShadeModel(GL11.GL_SMOOTH);
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glDisable(GL11.GL_LIGHTING);
-
-            GL11.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-            GL11.glClearDepth(1);
-
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-            while (!Display.isCloseRequested()) {
-                if (Display.wasResized()) {
-                    int width = Display.getWidth();
-                    int height = Display.getHeight();
-                    GL11.glMatrixMode(GL11.GL_PROJECTION);
-                    GL11.glLoadIdentity();
-                    GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
-                    GL11.glScissor(0, 0, width, height);
-                    GL11.glViewport(0, 0, width, height);
-                    renderHandler.init();
-                    mww2 = renderHandler.renderResolution.getWidth() / 2.0F;
-                    mhh2 = renderHandler.renderResolution.getHeight() / 2.0F;
-                }
-
-                long currentTime = System.nanoTime();
-                delta += (currentTime - previousTime) / nanoUpdates;
-                previousTime = currentTime;
-
-                while (delta >= 1) {
-                    update();
-                    renderHandler.update();
-                    delta--;
-                    ups++;
-                }
-
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-                GL11.glPushMatrix();
-
-                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-
-                renderHandler.render();
-
-                fps++;
-
-                if (System.currentTimeMillis() - timer > 1000) {
-                    int bytesPerSecond = 0;
-                    if (networkManager != null) {
-                        bytesPerSecond = networkManager.bytesPerSecond;
-                        networkManager.bytesPerSecond = 0;
-                    }
-                    Display.setTitle("Slyther - FPS: " + fps + " - UPS: " + ups + " - BPS: " + bytesPerSecond);
-                    fps = 0;
-
-                    timer += 1000;
-                    ups = 0;
-                }
-
-                GL11.glPopMatrix();
-                Display.sync(60);
-                Display.update();
-            }
-            try {
-                ConfigHandler.INSTANCE.saveConfig(CONFIGURATION_FILE, configuration);
-            } catch (IOException e) {
-                Log.error("Failed to save config");
-                Log.catching(e);
-            }
-            Display.destroy();
-            System.exit(1);
-        }
     }
 
     public void connect() {
@@ -578,9 +581,6 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> {
     public void reset() {
         closeAllGuis();
         openGui(new GuiMainMenu());
-        if (networkManager != null && networkManager.recorder != null) {
-            networkManager.recorder.close();
-        }
         networkManager = null;
         setup();
     }
