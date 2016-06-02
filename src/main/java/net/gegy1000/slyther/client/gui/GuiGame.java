@@ -295,6 +295,9 @@ public class GuiGame extends Gui {
                         drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                         GL11.glPopMatrix();
                     }
+                    if (snake.name.length() > 0) {
+                        drawCenteredString(snake.name, originX, originY + (32 * snake.scale), snake.scale, 0xFFFFFF);
+                    }
                     if (snake.antenna) {
                         GL11.glPushMatrix();
                         float directionX = (float) Math.cos(snake.angle);
