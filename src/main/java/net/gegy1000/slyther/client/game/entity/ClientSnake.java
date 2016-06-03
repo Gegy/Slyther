@@ -195,21 +195,21 @@ public class ClientSnake extends Snake<SlytherClient> {
                     int fx = 0;
                     int fy = 0;
                     int cm = point.eiu - 1;
-                    for (int qq = cm; qq >= 0; qq--) {
-                        point.efs[qq] = (int) (point.ems[qq] == 2 ? point.efs[qq] + lastDelta : point.efs[qq] + lastDelta);
-                        int h = point.efs[qq];
+                    for (int i = cm; i >= 0; i--) {
+                        point.efs[i] = (int) (point.ems[i] == 2 ? point.efs[i] + lastDelta : point.efs[i] + lastDelta);
+                        int h = point.efs[i];
                         if (h >= SlytherClient.HFC) {
-                            if (qq != cm) {
-                                point.exs[qq] = point.exs[cm];
-                                point.eys[qq] = point.eys[cm];
-                                point.efs[qq] = point.efs[cm];
-                                point.ems[qq] = point.ems[cm];
+                            if (i != cm) {
+                                point.exs[i] = point.exs[cm];
+                                point.eys[i] = point.eys[cm];
+                                point.efs[i] = point.efs[cm];
+                                point.ems[i] = point.ems[cm];
                             }
                             point.eiu--;
                             cm--;
                         } else {
-                            fx += point.exs[qq] * SlytherClient.HFAS[h];
-                            fy += point.eys[qq] * SlytherClient.HFAS[h];
+                            fx += point.exs[i] * SlytherClient.HFAS[h];
+                            fy += point.eys[i] * SlytherClient.HFAS[h];
                         }
                     }
                     point.fx = fx;
@@ -217,30 +217,30 @@ public class ClientSnake extends Snake<SlytherClient> {
                 }
             }
         }
-        float ex = (float) (Math.cos(eyeAngle) * pma);
-        float ey = (float) (Math.sin(eyeAngle) * pma);
-        if (rex < ex) {
-            rex += delta / 6.0F;
-            if (rex > ex) {
-                rex = ex;
+        float eyeX = (float) (Math.cos(eyeAngle) * pma);
+        float eyeY = (float) (Math.sin(eyeAngle) * pma);
+        if (relativeEyeX < eyeX) {
+            relativeEyeX += delta / 6.0F;
+            if (relativeEyeX > eyeX) {
+                relativeEyeX = eyeX;
             }
         }
-        if (rey < ey) {
-            rey += delta / 6.0F;
-            if (rey > ey) {
-                rey = ey;
+        if (relativeEyeY < eyeY) {
+            relativeEyeY += delta / 6.0F;
+            if (relativeEyeY > eyeY) {
+                relativeEyeY = eyeY;
             }
         }
-        if (rex > ex) {
-            rex -= delta / 6;
-            if (rex < ex) {
-                rex = ex;
+        if (relativeEyeX > eyeX) {
+            relativeEyeX -= delta / 6;
+            if (relativeEyeX < eyeX) {
+                relativeEyeX = eyeX;
             }
         }
-        if (rey > ey) {
-            rey -= delta / 6;
-            if (rey < ey) {
-                rey = ey;
+        if (relativeEyeY > eyeY) {
+            relativeEyeY -= delta / 6;
+            if (relativeEyeY < eyeY) {
+                relativeEyeY = eyeY;
             }
         }
         if (lastDelta > 0) {

@@ -47,7 +47,7 @@ public class GuiSelectSkin extends Gui {
         snake.partSeparation = snake.wantedSeperation;
         snake.snl();
         snake.aliveAmt = 1.0F;
-        snake.rex = 1.66F;
+        snake.relativeEyeX = 1.66F;
         update();
     }
 
@@ -183,11 +183,11 @@ public class GuiSelectSkin extends Gui {
             eyeOffsetX = (float) (Math.cos(ehang) * eyeForward + Math.cos(ehang + Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
             eyeOffsetY = (float) (Math.sin(ehang) * eyeForward + Math.sin(ehang + Math.PI / 2.0F) * (eyeSideDistance + 0.5F));
             drawCircle(eyeOffsetX, eyeOffsetY, snake.eyeRadius * scale, snake.eyeColor);
-            eyeOffsetX = (float) (Math.cos(ehang) * (eyeForward + 0.5F) + snake.rex * scale + Math.cos(ehang + Math.PI / 2.0F) * eyeSideDistance);
-            eyeOffsetY = (float) (Math.sin(ehang) * (eyeForward + 0.5F) + snake.rey * scale + Math.sin(ehang + Math.PI / 2.0F) * eyeSideDistance);
+            eyeOffsetX = (float) (Math.cos(ehang) * (eyeForward + 0.5F) + snake.relativeEyeX * scale + Math.cos(ehang + Math.PI / 2.0F) * eyeSideDistance);
+            eyeOffsetY = (float) (Math.sin(ehang) * (eyeForward + 0.5F) + snake.relativeEyeY * scale + Math.sin(ehang + Math.PI / 2.0F) * eyeSideDistance);
             drawCircle(eyeOffsetX, eyeOffsetY, 3.5F * scale, snake.pupilColor);
-            eyeOffsetX = (float) (Math.cos(ehang) * (eyeForward + 0.5F) + snake.rex * scale + Math.cos(ehang - Math.PI / 2.0F) * eyeSideDistance);
-            eyeOffsetY = (float) (Math.sin(ehang) * (eyeForward + 0.5F) + snake.rey * scale + Math.sin(ehang - Math.PI / 2.0F) * eyeSideDistance);
+            eyeOffsetX = (float) (Math.cos(ehang) * (eyeForward + 0.5F) + snake.relativeEyeX * scale + Math.cos(ehang - Math.PI / 2.0F) * eyeSideDistance);
+            eyeOffsetY = (float) (Math.sin(ehang) * (eyeForward + 0.5F) + snake.relativeEyeY * scale + Math.sin(ehang - Math.PI / 2.0F) * eyeSideDistance);
             drawCircle(eyeOffsetX, eyeOffsetY, 3.5F * scale, snake.pupilColor);
             GL11.glPopMatrix();
         } else if (snake.faceTexture != null) {

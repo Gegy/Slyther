@@ -196,7 +196,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         long previousTime = System.nanoTime();
         long timer = System.currentTimeMillis();
         int ups = 0;
-        double nanoUpdates = 1000000000.0 / 60.0;
+        double nanoUpdates = 1000000000.0 / 1.0;
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glShadeModel(GL11.GL_SMOOTH);

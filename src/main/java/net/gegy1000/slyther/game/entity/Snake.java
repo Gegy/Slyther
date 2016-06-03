@@ -28,8 +28,8 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     public float eyeAngle;
     public float wantedAngle;
     public float prevWantedAngle;
-    public float rex;
-    public float rey;
+    public float relativeEyeX;
+    public float relativeEyeY;
     public float speed;
     public float prevSpeed;
     public List<SnakePoint> points;
