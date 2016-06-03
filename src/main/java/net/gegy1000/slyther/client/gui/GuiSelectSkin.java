@@ -17,6 +17,8 @@ public class GuiSelectSkin extends Gui {
     private GuiMainMenu menu;
     private ClientSnake snake;
 
+    private int backgroundX;
+
     public GuiSelectSkin(GuiMainMenu menu) {
         this.menu = menu;
     }
@@ -69,13 +71,8 @@ public class GuiSelectSkin extends Gui {
 
     @Override
     public void render(float mouseX, float mouseY) {
-        int snakePointIndex = 0;
-        for (SnakePoint point : snake.points) {
-            point.posY = (float) (15.0F * Math.cos(snakePointIndex / 4.0F + client.renderTicks / 4.0F) * (1.0F - ((float) snakePointIndex / snake.points.size())));
-            snakePointIndex++;
-        }
         textureManager.bindTexture("/textures/background.png");
-        drawTexture(0.0F, 0.0F, client.renderTicks * 4.0F, 0, renderResolution.getWidth(), renderResolution.getHeight(), 599, 519);
+        drawTexture(0.0F, 0.0F, backgroundX * 2.0F, 0, renderResolution.getWidth(), renderResolution.getHeight(), 599, 519);
         drawCenteredLargeString("Select Skin", renderResolution.getWidth() / 2.0F, 25.0F, 1.0F, 0xFFFFFF);
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
@@ -225,7 +222,7 @@ public class GuiSelectSkin extends Gui {
             }
             for (int i = 1; i <= antennaLength; i++) {
                 snake.antennaVelocityX[i] -= 0.3F;
-                snake.antennaVelocityY[i] += Math.cos(client.renderTicks / 10.0F - 7.0F * y / antennaLength) * 0.14F;
+                snake.antennaVelocityY[i] += Math.cos(client.ticks / 10.0F - 7.0F * y / antennaLength) * 0.14F;
                 x = (float) (snake.antennaX[i - 1] + (Math.random() * 2.0F - 1));
                 y = (float) (snake.antennaY[i - 1] + (Math.random() * 2.0F - 1));
                 float diffX = snake.antennaX[i] - x;
@@ -303,6 +300,12 @@ public class GuiSelectSkin extends Gui {
 
     @Override
     public void update() {
+        backgroundX++;
+        int snakePointIndex = 0;
+        for (SnakePoint point : snake.points) {
+            point.posY = (float) (15.0F * Math.cos(snakePointIndex / 4.0F + client.ticks / 10.0F) * (1.0F - ((float) snakePointIndex / snake.points.size())));
+            snakePointIndex++;
+        }
     }
 
     @Override

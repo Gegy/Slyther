@@ -13,9 +13,6 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     public int id;
     public Skin skin;
 
-    public float prevPosX;
-    public float prevPosY;
-
     public float chl;
     public float tsp;
     public int sfr;
@@ -107,8 +104,6 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
         this.name = name;
         this.id = id;
         this.angle = angle;
-        prevPosX = posX;
-        prevPosY = posY;
         moveSpeed = game.getNsp1() + game.getNsp2() * scale;
         accelleratingSpeed = moveSpeed + 0.1F;
         msp = game.getNsp3();
@@ -211,14 +206,6 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
 
     public int getLength() {
         return (int) Math.floor(15.0F * (game.getFPSL(sct) + fam / game.getFMLT(sct) - 1.0F) - 5.0F);
-    }
-
-    public float getRenderX(float delta) {
-        return prevPosX + Math.min(1.0F, Math.max(0.0F, delta)) * (posX - prevPosX);
-    }
-
-    public float getRenderY(float delta) {
-        return prevPosY + Math.min(1.0F, Math.max(0.0F, delta)) * (posY - prevPosY);
     }
 
     @Override

@@ -70,7 +70,6 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     public boolean waitingForPingReturn; // Waiting for ping return?
     public long lastPacketTime;
     public float etm;
-    public float renderTicks;
     public float lastTicks;
     public float ticks;
     public float lastTicks2;
@@ -197,7 +196,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         long previousTime = System.nanoTime();
         long timer = System.currentTimeMillis();
         int ups = 0;
-        double nanoUpdates = 1000000000.0 / 30.0;
+        double nanoUpdates = 1000000000.0 / 60.0;
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glShadeModel(GL11.GL_SMOOTH);

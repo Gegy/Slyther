@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuiGame extends Gui {
+    private int backgroundX;
+
     @Override
     public void init() {
     }
@@ -30,8 +32,8 @@ public class GuiGame extends Gui {
         ClientSnake player = client.player;
         float delta = client.delta;
         if (!loading) {
-            client.viewX = player.getRenderX(delta) + player.fx + client.fvx;
-            client.viewY = player.getRenderY(delta) + player.fy + client.fvy;
+            client.viewX = player.posX + player.fx + client.fvx;
+            client.viewY = player.posY + player.fy + client.fvy;
         }
         client.viewAngle = (float) Math.atan2(client.viewY - client.GAME_RADIUS, client.viewX - client.GAME_RADIUS);
         client.viewDist = (float) Math.sqrt((client.viewX - client.GAME_RADIUS) * (client.viewX - client.GAME_RADIUS) + (client.viewY - client.GAME_RADIUS) * (client.viewY - client.GAME_RADIUS));
@@ -53,7 +55,7 @@ public class GuiGame extends Gui {
             for (int y = -1; y < 1; y++) {
                 float offsetX = x * sectionWidth;
                 float offsetY = y * sectionHeight;
-                drawTexture(offsetX, offsetY, (loading ? client.renderTicks : client.viewX) + offsetX, client.viewY + offsetY, sectionWidth, sectionHeight, 599, 519);
+                drawTexture(offsetX, offsetY, (loading ? backgroundX : client.viewX) + offsetX, client.viewY + offsetY, sectionWidth, sectionHeight, 599, 519);
             }
         }
         GL11.glTranslatef(-client.viewX, -client.viewY, 0.0F);
@@ -144,8 +146,8 @@ public class GuiGame extends Gui {
             }
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             for (Snake<?> snake : client.getSnakes()) {
-                float originX = snake.getRenderX(delta) + snake.fx;
-                float originY = snake.getRenderY(delta) + snake.fy;
+                float originX = snake.posX + snake.fx;
+                float originY = snake.posY + snake.fy;
                 float ehang = snake.ehang;
                 float scale = snake.scale;
                 if (snake.partSeparation != snake.wantedSeperation) {
@@ -439,6 +441,7 @@ public class GuiGame extends Gui {
 
     @Override
     public void update() {
+        backgroundX++;
         client.zoomOffset += Mouse.getDWheel() * 0.0005F;
         if (client.zoomOffset > 1.0F) {
             client.zoomOffset = 1.0F;

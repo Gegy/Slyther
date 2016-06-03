@@ -83,8 +83,8 @@ public class GuiMainMenu extends Gui {
         float backgroundMoveX = Mouse.getX() - (Display.getWidth() / 2.0F);
         float backgroundMoveY = (Display.getHeight() / 2.0F) - Mouse.getY();
         float angle = (float) Math.atan2(backgroundMoveY, backgroundMoveX);
-        backgroundX += Math.cos(angle) * 2.0F * client.delta;
-        backgroundY += Math.sin(angle) * 2.0F * client.delta;
+        backgroundX += Math.cos(angle) * 1.5F;
+        backgroundY += Math.sin(angle) * 1.5F;
 
         textureManager.bindTexture("/textures/background.png");
         drawTexture(0.0F, 0.0F, backgroundX, backgroundY, renderResolution.getWidth() / client.gsc, renderResolution.getHeight() / client.gsc, 599, 519);

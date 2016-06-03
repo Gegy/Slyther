@@ -157,8 +157,8 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
             snake.ftg = SlytherClient.RFC;
             snake.ehl = 0;
             if (snake == client.player) {
-                client.viewX = snake.getRenderX(client.delta) + snake.fx;
-                client.viewY = snake.getRenderY(client.delta) + snake.fy;
+                client.viewX = snake.posX + snake.fx;
+                client.viewY = snake.posY + snake.fy;
                 float viewDiffX = client.viewX - client.ovxx;
                 float viewDiffY = client.viewY - client.ovyy;
                 int fvpos = client.fvpos;
