@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuiGame extends Gui {
-    private int backgroundX;
-
     @Override
     public void init() {
     }
@@ -55,7 +53,7 @@ public class GuiGame extends Gui {
             for (int y = -1; y < 1; y++) {
                 float offsetX = x * sectionWidth;
                 float offsetY = y * sectionHeight;
-                drawTexture(offsetX, offsetY, (loading ? backgroundX : client.viewX) + offsetX, client.viewY + offsetY, sectionWidth, sectionHeight, 599, 519);
+                drawTexture(offsetX, offsetY, (loading ? client.renderTicks : client.viewX) + offsetX, client.viewY + offsetY, sectionWidth, sectionHeight, 599, 519);
             }
         }
         GL11.glTranslatef(-client.viewX, -client.viewY, 0.0F);
@@ -441,7 +439,6 @@ public class GuiGame extends Gui {
 
     @Override
     public void update() {
-        backgroundX++;
         client.zoomOffset += Mouse.getDWheel() * 0.0005F;
         if (client.zoomOffset > 1.0F) {
             client.zoomOffset = 1.0F;

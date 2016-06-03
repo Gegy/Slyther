@@ -70,6 +70,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     public boolean waitingForPingReturn; // Waiting for ping return?
     public long lastPacketTime;
     public float etm;
+    public float renderTicks;
     public float lastTicks;
     public float ticks;
     public float lastTicks2;

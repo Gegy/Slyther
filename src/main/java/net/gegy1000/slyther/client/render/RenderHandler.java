@@ -92,6 +92,7 @@ public class RenderHandler {
     }
 
     public void render() {
+        client.renderTicks = client.ticks + client.delta;
         renderResolution.applyScale();
         float mouseX = Mouse.getX() / renderResolution.getScale();
         float mouseY = (Display.getHeight() - Mouse.getY()) / renderResolution.getScale();
