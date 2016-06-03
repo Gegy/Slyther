@@ -29,6 +29,25 @@ public class GuiGame extends Gui {
         GL11.glScalef(gsc, gsc, 1.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glTranslatef(client.mww2 / gsc, client.mhh2 / gsc, 0.0F);
+        ClientSnake player = client.player;
+        if (!loading) {
+            client.viewX = player.posX + player.fx + client.fvx;
+            client.viewY = player.posY + player.fy + client.fvy;
+        }
+        client.viewAngle = (float) Math.atan2(client.viewY - client.GAME_RADIUS, client.viewX - client.GAME_RADIUS);
+        client.viewDist = (float) Math.sqrt((client.viewX - client.GAME_RADIUS) * (client.viewX - client.GAME_RADIUS) + (client.viewY - client.GAME_RADIUS) * (client.viewY - client.GAME_RADIUS));
+        client.bpx1 = client.viewX - (client.mww2 / gsc - 84);
+        client.bpy1 = client.viewY - (client.mhh2 / gsc - 84);
+        client.bpx2 = client.viewX + (client.mww2 / gsc - 84);
+        client.bpy2 = client.viewY + (client.mhh2 / gsc - 84);
+        client.fpx1 = client.viewX - (client.mww2 / gsc - 24);
+        client.fpy1 = client.viewY - (client.mhh2 / gsc - 24);
+        client.fpx2 = client.viewX + (client.mww2 / gsc - 24);
+        client.fpy2 = client.viewY + (client.mhh2 / gsc - 24);
+        client.apx1 = client.viewX - (client.mww2 / gsc - 210);
+        client.apy1 = client.viewY - (client.mhh2 / gsc - 210);
+        client.apx2 = client.viewX + (client.mww2 / gsc - 210);
+        client.apy2 = client.viewY + (client.mhh2 / gsc - 210);
         float sectionWidth = renderResolution.getWidth() / gsc / 2.0F;
         float sectionHeight = renderResolution.getHeight() / gsc / 2.0F;
         for (int x = -1; x < 1; x++) {
@@ -39,7 +58,6 @@ public class GuiGame extends Gui {
             }
         }
         GL11.glTranslatef(-client.viewX, -client.viewY, 0.0F);
-        ClientSnake player = client.player;
         if (!loading) {
             float newScale = 0.4F / Math.max(1.0F, (player.sct + 16.0F) / 36.0F) + 0.5F;
             if (client.gsc != newScale) {
@@ -65,22 +83,6 @@ public class GuiGame extends Gui {
                     client.fvpos = 0;
                 }
             }
-            client.viewX = player.posX + player.fx + client.fvx;
-            client.viewY = player.posY + player.fy + client.fvy;
-            client.viewAngle = (float) Math.atan2(client.viewY - client.GAME_RADIUS, client.viewX - client.GAME_RADIUS);
-            client.viewDist = (float) Math.sqrt((client.viewX - client.GAME_RADIUS) * (client.viewX - client.GAME_RADIUS) + (client.viewY - client.GAME_RADIUS) * (client.viewY - client.GAME_RADIUS));
-            client.bpx1 = client.viewX - (client.mww2 / gsc - 84);
-            client.bpy1 = client.viewY - (client.mhh2 / gsc - 84);
-            client.bpx2 = client.viewX + (client.mww2 / gsc - 84);
-            client.bpy2 = client.viewY + (client.mhh2 / gsc - 84);
-            client.fpx1 = client.viewX - (client.mww2 / gsc - 24);
-            client.fpy1 = client.viewY - (client.mhh2 / gsc - 24);
-            client.fpx2 = client.viewX + (client.mww2 / gsc - 24);
-            client.fpy2 = client.viewY + (client.mhh2 / gsc - 24);
-            client.apx1 = client.viewX - (client.mww2 / gsc - 210);
-            client.apy1 = client.viewY - (client.mhh2 / gsc - 210);
-            client.apx2 = client.viewX + (client.mww2 / gsc - 210);
-            client.apy2 = client.viewY + (client.mhh2 / gsc - 210);
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);

@@ -129,7 +129,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
                 client.ovxx = snake.posX + snake.fx;
                 client.ovyy = snake.posY + snake.fy;
             }
-            float moveAmount = client.delta * snake.speed / 4.0F;
+            float moveAmount = client.etm / 8.0F * snake.speed / 4.0F;
             moveAmount *= client.lagMultiplier;
             float prevChl = snake.chl - 1;
             snake.chl = moveAmount / snake.msl;
