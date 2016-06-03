@@ -29,7 +29,7 @@ public class GuiSelectSkin extends Gui {
             point.deltaX = i == 0 ? 0.0F : 10.0F;
             points.add(point);
         }
-        snake = new ClientSnake(client, "", 0, points.get(points.size() - 1).posX, 0.0F, client.configuration.skin, 0.0F, points);
+        snake = new ClientSnake(client, "", 0, points.get(points.size() - 1).posX + 40.0F, 0.0F, client.configuration.skin, 0.0F, points);
         snake.speed = 4.8F;
         snake.speedTurnMultiplier = snake.speed / client.getSpangDv();
         if (snake.speedTurnMultiplier > 1) {
@@ -71,15 +71,15 @@ public class GuiSelectSkin extends Gui {
     @Override
     public void render(float mouseX, float mouseY) {
         textureManager.bindTexture("/textures/background.png");
-        drawTexture(0.0F, 0.0F, backgroundX, 0, renderResolution.getWidth(), renderResolution.getHeight(), 599, 519);
+        drawTexture(0.0F, 0.0F, backgroundX * 1.5F, 0, renderResolution.getWidth(), renderResolution.getHeight(), 599, 519);
         drawCenteredLargeString("Select Skin", renderResolution.getWidth() / 2.0F, 25.0F, 1.0F, 0xFFFFFF);
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glTranslatef(client.mww2 - (snake.points.get(snake.points.size() / 2).posX), client.mhh2, 0.0F);
-        float originX = snake.posX + snake.fx;
-        float originY = snake.posY + snake.fy;
+        GL11.glTranslatef(client.mww2 - (snake.points.get(snake.points.size() / 2).posX) - 20.0F, client.mhh2, 0.0F);
+        float originX = snake.posX;
+        float originY = snake.posY;
         float ehang = snake.ehang;
         float scale = snake.scale;
         List<Float> xs = new ArrayList<>();
@@ -109,8 +109,8 @@ public class GuiSelectSkin extends Gui {
             SnakePoint point = snake.points.get(pointIndex);
             lastX = x;
             lastY = y;
-            x = point.posX + point.fx;
-            y = point.posY + point.fy;
+            x = point.posX;
+            y = point.posY;
             if (G > -0.25F) {
                 lastAverageX = averageX;
                 lastAverageY = averageY;
@@ -221,7 +221,7 @@ public class GuiSelectSkin extends Gui {
             }
             for (int i = 1; i <= antennaLength; i++) {
                 snake.antennaVelocityX[i] -= 0.3F;
-                snake.antennaVelocityY[i] += Math.cos(client.ticks / 23.0F - 7.0F * y / antennaLength) * 0.14F;
+                snake.antennaVelocityY[i] += Math.cos(client.ticks / 10.0F - 7.0F * y / antennaLength) * 0.14F;
                 x = (float) (snake.antennaX[i - 1] + (Math.random() * 2.0F - 1));
                 y = (float) (snake.antennaY[i - 1] + (Math.random() * 2.0F - 1));
                 float diffX = snake.antennaX[i] - x;
@@ -302,10 +302,9 @@ public class GuiSelectSkin extends Gui {
         backgroundX++;
         int i = 0;
         for (SnakePoint point : snake.points) {
-            point.posY = (float) (15.0F * Math.cos(i / 4.0F + client.ticks / 19.0F) * (1.0F - i / snake.points.size()));
+            point.posY = (float) (10.0F * Math.cos(i / 4.0F + client.ticks / 8.0F) * (1.0F - i / snake.points.size()));
             i++;
         }
-        snake.posY = snake.points.get(snake.points.size() - 1).posY;
     }
 
     @Override

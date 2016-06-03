@@ -74,8 +74,8 @@ public class GuiMainMenu extends Gui {
         float x = Mouse.getX() - (Display.getWidth() / 2.0F);
         float y = (Display.getHeight() / 2.0F) - Mouse.getY();
         float angle = (float) Math.atan2(y, x);
-        backgroundX += Math.cos(angle) * 1.5F;
-        backgroundY += Math.sin(angle) * 1.5F;
+        backgroundX += Math.cos(angle) * 2.0F * client.delta;
+        backgroundY += Math.sin(angle) * 2.0F * client.delta;
     }
 
     @Override

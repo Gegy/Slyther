@@ -30,9 +30,10 @@ public class GuiGame extends Gui {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glTranslatef(client.mww2 / gsc, client.mhh2 / gsc, 0.0F);
         ClientSnake player = client.player;
+        float delta = client.delta;
         if (!loading) {
-            client.viewX = player.posX + player.fx + client.fvx;
-            client.viewY = player.posY + player.fy + client.fvy;
+            client.viewX = player.getRenderX(delta) + player.fx + client.fvx;
+            client.viewY = player.getRenderY(delta) + player.fy + client.fvy;
         }
         client.viewAngle = (float) Math.atan2(client.viewY - client.GAME_RADIUS, client.viewX - client.GAME_RADIUS);
         client.viewDist = (float) Math.sqrt((client.viewX - client.GAME_RADIUS) * (client.viewX - client.GAME_RADIUS) + (client.viewY - client.GAME_RADIUS) * (client.viewY - client.GAME_RADIUS));
@@ -145,8 +146,8 @@ public class GuiGame extends Gui {
             }
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             for (Snake<?> snake : client.getSnakes()) {
-                float originX = snake.posX + snake.fx;
-                float originY = snake.posY + snake.fy;
+                float originX = snake.getRenderX(delta) + snake.fx;
+                float originY = snake.getRenderY(delta) + snake.fy;
                 float ehang = snake.ehang;
                 float scale = snake.scale;
                 if (snake.partSeparation != snake.wantedSeperation) {

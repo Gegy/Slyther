@@ -18,6 +18,8 @@ public class ServerSnake extends Snake<SlytherServer> {
 
     @Override
     public boolean update(float delta, float lastDelta, float lastDelta2) {
+        prevPosX = posX;
+        prevPosY = posY;
         if (angle < 0 || angle >= SlytherServer.PI_2) {
             angle %= SlytherServer.PI_2;
         }

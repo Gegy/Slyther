@@ -192,11 +192,11 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
 
     @Override
     public void run() {
-        double delta = 0;
+        delta = 0;
         long previousTime = System.nanoTime();
         long timer = System.currentTimeMillis();
         int ups = 0;
-        double nanoUpdates = 1000000000.0 / 60.0;
+        double nanoUpdates = 1000000000.0 / 30.0;
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glShadeModel(GL11.GL_SMOOTH);
@@ -374,9 +374,8 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         if (networkManager != null) {
             runTasks();
             long time = System.currentTimeMillis();
-            delta = 0;
             float lastDelta, lastDelta2;
-            float delta = (time - lastTickTime) / 8;
+            float delta = (time - lastTickTime) / 8.0F;
             lastTickTime = time;
             if (!lagging && waitingForPingReturn && time - lastPacketTime > 420) {
                 lagging = true;
