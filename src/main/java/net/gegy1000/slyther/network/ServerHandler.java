@@ -121,7 +121,7 @@ public enum ServerHandler {
         ///int ac = 0;
         StringBuilder ipBuf = new StringBuilder();
         char[] chars = encoded.toCharArray();
-        //int[] unkDist = new int[256]; 
+        //int[] unkDist = new int[256];
         for (int i = 1; i < chars.length; i++) {
             int nibble = (chars[i] - 'a' - (i - 1) * 7) % 26;
             if (nibble < 0) {

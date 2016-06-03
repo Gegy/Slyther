@@ -19,6 +19,7 @@ public class TextureManager {
             try {
                 return textures.put(path, TextureLoader.getTexture("png", TextureManager.class.getResourceAsStream(path)));
             } catch (IOException e) {
+                Log.error("Failed to load texture {}", path);
                 Log.catching(e);
             }
         }

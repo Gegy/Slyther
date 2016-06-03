@@ -157,12 +157,32 @@ public class GuiSelectSkin extends Gui {
         }
         xs.add(pointX);
         ys.add(pointY);
+        textureManager.bindTexture("/textures/shadow.png");
+        for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
+            pointX = (xs.get(pointIndex));
+            pointY = (ys.get(pointIndex));
+            GL11.glPushMatrix();
+            GL11.glTranslatef(pointX, pointY, 0);
+            float pointScale = snake.scale * 0.35F;
+            if (pointIndex < 4) {
+                pointScale *= 1 + (4 - pointIndex) * snake.headSwell;
+            }
+            GL11.glScalef(pointScale, pointScale, 1.0F);
+            drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
+            GL11.glPopMatrix();
+        }
         textureManager.bindTexture("/textures/snake_point.png");
         for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
             pointX = (xs.get(pointIndex));
             pointY = (ys.get(pointIndex));
             SkinColor color = pattern[pointIndex % pattern.length];
-            GL11.glColor4f(color.red, color.green, color.blue, 1.0F);
+            float colorMultipler = 1.0F;
+            float offset = (pointIndex / 3.0F % 6.0F);
+            if (offset >= 3.0F) {
+                offset = 3.0F - (offset - 3.0F);
+            }
+            colorMultipler -= offset / 15.0F;
+            GL11.glColor4f(color.red * colorMultipler, color.green * colorMultipler, color.blue * colorMultipler, 1.0F);
             GL11.glPushMatrix();
             GL11.glTranslatef(pointX, pointY, 0);
             float pointScale = snake.scale * 0.25F;
