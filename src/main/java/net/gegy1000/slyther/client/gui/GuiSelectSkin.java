@@ -23,12 +23,12 @@ public class GuiSelectSkin extends Gui {
 
     private void createSnake() {
         List<SnakePoint> points = new ArrayList<>();
-        for (int i = 0; i < 22; i++) {
+        for (int i = 0; i < 23; i++) {
             SnakePoint point = new SnakePoint(i * 10.0F, 0.0F);
             point.deltaX = i == 0 ? 0.0F : 10.0F;
             points.add(point);
         }
-        snake = new ClientSnake(client, "", 0, points.get(points.size() - 1).posX + 30.0F, 0.0F, client.configuration.skin, 0.0F, points);
+        snake = new ClientSnake(client, "", 0, points.get(points.size() - 1).posX, 0.0F, client.configuration.skin, 0.0F, points);
         snake.speed = 4.8F;
         snake.speedTurnMultiplier = snake.speed / client.getSpangDv();
         if (snake.speedTurnMultiplier > 1) {
@@ -71,17 +71,17 @@ public class GuiSelectSkin extends Gui {
     public void render(float mouseX, float mouseY) {
         int snakePointIndex = 0;
         for (SnakePoint point : snake.points) {
-            point.posY = (float) (6.0F * Math.cos(snakePointIndex / 4.0F + client.renderTicks / 6.0F) * (1.0F - snakePointIndex / snake.points.size()));
+            point.posY = (float) (15.0F * Math.cos(snakePointIndex / 4.0F + client.renderTicks / 4.0F) * (1.0F - ((float) snakePointIndex / snake.points.size())));
             snakePointIndex++;
         }
         textureManager.bindTexture("/textures/background.png");
-        drawTexture(0.0F, 0.0F, client.renderTicks * 2.0F, 0, renderResolution.getWidth(), renderResolution.getHeight(), 599, 519);
+        drawTexture(0.0F, 0.0F, client.renderTicks * 4.0F, 0, renderResolution.getWidth(), renderResolution.getHeight(), 599, 519);
         drawCenteredLargeString("Select Skin", renderResolution.getWidth() / 2.0F, 25.0F, 1.0F, 0xFFFFFF);
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glTranslatef(client.mww2 - (snake.points.get(snake.points.size() / 2).posX) - 15.0F, client.mhh2, 0.0F);
+        GL11.glTranslatef(client.mww2 - (snake.points.get(snake.points.size() / 2).posX), client.mhh2, 0.0F);
         float originX = snake.posX;
         float originY = snake.posY;
         float ehang = snake.ehang;
