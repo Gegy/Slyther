@@ -56,9 +56,9 @@ public class TextBoxElement extends Element {
         GL11.glColor4f((color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 1.0F);
         drawButton(posX, posY, width, height);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        gui.drawCenteredString(text, posX + (width / 2.0F), posY + (height / 2.0F), 1.0F, 0xFFFFFF);
+        gui.drawCenteredString(text, posX + (width / 2.0F), posY + (height / 2.0F), 0.5F, 0xFFFFFF);
         if (selected && tick % 40 > 20) {
-            float x = gui.font.getWidth(text.substring(0, selectionIndex)) - gui.font.getWidth(text) / 2.0F;
+            float x = (gui.font.getWidth(text.substring(0, selectionIndex)) / 2.0F) - gui.font.getWidth(text) / 4.0F;
             gui.drawRect(posX + (width / 2.0F) + x, posY + (height / 2.0F) - (gui.font.getHeight() / 2.0F), 1.0F, gui.font.getHeight());
         }
     }

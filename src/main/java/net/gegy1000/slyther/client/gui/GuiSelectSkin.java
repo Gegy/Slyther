@@ -79,7 +79,7 @@ public class GuiSelectSkin extends Gui {
         }
         textureManager.bindTexture("/textures/background.png");
         drawTexture(0.0F, 0.0F, backgroundX * 2.0F, 0, renderResolution.getWidth(), renderResolution.getHeight(), 599, 519);
-        drawCenteredLargeString("Select Skin", renderResolution.getWidth() / 2.0F, 25.0F, 1.0F, 0xFFFFFF);
+        drawCenteredLargeString("Select Skin", renderResolution.getWidth() / 2.0F, 25.0F, 0.5F, 0xFFFFFF);
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_ALPHA_TEST);

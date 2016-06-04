@@ -30,7 +30,7 @@ public class ButtonElement extends Element {
         GL11.glColor4f((color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 1.0F);
         drawButton(posX, posY, width, height);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        gui.drawCenteredString(text, posX + (width / 2.0F), posY + (height / 2.0F), 1.0F, 0xFFFFFF);
+        gui.drawCenteredString(text, posX + (width / 2.0F), posY + (height / 2.0F), 0.5F, 0xFFFFFF);
     }
 
     @Override

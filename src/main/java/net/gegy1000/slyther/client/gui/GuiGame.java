@@ -327,7 +327,7 @@ public class GuiGame extends Gui {
                         GL11.glPopMatrix();
                     }
                     if (snake.name.length() > 0) {
-                        drawCenteredString(snake.name, originX, originY + (32 * snake.scale), snake.scale, 0xFFFFFF);
+                        drawCenteredString(snake.name, originX, originY + (32 * snake.scale), snake.scale / 2.0F, 0xFFFFFF);
                     }
                     if (snake.antenna) {
                         GL11.glPushMatrix();
@@ -424,12 +424,12 @@ public class GuiGame extends Gui {
 
             GL11.glPopMatrix();
 
-            drawString("Your length: " + player.getLength(), 3.0F, renderResolution.getHeight() - 35.0F, 1.0F, 0xFFFFFF);
-            drawString("Rank " + client.rank + "/" + client.snakeCount, 3.0F, renderResolution.getHeight() - 18.0F, 1.0F, 0xAAAAAA);
+            drawString("Your length: " + player.getLength(), 3.0F, renderResolution.getHeight() - 35.0F, 0.5F, 0xFFFFFF);
+            drawString("Rank " + client.rank + "/" + client.snakeCount, 3.0F, renderResolution.getHeight() - 18.0F, 0.5F, 0xAAAAAA);
 
-            drawLargeString("Leaderboard:", renderResolution.getWidth() - largeFont.getWidth("Leaderboard:") - 10.0F, 2.0F, 1.0F, 0xFFFFFF);
+            drawLargeString("Leaderboard:", renderResolution.getWidth() - largeFont.getWidth("Leaderboard:") / 2.0F - 10.0F, 2.0F, 0.5F, 0xFFFFFF);
 
-            int leaderboardY = largeFont.getHeight() + 4;
+            int leaderboardY = (largeFont.getHeight() / 2) + 4;
 
             List<LeaderboardEntry> leaderboard = new ArrayList<>(client.leaderboard);
 
@@ -439,9 +439,9 @@ public class GuiGame extends Gui {
             for (int i = 1; i <= leaderboard.size(); i++) {
                 LeaderboardEntry leaderboardEntry = leaderboard.get(i - 1);
                 String text = i + ". " + leaderboardEntry;
-                drawString(text, renderResolution.getWidth() - font.getWidth(text) - 8.0F, leaderboardY, 1.0F, leaderboardEntry.color.toHex() | alpha << 24);
+                drawString(text, renderResolution.getWidth() - (font.getWidth(text) / 2.0F) - 8.0F, leaderboardY, 0.5F, leaderboardEntry.color.toHex() | alpha << 24);
 
-                leaderboardY += font.getHeight() + 2;
+                leaderboardY += font.getHeight() / 2.0F + 2;
                 alpha -= alphaChange;
             }
 
@@ -463,7 +463,7 @@ public class GuiGame extends Gui {
             drawCircle(locationMarkerX, locationMarkerY, 2.0F, 0xFFFFFF);
         } else {
             GL11.glPopMatrix();
-            drawCenteredLargeString("Connecting to server...", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F, 2.0F, 0xFFFFFF);
+            drawCenteredLargeString("Connecting to server...", renderResolution.getWidth() / 2.0F, renderResolution.getHeight() / 2.0F, 1.0F, 0xFFFFFF);
         }
     }
 

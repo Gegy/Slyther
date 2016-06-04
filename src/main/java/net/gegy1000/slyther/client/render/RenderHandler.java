@@ -53,8 +53,8 @@ public class RenderHandler {
             Mouse.create();
             try {
                 Font awtFont = new Font("Arial Rounded MT Bold", Font.PLAIN, 0);
-                font = new TrueTypeFont(awtFont.deriveFont(14.0F), true);
-                largeFont = new TrueTypeFont(awtFont.deriveFont(30.0F), true);
+                font = new TrueTypeFont(awtFont.deriveFont(28.0F), true);
+                largeFont = new TrueTypeFont(awtFont.deriveFont(55.0F), true);
             } catch (Exception e) {
                 Log.catching(e);
             }
