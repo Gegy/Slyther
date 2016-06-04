@@ -2,6 +2,7 @@ package net.gegy1000.slyther.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import net.gegy1000.slyther.game.Skin;
 import net.gegy1000.slyther.game.entity.Entity;
@@ -20,19 +21,21 @@ public class ConnectedClient {
     public Skin skin;
     public ServerSnake snake;
     public WebSocket socket;
-    public long lastPacketTime;
+    public long lastPacketTime = System.currentTimeMillis();
     public SlytherServer server;
     public float gsc = 0.9F;
     public int protocolVersion;
     public int rank;
     public float viewDistance;
+    public int id;
 
     public List<Entity> tracking = new ArrayList<>();
     public List<Sector> trackingSectors = new ArrayList<>();
 
-    public ConnectedClient(SlytherServer server, WebSocket socket) {
+    public ConnectedClient(SlytherServer server, WebSocket socket, int id) {
         this.server = server;
         this.socket = socket;
+        this.id = id;
     }
 
     public void setup(String name, Skin skin, int protocolVersion) {
@@ -106,15 +109,19 @@ public class ConnectedClient {
     }
 
     public void send(SlytherServerMessageBase message) {
-        try {
-            MessageByteBuffer buffer = new MessageByteBuffer();
-            buffer.writeUInt16((int) (System.currentTimeMillis() - lastPacketTime));
-            buffer.writeUInt8(message.getSendMessageId());
-            message.write(buffer, server, this);
-            socket.send(buffer.bytes());
-        } catch (Exception e) {
-            Log.error("An error occurred while sending message {}", message.getClass().getName());
-            Log.catching(e);
+        if (socket.isOpen()) {
+            try {
+                MessageByteBuffer buffer = new MessageByteBuffer();
+                buffer.writeUInt16((int) (System.currentTimeMillis() - lastPacketTime));
+                buffer.writeUInt8(message.getSendMessageId());
+                message.write(buffer, server, this);
+                socket.send(buffer.bytes());
+            } catch (Exception e) {
+                Log.error("An error occurred while sending message {} to {} ({})", message.getClass().getName(), name, id);
+                Log.catching(e);
+            }
+        } else {
+            server.removeClient(socket);
         }
     }
 }

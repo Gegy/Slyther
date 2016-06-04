@@ -1,6 +1,9 @@
 package net.gegy1000.slyther.game.entity;
 
+import net.gegy1000.slyther.game.Game;
+
 public class SnakePoint {
+    public Game<?, ?> game;
     public float posX;
     public float posY;
     public float prevPosX;
@@ -17,7 +20,8 @@ public class SnakePoint {
     public float[] eys = new float[128];
     public float[] ems = new float[128];
 
-    public SnakePoint(float posX, float posY) {
+    public SnakePoint(Game<?, ?> game, float posX, float posY) {
+        this.game = game;
         this.posX = posX;
         this.posY = posY;
     }
@@ -33,5 +37,10 @@ public class SnakePoint {
 
     public float getRenderY(double frameDelta) {
         return (float) (prevPosY + frameDelta * (posY - prevPosY));
+    }
+
+    public boolean shouldTrack(Sector sector) {
+        int sectorSize = game.getSectorSize();
+        return (int) (posX / sectorSize) == sector.posX && (int) (posY / sectorSize) == sector.posY;
     }
 }

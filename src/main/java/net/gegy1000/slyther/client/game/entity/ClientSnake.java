@@ -74,9 +74,7 @@ public class ClientSnake extends Snake<SlytherClient> {
         }
         if (turnDirection == 1) {
             angle -= turnSpeed;
-            if (angle < 0 || angle >= SlytherClient.PI_2) {
-                angle %= SlytherClient.PI_2;
-            }
+            angle %= SlytherClient.PI_2;
             if (angle < 0) {
                 angle += SlytherClient.PI_2;
             }
@@ -93,9 +91,7 @@ public class ClientSnake extends Snake<SlytherClient> {
             }
         } else if (turnDirection == 2) {
             angle += turnSpeed;
-            if (angle < 0 || angle >= SlytherClient.PI_2) {
-                angle %= SlytherClient.PI_2;
-            }
+            angle %= SlytherClient.PI_2;
             if (angle < 0) {
                 angle += SlytherClient.PI_2;
             }

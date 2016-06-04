@@ -4,6 +4,7 @@ import net.gegy1000.slyther.network.NetworkManager;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
+import net.gegy1000.slyther.network.message.server.MessageSetup;
 import net.gegy1000.slyther.util.Log;
 
 import org.java_websocket.WebSocket;
@@ -17,24 +18,30 @@ import java.util.Arrays;
 
 public class ServerNetworkManager extends WebSocketServer implements NetworkManager {
     private SlytherServer server;
+    private int port;
+
+    private int currentClientId;
 
     public ServerNetworkManager(SlytherServer server, int port) throws UnknownHostException {
         super(new InetSocketAddress(port));
         this.server = server;
+        this.port = port;
         start();
     }
 
     @Override
     public void run() {
         Thread.currentThread().setName(getClass().getSimpleName());
+        Log.info("Server started on port {}", port);
         super.run();
     }
 
     @Override
     public void onOpen(WebSocket connection, ClientHandshake handshake) {
-        Log.info("Initiating new connection.");
         server.scheduleTask(() -> {
-            ConnectedClient client = new ConnectedClient(server, connection);
+            Log.debug("Initiating a new connection.");
+            ConnectedClient client = new ConnectedClient(server, connection, currentClientId);
+            currentClientId++;
             server.clients.add(client);
             client.lastPacketTime = System.currentTimeMillis();
             return null;
@@ -58,7 +65,7 @@ public class ServerNetworkManager extends WebSocketServer implements NetworkMana
             MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer);
             SlytherClientMessageBase message = MessageHandler.INSTANCE.getClientMessage(buffer);
             if (message == null) {
-                Log.warn("Received unknown message {}", () -> Arrays.toString(buffer.array()));
+                Log.warn("Received unknown message {} from {} ({})", () -> Arrays.toString(buffer.array()), client.name, client.id);
             } else {
                 server.scheduleTask(() -> {
                     message.read(buffer, server, client);

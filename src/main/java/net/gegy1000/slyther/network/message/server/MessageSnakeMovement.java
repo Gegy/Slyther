@@ -9,15 +9,15 @@ import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
-public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
+public class MessageSnakeMovement extends SlytherServerMessageBase {
     private Snake<?> snake;
     private boolean relative;
     private boolean incrementSct;
 
-    public MessageUpdateSnakePoints() {
+    public MessageSnakeMovement() {
     }
 
-    public MessageUpdateSnakePoints(Snake snake, boolean relative, boolean incrementSct) {
+    public MessageSnakeMovement(Snake snake, boolean relative, boolean incrementSct) {
         this.snake = snake;
         this.relative = relative;
         this.incrementSct = incrementSct;
@@ -70,7 +70,7 @@ public class MessageUpdateSnakePoints extends SlytherServerMessageBase {
             if (updateLength) {
                 snake.fam = (double) buffer.readUInt24() / 0xFFFFFF;
             }
-            SnakePoint point = new SnakePoint(x, y);
+            SnakePoint point = new SnakePoint(client, x, y);
             point.deltaX = point.posX - head.posX;
             point.deltaY = point.posY - head.posY;
             snake.points.add(point);

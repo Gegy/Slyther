@@ -108,7 +108,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                     pointX += (buffer.readUInt8() - 127) / 2.0F;
                     pointY += (buffer.readUInt8() - 127) / 2.0F;
                 }
-                SnakePoint point = new SnakePoint(pointX, pointY);
+                SnakePoint point = new SnakePoint(client, pointX, pointY);
                 point.deltaX = pointX - prevPointX;
                 point.deltaY = pointY - prevPointY;
                 points.add(point);

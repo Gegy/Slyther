@@ -29,24 +29,12 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
         buffer.writeUInt16(snake.id);
-        if (turnDirection && angle && wantedAngle && speed) {
+        if (turnDirection) {
             buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
             buffer.writeUInt8((int) (snake.wantedAngle / (2.0F * Math.PI / 256.0F)));
             buffer.writeUInt8((int) (snake.speed * 18.0F));
-        } else if (angle && speed) {
+        } else {
             buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
-            buffer.writeUInt8((int) (snake.speed * 18.0F));
-        } else if ((turnDirection) && (snake.turnDirection == 1 || snake.turnDirection == 2) && wantedAngle && speed) {
-            buffer.writeUInt8((int) (snake.wantedAngle / (2.0F * Math.PI / 256.0F)));
-            buffer.writeUInt8((int) (snake.speed * 18.0F));
-        } else if ((turnDirection && snake.turnDirection == 2) && angle && wantedAngle) {
-            buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
-            buffer.writeUInt8((int) (snake.wantedAngle / (2.0F * Math.PI / 256.0F)));
-        } else if (angle) {
-            buffer.writeUInt8((int) (snake.angle / (2.0F * Math.PI / 256.0F)));
-        } else if ((turnDirection && snake.turnDirection == 1) && wantedAngle) {
-            buffer.writeUInt8((int) (snake.wantedAngle / (2.0F * Math.PI / 256.0F)));
-        } else if (speed) {
             buffer.writeUInt8((int) (snake.speed * 18.0F));
         }
     }
@@ -137,22 +125,10 @@ public class MessageUpdateSnake extends SlytherServerMessageBase {
 
     @Override
     public int getSendMessageId() {
-        if (turnDirection && angle && wantedAngle && speed) {
-            return snake.turnDirection == 1 ? 'e' : 'E';
-        } else if (angle && speed) {
-            return 'e';
-        } else if ((turnDirection && snake.turnDirection == 1) && wantedAngle && speed) {
-            return 'E';
-        } else if ((turnDirection && snake.turnDirection == 2) && wantedAngle && speed) {
-            return '4';
-        } else if ((turnDirection && snake.turnDirection == 2) && angle && wantedAngle) {
-            return '5';
-        } else if (angle) {
-            return 'e';
-        } else if ((turnDirection && snake.turnDirection == 1) && wantedAngle) {
-            return 'E';
-        } else if (speed) {
-            return '3';
+        if (turnDirection) {
+            if (snake.turnDirection != 1) {
+                return !(angle || wantedAngle) ? '5' : '4';
+            }
         }
         return 'e';
     }

@@ -31,9 +31,9 @@ public abstract class Entity<GME extends Game<?, ?>> {
             Sector previousSector = null;
             Sector newSector = null;
             for (Sector sector : client.trackingSectors) {
-                if (sector.posX == sectorX && sector.posY == sectorY) {
+                if (shouldTrack(sector, sectorX, sectorY)) {
                     newSector = sector;
-                } else if (sector.posX == previousSectorX && sector.posY == previousSectorY) {
+                } else if (shouldTrack(sector, previousSectorX, previousSectorY)) {
                     previousSector = sector;
                 }
             }
@@ -45,6 +45,10 @@ public abstract class Entity<GME extends Game<?, ?>> {
             previousSectorX = sectorX;
             previousSectorY = sectorY;
         }
+    }
+
+    public boolean shouldTrack(Sector sector, int sectorX, int sectorY) {
+        return sectorX == sector.posX && sectorY == sector.posY;
     }
 
     public float getRenderX(double frameDelta) {

@@ -41,6 +41,6 @@ public class MessageClientSetup extends SlytherClientMessageBase {
         Skin skin = Skin.values()[buffer.readUInt8() % Skin.values().length];
         String name = buffer.readASCIIBytes();
         client.setup(name, skin, protocolVersion);
-        Log.debug("{} connected with skin {}", client.name, client.skin);
+        Log.debug("{} ({}) connected with skin {}", client.name, client.id, client.skin);
     }
 }

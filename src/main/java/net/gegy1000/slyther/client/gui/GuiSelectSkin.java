@@ -26,7 +26,7 @@ public class GuiSelectSkin extends Gui {
     private void createSnake() {
         List<SnakePoint> points = new ArrayList<>();
         for (int i = 0; i < 23; i++) {
-            SnakePoint point = new SnakePoint(i * 10.0F, 0.0F);
+            SnakePoint point = new SnakePoint(client, i * 10.0F, 0.0F);
             point.deltaX = i == 0 ? 0.0F : 10.0F;
             points.add(point);
         }
@@ -74,7 +74,7 @@ public class GuiSelectSkin extends Gui {
         backgroundX++;
         int snakePointIndex = 0;
         for (SnakePoint point : snake.points) {
-            point.posY = (float) (15.0F * Math.cos(snakePointIndex / 4.0F + client.frameTicks / 5.0F) * (1.0F - ((float) snakePointIndex / snake.points.size())));
+            point.posY = (float) (15.0F * Math.cos(snakePointIndex / 4.0F + client.frameTicks / 4.0F) * (1.0F - ((float) snakePointIndex / snake.points.size())));
             snakePointIndex++;
         }
         textureManager.bindTexture("/textures/background.png");

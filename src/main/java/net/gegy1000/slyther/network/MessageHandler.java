@@ -21,7 +21,7 @@ public enum MessageHandler {
         registerServer(MessageNewFood.class);
         registerServer(MessageNewPrey.class);
         registerServer(MessageUpdateSnake.class);
-        registerServer(MessageUpdateSnakePoints.class);
+        registerServer(MessageSnakeMovement.class);
         registerServer(MessagePreyPositionUpdate.class);
         registerServer(MessageUpdateFam.class);
         registerServer(MessageRemoveFood.class);

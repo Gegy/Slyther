@@ -1,20 +1,26 @@
 package net.gegy1000.slyther.server;
 
-import net.gegy1000.slyther.game.*;
-import net.gegy1000.slyther.game.entity.*;
+import net.gegy1000.slyther.game.Color;
+import net.gegy1000.slyther.game.ConfigHandler;
+import net.gegy1000.slyther.game.Game;
+import net.gegy1000.slyther.game.LeaderboardEntry;
+import net.gegy1000.slyther.game.entity.Entity;
+import net.gegy1000.slyther.game.entity.Snake;
+import net.gegy1000.slyther.game.entity.SnakePoint;
 import net.gegy1000.slyther.network.message.server.MessageUpdateLeaderboard;
 import net.gegy1000.slyther.server.game.entity.ServerFood;
-import net.gegy1000.slyther.server.game.entity.ServerPrey;
 import net.gegy1000.slyther.server.game.entity.ServerSector;
 import net.gegy1000.slyther.server.game.entity.ServerSnake;
 import net.gegy1000.slyther.util.Log;
 import net.gegy1000.slyther.util.SystemUtils;
-
 import org.java_websocket.WebSocket;
 
 import java.io.File;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
     public static final double PI_2 = Math.PI * 2;
@@ -149,7 +155,7 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
         int posX = (rng.nextInt(spawnFuzz) - spawnFuzz / 2);
         int posY = (rng.nextInt(spawnFuzz) - spawnFuzz / 2);
         List<SnakePoint> points = new ArrayList<>();
-        points.add(new SnakePoint(posX, posY));
+        points.add(new SnakePoint(this, posX, posY));
         ServerSnake snake = new ServerSnake(this, client, currentSnakeId++, posX, posY, 0.0F, points);
         snake.client = client;
         addEntity(snake);
@@ -161,7 +167,9 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
             ConnectedClient client = getConnectedClient(socket);
             clients.remove(client);
             if (client != null) {
-                Log.info("{} disconnected.", client.name);
+                if (client.name != null) {
+                    Log.debug("{} ({}) disconnected.", client.name, client.id);
+                }
                 removeEntity(client.snake);
             }
             return null;
@@ -185,6 +193,14 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
             }
         }
         return tracking;
+    }
+
+    @Override
+    public void removeEntity(Entity<?> entity) {
+        for (ConnectedClient client : getTrackingClients(entity)) {
+            client.untrack(entity);
+        }
+        super.removeEntity(entity);
     }
 
     @Override

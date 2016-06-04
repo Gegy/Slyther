@@ -227,6 +227,16 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     }
 
     @Override
+    public boolean shouldTrack(Sector sector, int sectorX, int sectorY) {
+        for (SnakePoint point : points) {
+            if (point.shouldTrack(sector)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public int compareTo(Snake snake) {
         return Integer.compare(getLength(), snake.getLength());
     }
