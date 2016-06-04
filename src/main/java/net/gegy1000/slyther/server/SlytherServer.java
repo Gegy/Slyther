@@ -116,7 +116,7 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
             client.update();
         }
         for (Entity entity : getEntities()) {
-            entity.update(delta, lastDelta, lastDelta2);
+            entity.updateBase(delta, lastDelta, lastDelta2);
         }
         if (time - lastLeaderboardUpdateTime > configuration.leaderboardUpdateFrequency) {
             leaderboard.clear();

@@ -15,6 +15,7 @@ public class ClientSnake extends Snake<SlytherClient> {
 
     @Override
     public boolean update(float delta, float lastDelta, float lastDelta2) {
+        prevAngle = getAngleForInterpolation(angle, prevAngle);
         float turnSpeed = game.getMamu() * delta * scaleTurnMultiplier * speedTurnMultiplier;
         float moveAmount = speed * delta / 4;
         if (moveAmount > msl) {

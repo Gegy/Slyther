@@ -7,6 +7,8 @@ public abstract class Entity<GME extends Game<?, ?>> {
     public GME game;
     public float posX;
     public float posY;
+    public float prevPosX;
+    public float prevPosY;
     public int previousSectorX;
     public int previousSectorY;
 
@@ -14,6 +16,12 @@ public abstract class Entity<GME extends Game<?, ?>> {
         this.game = game;
         this.posX = posX;
         this.posY = posY;
+    }
+
+    public final boolean updateBase(float delta, float lastDelta, float lastDelta2) {
+        prevPosX = posX;
+        prevPosY = posY;
+        return update(delta, lastDelta, lastDelta2);
     }
 
     public void updateTrackers(ConnectedClient client) {
@@ -39,7 +47,16 @@ public abstract class Entity<GME extends Game<?, ?>> {
         }
     }
 
+    public float getRenderX(double frameDelta) {
+        return (float) (prevPosX + frameDelta * (posX - prevPosX));
+    }
+
+    public float getRenderY(double frameDelta) {
+        return (float) (prevPosY + frameDelta * (posY - prevPosY));
+    }
+
     public abstract void startTracking(ConnectedClient tracker);
+
     public abstract void stopTracking(ConnectedClient tracker);
 
     public abstract boolean update(float delta, float lastDelta, float lastDelta2);

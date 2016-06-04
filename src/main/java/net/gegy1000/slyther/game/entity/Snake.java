@@ -208,6 +208,24 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
         return (int) Math.floor(15.0F * (game.getFPSL(sct) + fam / game.getFMLT(sct) - 1.0F) - 5.0F);
     }
 
+    public float getRenderAngle(double frameDelta) {
+        return (float) (prevAngle + frameDelta * (getAngleForInterpolation(prevAngle, angle) - prevAngle));
+    }
+
+    /*
+     * @author pau101
+     */
+    protected float getAngleForInterpolation(float angle, float prevAngle) {
+        float max = (float) SlytherClient.PI_2;
+        while (angle - prevAngle < 0.0F) {
+            prevAngle -= max;
+        }
+        while (angle - prevAngle >= max) {
+            prevAngle += max;
+        }
+        return prevAngle;
+    }
+
     @Override
     public int compareTo(Snake snake) {
         return Integer.compare(getLength(), snake.getLength());

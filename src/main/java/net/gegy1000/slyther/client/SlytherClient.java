@@ -170,6 +170,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     }
 
     public float delta;
+    public double frameDelta;
 
     public boolean allowUserInput = true;
 
@@ -192,11 +193,11 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
 
     @Override
     public void run() {
-        delta = 0;
+        double delta = 0;
         long previousTime = System.nanoTime();
         long timer = System.currentTimeMillis();
         int ups = 0;
-        double nanoUpdates = 1000000000.0 / 60.0;
+        double nanoUpdates = 1000000000.0 / 30.0;
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glShadeModel(GL11.GL_SMOOTH);
@@ -220,7 +221,9 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
             doResize = true;
 
             long currentTime = System.nanoTime();
-            delta += (currentTime - previousTime) / nanoUpdates;
+            double currentTickDelta = (currentTime - previousTime) / nanoUpdates;
+            delta += currentTickDelta;
+            frameDelta = (frameDelta + currentTickDelta) % 1.0;
             previousTime = currentTime;
 
             while (delta >= 1) {
@@ -375,7 +378,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
             runTasks();
             long time = System.currentTimeMillis();
             float lastDelta, lastDelta2;
-            float delta = (time - lastTickTime) / 8.0F;
+            delta = (time - lastTickTime) / 8.0F;
             lastTickTime = time;
             if (!lagging && waitingForPingReturn && time - lastPacketTime > 420) {
                 lagging = true;
@@ -513,7 +516,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
                 Iterator<Entity> entityIter = entityIterator();
                 while (entityIter.hasNext()) {
                     Entity entity = entityIter.next();
-                    if (entity.update(delta, lastDelta, lastDelta2)) {
+                    if (entity.updateBase(delta, lastDelta, lastDelta2)) {
                         entityIter.remove();
                     }
                 }
