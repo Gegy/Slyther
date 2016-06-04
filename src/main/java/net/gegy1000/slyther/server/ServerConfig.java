@@ -5,12 +5,12 @@ import net.gegy1000.slyther.game.Configuration;
 public class ServerConfig implements Configuration {
     public int gameRadius = 21600;
     public int mscps = 411;
-    public int sectorSize = 480;
-    public int sectorsAlongEdge = 130;
+    public int sectorSize = 300;
+    public int sectorsAlongEdge = 114;
     public float spangDv = 4.8F;
-    public float nsp1 = 4.25F;
-    public float nsp2 = 0.5F;
-    public float nsp3 = 12.0F;
+    public float nsp1 = 5.39F;
+    public float nsp2 = 0.4F;
+    public float nsp3 = 14.0F;
     public float mamu = 0.033F;
     public float mamu2 = 0.028F;
     public float cst = 0.43F;

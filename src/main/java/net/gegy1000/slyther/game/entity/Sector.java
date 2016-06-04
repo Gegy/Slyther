@@ -22,8 +22,8 @@ public abstract class Sector<GME extends Game<?, ?>> {
 
     public boolean shouldTrack(ConnectedClient client) {
         int sectorSize = ((SlytherServer) game).configuration.sectorSize;
-        float deltaX = posX * sectorSize + sectorSize / 2.0F - client.snake.posX;
-        float deltaY = posY * sectorSize + sectorSize / 2.0F - client.snake.posY;
+        float deltaX = (posX * sectorSize) + (sectorSize / 2.0F) - client.snake.posX;
+        float deltaY = (posY * sectorSize) + (sectorSize / 2.0F) - client.snake.posY;
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY) <= client.viewDistance;
     }
 
