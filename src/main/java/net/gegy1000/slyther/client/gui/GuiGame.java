@@ -15,6 +15,7 @@ import java.util.List;
 
 public class GuiGame extends Gui {
     private int backgroundX;
+    private float prevZoomOffset;
 
     @Override
     public void init() {
@@ -22,15 +23,22 @@ public class GuiGame extends Gui {
 
     @Override
     public void render(float mouseX, float mouseY) {
+        backgroundX++;
+        client.zoomOffset += Mouse.getDWheel() * 0.0005F;
+        if (client.zoomOffset > 1.0F) {
+            client.zoomOffset = 1.0F;
+        } else if (client.zoomOffset < -0.75F) {
+            client.zoomOffset = -0.75F;
+        }
+        double frameDelta = client.frameDelta;
         boolean loading = client.networkManager == null || client.player == null;
         GL11.glPushMatrix();
         textureManager.bindTexture("/textures/background.png");
-        float gsc = client.gsc + client.zoomOffset;
+        float gsc = Math.max(0.075F, client.gsc + (float) (prevZoomOffset + frameDelta * (client.zoomOffset - prevZoomOffset)));
         GL11.glScalef(gsc, gsc, 1.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glTranslatef(client.mww2 / gsc, client.mhh2 / gsc, 0.0F);
         ClientSnake player = client.player;
-        double frameDelta = client.frameDelta;
         if (!loading) {
             client.viewX = player.getRenderX(frameDelta) + player.fx + client.fvx;
             client.viewY = player.getRenderY(frameDelta) + player.fy + client.fvy;
@@ -191,8 +199,8 @@ public class GuiGame extends Gui {
                         SnakePoint point = snake.points.get(pointIndex);
                         lastX = x;
                         lastY = y;
-                        x = point.posX + point.fx;
-                        y = point.posY + point.fy;
+                        x = point.getRenderX(frameDelta) + point.fx;
+                        y = point.getRenderY(frameDelta) + point.fy;
                         if (G > -0.25F) {
                             lastAverageX = averageX;
                             lastAverageY = averageY;
@@ -271,7 +279,7 @@ public class GuiGame extends Gui {
                         }
                         colorMultipler -= offset / 15.0F;
                         if (snake.speed > snake.accelleratingSpeed) {
-                            offset = (pointIndex + client.ticks) / 2.0F % 20.0F;
+                            offset = (pointIndex + client.frameTicks) / 2.0F % 20.0F;
                             if (offset > 10.0F) {
                                 offset = 10.0F - (offset - 10.0F);
                             }
@@ -461,13 +469,7 @@ public class GuiGame extends Gui {
 
     @Override
     public void update() {
-        backgroundX++;
-        client.zoomOffset += Mouse.getDWheel() * 0.0005F;
-        if (client.zoomOffset > 1.0F) {
-            client.zoomOffset = 1.0F;
-        } else if (client.zoomOffset < -0.75F) {
-            client.zoomOffset = -0.75F;
-        }
+        prevZoomOffset = client.zoomOffset;
     }
 
     @Override

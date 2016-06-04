@@ -26,4 +26,12 @@ public class SnakePoint {
         prevPosX = posX;
         prevPosY = posY;
     }
+
+    public float getRenderX(double frameDelta) {
+        return (float) (prevPosX + frameDelta * (posX - prevPosX));
+    }
+
+    public float getRenderY(double frameDelta) {
+        return (float) (prevPosY + frameDelta * (posY - prevPosY));
+    }
 }

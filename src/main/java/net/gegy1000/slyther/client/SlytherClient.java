@@ -81,6 +81,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     public float gla = 1.0F;
     public float qsm = 1.0F;
     public long lastAccelerateUpdateTime;
+    public float frameTicks;
 
     public int lastMouseX;
     public int lastMouseY;
