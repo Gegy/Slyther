@@ -18,20 +18,18 @@ public class ClientSnake extends Snake<SlytherClient> {
         for (SnakePoint point : points) {
             point.update();
         }
+        if (this == game.player && game.allowUserInput()) {
+            boolean prev = accelerating;
+            accelerating = Mouse.isButtonDown(0) || Mouse.isButtonDown(1);
+            if (prev != accelerating) {
+                wasAccelerating = prev;
+            }
+        }
         prevAngle = getAngleForInterpolation(angle, prevAngle);
         float turnSpeed = game.getMamu() * delta * scaleTurnMultiplier * speedTurnMultiplier;
         float moveAmount = speed * delta / 4;
         if (moveAmount > msl) {
             moveAmount = msl;
-        }
-        if (game.allowUserInput) {
-            if (this == game.player) {
-                boolean prev = mouseDown;
-                mouseDown = Mouse.isButtonDown(0) || Mouse.isButtonDown(1);
-                if (prev != mouseDown) {
-                    wasMouseDown = prev;
-                }
-            }
         }
         if (!dead) {
             if (tsp != speed) {

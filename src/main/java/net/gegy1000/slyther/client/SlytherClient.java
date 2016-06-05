@@ -1,8 +1,10 @@
 package net.gegy1000.slyther.client;
 
+import net.gegy1000.slyther.client.controller.Controller;
 import net.gegy1000.slyther.client.game.entity.ClientFood;
 import net.gegy1000.slyther.client.game.entity.ClientPrey;
 import net.gegy1000.slyther.client.game.entity.ClientSnake;
+import net.gegy1000.slyther.client.controller.IController;
 import net.gegy1000.slyther.game.Game;
 import net.gegy1000.slyther.game.entity.*;
 import net.gegy1000.slyther.client.gui.Gui;
@@ -20,6 +22,7 @@ import net.gegy1000.slyther.util.UIUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.reflections.Reflections;
 
 import java.io.File;
 import java.io.IOException;
@@ -173,9 +176,11 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     public float delta;
     public double frameDelta;
 
-    public boolean allowUserInput = true;
+    private boolean allowUserInput = true;
 
     public float zoomOffset;
+
+    private IController controller;
 
     private static final File CONFIGURATION_FILE = new File(SystemUtils.getGameFolder(), "config.json");
 
@@ -186,6 +191,18 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         } catch (IOException e) {
             UIUtils.displayException("Unable to read config", e);
             Log.catching(e);
+        }
+        Reflections reflections = new Reflections("");
+        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Controller.class);
+        for (Class<?> controller : annotated) {
+            if (IController.class.isAssignableFrom(controller)) {
+                try {
+                    Controller annotation = controller.getAnnotation(Controller.class);
+                    setController((IController) controller.getDeclaredConstructor().newInstance());
+                    Log.info("Using controller \"{}\" ({})", annotation.name(), controller.getSimpleName());
+                } catch (Exception e) {
+                }
+            }
         }
         renderHandler = new RenderHandler(this);
         renderHandler.setup();
@@ -287,10 +304,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     }
 
     private void setup() {
-        getSnakes().clear();
-        getFoods().clear();
-        getPreys().clear();
-        getSectors().clear();
+        clearEntities();
         delta = 0;
         ticks = 0;
         lastTicks = 0;
@@ -437,40 +451,6 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
                 }
             }
             if (player != null) {
-                if (keyDownLeftTicks > 0 || keyDownRightTicks > 0) {
-                    if (time - lastKeyTime > 150) {
-                        lastKeyTime = time;
-                        if (keyDownRightTicks > 0) {
-                            if (keyDownRightTicks < keyDownLeftTicks) {
-                                keyDownLeftTicks -= keyDownRightTicks;
-                                keyDownRightTicks = 0;
-                            }
-                        }
-                        if (keyDownLeftTicks > 0) {
-                            if (keyDownLeftTicks < keyDownRightTicks) {
-                                keyDownRightTicks -= keyDownLeftTicks;
-                                keyDownLeftTicks = 0;
-                            }
-                        }
-                        int direction;
-                        if (keyDownLeftTicks > 0) {
-                            direction = (int) keyDownLeftTicks;
-                            if (direction > 127) {
-                                direction = 127;
-                            }
-                            keyDownLeftTicks -= direction;
-                            player.eyeAngle -= MAMU * direction * player.scaleTurnMultiplier * player.speedTurnMultiplier;
-                        } else {
-                            direction = (int) keyDownRightTicks;
-                            if (direction > 127) {
-                                direction = 127;
-                            }
-                            keyDownRightTicks -= direction;
-                            player.eyeAngle += MAMU * direction * player.scaleTurnMultiplier * player.speedTurnMultiplier;
-                        }
-                        networkManager.send(new MessageSetTurn((byte) direction));
-                    }
-                }
                 if (!waitingForPingReturn) {
                     if (time - lastPingTime > 250) {
                         lastPingTime = time;
@@ -479,38 +459,87 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
                     }
                 }
                 etm *= Math.pow(0.993, lastDelta);
-                if (time - lastAccelerateUpdateTime > 150) {
-                    if (player.mouseDown != player.wasMouseDown) {
-                        lastAccelerateUpdateTime = time;
-                        networkManager.send(new MessageAccelerate(player.mouseDown));
-                        player.wasMouseDown = player.mouseDown;
-                    }
-                }
                 if (allowUserInput) {
-                    int mouseX = Mouse.getX() - (Display.getWidth() / 2);
-                    int mouseY = (Display.getHeight() - Mouse.getY()) - (Display.getHeight() / 2);
-                    if (mouseX != lastMouseX || mouseY != lastMouseY) {
-                        mouseMoved = true;
+                    if (controller == null) {
+                        if (keyDownLeftTicks > 0 || keyDownRightTicks > 0) {
+                            if (time - lastKeyTime > 150) {
+                                lastKeyTime = time;
+                                if (keyDownRightTicks > 0) {
+                                    if (keyDownRightTicks < keyDownLeftTicks) {
+                                        keyDownLeftTicks -= keyDownRightTicks;
+                                        keyDownRightTicks = 0;
+                                    }
+                                }
+                                if (keyDownLeftTicks > 0) {
+                                    if (keyDownLeftTicks < keyDownRightTicks) {
+                                        keyDownRightTicks -= keyDownLeftTicks;
+                                        keyDownLeftTicks = 0;
+                                    }
+                                }
+                                int direction;
+                                if (keyDownLeftTicks > 0) {
+                                    direction = (int) keyDownLeftTicks;
+                                    if (direction > 127) {
+                                        direction = 127;
+                                    }
+                                    keyDownLeftTicks -= direction;
+                                    player.eyeAngle -= MAMU * direction * player.scaleTurnMultiplier * player.speedTurnMultiplier;
+                                } else {
+                                    direction = (int) keyDownRightTicks;
+                                    if (direction > 127) {
+                                        direction = 127;
+                                    }
+                                    keyDownRightTicks -= direction;
+                                    player.eyeAngle += MAMU * direction * player.scaleTurnMultiplier * player.speedTurnMultiplier;
+                                }
+                                networkManager.send(new MessageSetTurn((byte) direction));
+                            }
+                        }
+                        int mouseX = Mouse.getX() - (Display.getWidth() / 2);
+                        int mouseY = (Display.getHeight() - Mouse.getY()) - (Display.getHeight() / 2);
+                        if (mouseX != lastMouseX || mouseY != lastMouseY) {
+                            mouseMoved = true;
+                        }
+                        if (mouseMoved) {
+                            if (time - lastTurnTime > 100) {
+                                mouseMoved = false;
+                                lastTurnTime = time;
+                                lastMouseX = mouseX;
+                                lastMouseY = mouseY;
+                                int dist = mouseX * mouseX + mouseY * mouseY;
+                                float angle;
+                                if (dist > 256) {
+                                    angle = (float) Math.atan2(mouseY, mouseX);
+                                    player.eyeAngle = angle;
+                                } else {
+                                    angle = player.wantedAngle;
+                                }
+                                angle %= PI_2;
+                                if (angle < 0) {
+                                    angle += PI_2;
+                                }
+                                networkManager.send(new MessageSetAngle(angle));
+                            }
+                        }
+                    } else {
+                        controller.update(this);
+                        float targetAngle = controller.getTargetAngle();
+                        if (targetAngle != lastSendAngle || player.wantedAngle != targetAngle) {
+                            targetAngle %= PI_2;
+                            if (targetAngle < 0) {
+                                targetAngle += PI_2;
+                            }
+                            player.eyeAngle = targetAngle;
+                            player.wantedAngle = targetAngle;
+                            networkManager.send(new MessageSetAngle(targetAngle));
+                        }
+                        player.accelerating = controller.shouldAccelerate();
                     }
-                    if (mouseMoved) {
-                        if (time - lastTurnTime > 100) {
-                            mouseMoved = false;
-                            lastTurnTime = time;
-                            lastMouseX = mouseX;
-                            lastMouseY = mouseY;
-                            int dist = mouseX * mouseX + mouseY * mouseY;
-                            float angle;
-                            if (dist > 256) {
-                                angle = (float) Math.atan2(mouseY, mouseX);
-                                player.eyeAngle = angle;
-                            } else {
-                                angle = player.wantedAngle;
-                            }
-                            angle %= PI_2;
-                            if (angle < 0) {
-                                angle += PI_2;
-                            }
-                            networkManager.send(new MessageSetAngle(angle));
+                    if (time - lastAccelerateUpdateTime > 150) {
+                        if (player.accelerating != player.wasAccelerating) {
+                            lastAccelerateUpdateTime = time;
+                            networkManager.send(new MessageAccelerate(player.accelerating));
+                            player.wasAccelerating = player.accelerating;
                         }
                     }
                 }
@@ -525,6 +554,10 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         } else {
             ticks++;
         }
+    }
+
+    public boolean allowUserInput() {
+        return allowUserInput && controller != null;
     }
 
     public void moveTo(float x, float y) {
@@ -552,7 +585,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     }
 
     public ClientPrey getPrey(int id) {
-        for (Prey prey : getPreys()) {
+        for (Prey prey : getImmutablePreys()) {
             if (prey.id == id) {
                 return (ClientPrey) prey;
             }
@@ -586,6 +619,10 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         openGui(new GuiMainMenu());
         networkManager = null;
         setup();
+    }
+
+    public void setController(IController controller) {
+        this.controller = controller;
     }
 
     @Override

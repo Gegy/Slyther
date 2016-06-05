@@ -44,10 +44,9 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     public float speedTurnMultiplier;
     public float deadAmt;
     public float aliveAmt;
-    public boolean mouseDown;
-    public boolean wasMouseDown;
-    public boolean dead;
     public boolean accelerating;
+    public boolean wasAccelerating;
+    public boolean dead;
     public int turnDirection;
     public int prevTurnDirection;
     public int edir;

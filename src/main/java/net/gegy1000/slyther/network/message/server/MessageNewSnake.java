@@ -125,8 +125,8 @@ public class MessageNewSnake extends SlytherServerMessageBase {
                 client.viewX = pointX;
                 client.viewY = pointY;
                 client.player = snake;
-                snake.mouseDown = false;
-                snake.wasMouseDown = false;
+                snake.accelerating = false;
+                snake.wasAccelerating = false;
             }
             snake.eyeAngle = snake.wantedAngle = wantedAngle;
             snake.speed = speed;

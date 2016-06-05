@@ -2,22 +2,20 @@ package net.gegy1000.slyther.game;
 
 import net.gegy1000.slyther.game.entity.*;
 import net.gegy1000.slyther.network.NetworkManager;
+import net.gegy1000.slyther.util.BridedList;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public abstract class Game<NET extends NetworkManager, CFG extends Configuration> {
-    private List<Entity<?>> entities = new ArrayList<>();
-    private List<Snake<?>> snakes = new ArrayList<>();
-    private List<Sector<?>> sectors = new ArrayList<>();
-    private List<Food<?>> foods = new ArrayList<>();
-    private List<Prey<?>> preys = new ArrayList<>();
+    private BridedList<Entity<?>> entities = new BridedList<>();
+    private BridedList<Snake<?>> snakes = new BridedList<>();
+    private BridedList<Sector<?>> sectors = new BridedList<>();
+    private BridedList<Food<?>> foods = new BridedList<>();
+    private BridedList<Prey<?>> preys = new BridedList<>();
 
     public List<LeaderboardEntry> leaderboard = new ArrayList<>();
     public boolean[][] map = new boolean[80][80];
@@ -79,6 +77,14 @@ public abstract class Game<NET extends NetworkManager, CFG extends Configuration
         }
     }
 
+    public void clearEntities() {
+        entities.clear();
+        snakes.clear();
+        foods.clear();
+        preys.clear();
+        sectors.clear();
+    }
+
     public Iterator<Entity> entityIterator() {
         return new Iterator<Entity>() {
             private int index;
@@ -107,23 +113,23 @@ public abstract class Game<NET extends NetworkManager, CFG extends Configuration
     }
 
     public List<Entity<?>> getEntities() {
-        return entities;
+        return entities.unmodifiable();
     }
 
     public List<Snake<?>> getSnakes() {
-        return snakes;
+        return snakes.unmodifiable();
     }
 
     public List<Food<?>> getFoods() {
-        return foods;
+        return foods.unmodifiable();
     }
 
     public List<Sector<?>> getSectors() {
-        return sectors;
+        return sectors.unmodifiable();
     }
 
-    public List<Prey<?>> getPreys() {
-        return preys;
+    public List<Prey<?>> getImmutablePreys() {
+        return preys.unmodifiable();
     }
 
     public abstract int getGameRadius();

@@ -125,7 +125,7 @@ public class GuiGame extends Gui {
                     GL11.glPopMatrix();
                 }
             }
-            for (Prey prey : client.getPreys()) {
+            for (Prey prey : client.getImmutablePreys()) {
                 float posX = prey.getRenderX(frameDelta) + prey.fx;
                 float posY = prey.getRenderY(frameDelta) + prey.fy;
                 if (posX >= client.fpx1 && posX <= client.fpx2 && posY >= client.fpy1 && posY <= client.fpy2) {
