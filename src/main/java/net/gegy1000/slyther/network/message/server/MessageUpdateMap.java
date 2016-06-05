@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -12,7 +13,7 @@ public class MessageUpdateMap extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         for (int x = 0; x < 80; x++) {
             for (int y = 0; y < 80; y++) {
                 client.map[x][y] = false;

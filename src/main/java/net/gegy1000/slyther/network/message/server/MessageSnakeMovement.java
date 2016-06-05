@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.game.entity.Snake;
@@ -42,7 +43,7 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         boolean updateLength = messageId == 'n' || messageId == 'N';
         int id = buffer.readUInt16();
         ClientSnake snake = client.getSnake(id);
@@ -118,7 +119,7 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
             snake.moveSpeed = client.NSP1 + client.NSP2 * snake.scale;
             snake.accelleratingSpeed = snake.moveSpeed + 0.1F;
             snake.wantedSeperation = snake.scale * 6.0F;
-            float min = SlytherClient.NSEP / client.gsc;
+            float min = SlytherClient.NSEP / client.globalScale;
             if (snake.wantedSeperation < min) {
                 snake.wantedSeperation = min;
             }
@@ -126,8 +127,8 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
                 snake.snl();
             }
             if (snake == client.player) {
-                client.ovxx = snake.posX + snake.fx;
-                client.ovyy = snake.posY + snake.fy;
+                client.originalViewX = snake.posX + snake.fx;
+                client.originalViewY = snake.posY + snake.fy;
             }
             float moveAmount = client.etm / 8.0F * snake.speed / 4.0F;
             moveAmount *= client.lagMultiplier;
@@ -159,8 +160,8 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
             if (snake == client.player) {
                 client.viewX = snake.posX + snake.fx;
                 client.viewY = snake.posY + snake.fy;
-                float viewDiffX = client.viewX - client.ovxx;
-                float viewDiffY = client.viewY - client.ovyy;
+                float viewDiffX = client.viewX - client.originalViewX;
+                float viewDiffY = client.viewY - client.originalViewY;
                 int fvpos = client.fvpos;
                 for (int i = 0; i < SlytherClient.VFC; i++) {
                     double vfas = SlytherClient.VFAS[i];

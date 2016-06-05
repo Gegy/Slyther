@@ -22,9 +22,9 @@ public abstract class Gui {
 
     protected List<Element> elements = new ArrayList<>();
 
-    public final void initBase(SlytherClient client) {
+    public final void initBase(SlytherClient client, RenderHandler renderHandler) {
         this.client = client;
-        renderHandler = client.renderHandler;
+        this.renderHandler = renderHandler;
         renderResolution = renderHandler.renderResolution;
         textureManager = renderHandler.textureManager;
         font = renderHandler.font;

@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.game.entity.ClientPrey;
 import net.gegy1000.slyther.game.Color;
@@ -26,7 +27,7 @@ public class MessageNewPrey extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         int id = buffer.readUInt16();
         if (!buffer.hasRemaining()) {
             Prey prey = client.getPrey(id);

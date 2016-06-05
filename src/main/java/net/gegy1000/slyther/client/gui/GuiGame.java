@@ -31,13 +31,13 @@ public class GuiGame extends Gui {
             client.zoomOffset = -0.75F;
         }
         double frameDelta = client.frameDelta;
-        boolean loading = client.networkManager == null || client.player == null;
+        boolean loading = client.player == null;
         GL11.glPushMatrix();
         textureManager.bindTexture("/textures/background.png");
-        float gsc = Math.max(0.075F, client.gsc + (float) (prevZoomOffset + frameDelta * (client.zoomOffset - prevZoomOffset)));
+        float gsc = Math.max(0.075F, client.globalScale + (float) (prevZoomOffset + frameDelta * (client.zoomOffset - prevZoomOffset)));
         GL11.glScalef(gsc, gsc, 1.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glTranslatef(client.mww2 / gsc, client.mhh2 / gsc, 0.0F);
+        GL11.glTranslatef(renderHandler.centerX / gsc, renderHandler.centerY / gsc, 0.0F);
         ClientSnake player = client.player;
         if (!loading) {
             client.viewX = player.getRenderX(frameDelta) + player.fx + client.fvx;
@@ -45,18 +45,18 @@ public class GuiGame extends Gui {
         }
         client.viewAngle = (float) Math.atan2(client.viewY - client.GAME_RADIUS, client.viewX - client.GAME_RADIUS);
         client.viewDist = (float) Math.sqrt((client.viewX - client.GAME_RADIUS) * (client.viewX - client.GAME_RADIUS) + (client.viewY - client.GAME_RADIUS) * (client.viewY - client.GAME_RADIUS));
-        client.bpx1 = client.viewX - (client.mww2 / gsc - 84);
-        client.bpy1 = client.viewY - (client.mhh2 / gsc - 84);
-        client.bpx2 = client.viewX + (client.mww2 / gsc - 84);
-        client.bpy2 = client.viewY + (client.mhh2 / gsc - 84);
-        client.fpx1 = client.viewX - (client.mww2 / gsc - 24);
-        client.fpy1 = client.viewY - (client.mhh2 / gsc - 24);
-        client.fpx2 = client.viewX + (client.mww2 / gsc - 24);
-        client.fpy2 = client.viewY + (client.mhh2 / gsc - 24);
-        client.apx1 = client.viewX - (client.mww2 / gsc - 210);
-        client.apy1 = client.viewY - (client.mhh2 / gsc - 210);
-        client.apx2 = client.viewX + (client.mww2 / gsc - 210);
-        client.apy2 = client.viewY + (client.mhh2 / gsc - 210);
+        renderHandler.bpx1 = client.viewX - (renderHandler.centerX / gsc - 84);
+        renderHandler.bpy1 = client.viewY - (renderHandler.centerY / gsc - 84);
+        renderHandler.bpx2 = client.viewX + (renderHandler.centerX / gsc - 84);
+        renderHandler.bpy2 = client.viewY + (renderHandler.centerY / gsc - 84);
+        renderHandler.fpx1 = client.viewX - (renderHandler.centerX / gsc - 24);
+        renderHandler.fpy1 = client.viewY - (renderHandler.centerY / gsc - 24);
+        renderHandler.fpx2 = client.viewX + (renderHandler.centerX / gsc - 24);
+        renderHandler.fpy2 = client.viewY + (renderHandler.centerY / gsc - 24);
+        renderHandler.apx1 = client.viewX - (renderHandler.centerX / gsc - 210);
+        renderHandler.apy1 = client.viewY - (renderHandler.centerY / gsc - 210);
+        renderHandler.apx2 = client.viewX + (renderHandler.centerX / gsc - 210);
+        renderHandler.apy2 = client.viewY + (renderHandler.centerY / gsc - 210);
         float sectionWidth = renderResolution.getWidth() / gsc / 2.0F;
         float sectionHeight = renderResolution.getHeight() / gsc / 2.0F;
         for (int x = -1; x < 1; x++) {
@@ -69,16 +69,16 @@ public class GuiGame extends Gui {
         GL11.glTranslatef(-client.viewX, -client.viewY, 0.0F);
         if (!loading) {
             float newScale = 0.4F / Math.max(1.0F, (player.sct + 16.0F) / 36.0F) + 0.5F;
-            if (client.gsc != newScale) {
-                if (client.gsc < newScale) {
-                    client.gsc += 0.0001F;
-                    if (client.gsc > newScale) {
-                        client.gsc = newScale;
+            if (client.globalScale != newScale) {
+                if (client.globalScale < newScale) {
+                    client.globalScale += 0.0001F;
+                    if (client.globalScale > newScale) {
+                        client.globalScale = newScale;
                     }
-                } else if (client.gsc > newScale) {
-                    client.gsc -= 0.0001F;
-                    if (client.gsc < newScale) {
-                        client.gsc = newScale;
+                } else if (client.globalScale > newScale) {
+                    client.globalScale -= 0.0001F;
+                    if (client.globalScale < newScale) {
+                        client.globalScale = newScale;
                     }
                 }
             }
@@ -109,11 +109,11 @@ public class GuiGame extends Gui {
             }
             textureManager.bindTexture("/textures/food.png");
             float globalAlpha = 1.75F;
-            if (client.gla != 1.0F) {
-                globalAlpha = 1.75F * client.gla;
+            if (client.globalAlpha != 1.0F) {
+                globalAlpha = 1.75F * client.globalAlpha;
             }
             for (Food food : client.getFoods()) {
-                if (food.renderX >= client.fpx1 && food.renderX <= client.fpx2 && food.renderY >= client.fpy1 && food.renderY <= client.fpy2) {
+                if (food.renderX >= renderHandler.fpx1 && food.renderX <= renderHandler.fpx2 && food.renderY >= renderHandler.fpy1 && food.renderY <= renderHandler.fpy2) {
                     Color color = food.color;
                     float size = (food.size / 5.0F) * food.rad * 0.25F;
                     GL11.glPushMatrix();
@@ -128,7 +128,7 @@ public class GuiGame extends Gui {
             for (Prey prey : client.getImmutablePreys()) {
                 float posX = prey.getRenderX(frameDelta) + prey.fx;
                 float posY = prey.getRenderY(frameDelta) + prey.fy;
-                if (posX >= client.fpx1 && posX <= client.fpx2 && posY >= client.fpy1 && posY <= client.fpy2) {
+                if (posX >= renderHandler.fpx1 && posX <= renderHandler.fpx2 && posY >= renderHandler.fpy1 && posY <= renderHandler.fpy2) {
                     Color color = prey.color;
                     float size = (prey.size / 10.0F) * prey.rad;
                     GL11.glPushMatrix();
@@ -475,9 +475,7 @@ public class GuiGame extends Gui {
     @Override
     public void keyPressed(int key, char character) {
         if (key == Keyboard.KEY_BACK || key == Keyboard.KEY_ESCAPE) {
-            client.networkManager.close(1000, "Forcefully closed by player");
-            client.player = null;
-            client.networkManager = null;
+            client.close();
             closeGui();
             client.openGui(new GuiMainMenu());
         }

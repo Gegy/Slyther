@@ -184,12 +184,12 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
 
     //Set new length
     public void snl() {
-        double tl = totalLength;
+        double prevTotalLength = totalLength;
         totalLength = sct + fam;
-        tl = totalLength - tl;
+        double lengthDelta = totalLength - prevTotalLength;
         int flpos = this.flpos;
         for (int i = 0; i < SlytherClient.LFC; i++) {
-            fls[flpos] -= tl * SlytherClient.LFAS[i];
+            fls[flpos] -= lengthDelta * SlytherClient.LFAS[i];
             flpos++;
             if (flpos >= SlytherClient.LFC) {
                 flpos = 0;
@@ -197,10 +197,6 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
         }
         fl = fls[this.flpos];
         fltg = SlytherClient.LFC;
-        SlytherClient client = (SlytherClient) game;
-        if (this == client.player) {
-            client.wumsts = true;
-        }
     }
 
     public int getLength() {

@@ -1,8 +1,8 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.game.entity.ClientPrey;
-import net.gegy1000.slyther.game.entity.Prey;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
@@ -14,7 +14,7 @@ public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         int id = buffer.readUInt16();
         int x = buffer.readUInt16() * 3 + 1;
         int y = buffer.readUInt16() * 3 + 1;

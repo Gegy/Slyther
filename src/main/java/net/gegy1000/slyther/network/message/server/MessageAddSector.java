@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.game.entity.ClientSector;
 import net.gegy1000.slyther.game.entity.Sector;
@@ -26,7 +27,7 @@ public class MessageAddSector extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         client.addSector(new ClientSector(client, buffer.readUInt8(), buffer.readUInt8()));
     }
 

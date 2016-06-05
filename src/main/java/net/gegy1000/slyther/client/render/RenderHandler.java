@@ -14,8 +14,6 @@ import org.newdawn.slick.opengl.ImageIOImageData;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -29,6 +27,22 @@ public class RenderHandler {
 
     public TrueTypeFont font;
     public TrueTypeFont largeFont;
+
+    public float centerX;
+    public float centerY;
+
+    public float bpx1;
+    public float bpy1;
+    public float bpx2;
+    public float bpy2;
+    public float fpx1;
+    public float fpy1;
+    public float fpx2;
+    public float fpy2;
+    public float apx1;
+    public float apy1;
+    public float apx2;
+    public float apy2;
 
     private List<Gui> guis = new ArrayList<>();
 
@@ -71,8 +85,10 @@ public class RenderHandler {
 
     public void init() {
         renderResolution = new RenderResolution();
+        centerX = renderResolution.getWidth() / 2.0F;
+        centerY = renderResolution.getHeight() / 2.0F;
         for (Gui gui : getGuis()) {
-            gui.initBase(client);
+            gui.initBase(client, this);
         }
     }
 
@@ -112,7 +128,7 @@ public class RenderHandler {
     public void openGui(Gui gui) {
         if (!guis.contains(gui)) {
             guis.add(gui);
-            gui.initBase(client);
+            gui.initBase(client, this);
         }
     }
 

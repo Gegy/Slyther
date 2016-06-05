@@ -2,15 +2,14 @@ package net.gegy1000.slyther.client;
 
 import net.gegy1000.slyther.client.recording.GameRecorder;
 import net.gegy1000.slyther.client.recording.GameReplayer;
-import net.gegy1000.slyther.network.NetworkManager;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
+import net.gegy1000.slyther.network.NetworkManager;
 import net.gegy1000.slyther.network.ServerHandler;
-import net.gegy1000.slyther.network.message.client.MessageClientSetup;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
+import net.gegy1000.slyther.network.message.client.MessageClientSetup;
 import net.gegy1000.slyther.util.Log;
-
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
@@ -33,6 +32,12 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
 
     public boolean isReplaying;
     public GameRecorder recorder;
+
+    public boolean waitingForPingReturn;
+    public long lastPacketTime;
+    public long lastPingTime;
+
+    public long packetTimeOffset;
 
     public ClientNetworkManager(URI uri, SlytherClient client, String ip, Map<String, String> headers, boolean shouldRecord, boolean isReplaying) throws IOException {
         super(uri, new Draft_17(), headers, 0);
@@ -80,9 +85,9 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
 
     public void ping() {
         if (isOpen() && !isReplaying) {
-            if (!client.waitingForPingReturn) {
+            if (!waitingForPingReturn) {
                 send(PING_DATA);
-                client.waitingForPingReturn = true;
+                waitingForPingReturn = true;
             }
         }
     }
@@ -98,15 +103,15 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
         }
         if (buffer.limit() >= 2) {
             bytesPerSecond += buffer.limit();
-            client.lastPacketTime = client.currentPacketTime;
+            lastPacketTime = client.currentPacketTime;
             client.currentPacketTime = System.currentTimeMillis();
             int serverTimeDelta = buffer.readUInt16();
             byte messageId = (byte) buffer.readUInt8();
-            long timeDelta = client.currentPacketTime - client.lastPacketTime;
-            if (client.lastPacketTime == 0) {
+            long timeDelta = client.currentPacketTime - lastPacketTime;
+            if (lastPacketTime == 0) {
                 timeDelta = 0;
             }
-            client.packetTimeOffset += timeDelta - serverTimeDelta;
+            packetTimeOffset += timeDelta - serverTimeDelta;
             client.etm += Math.max(-180, Math.min(180, timeDelta - serverTimeDelta));
             Class<? extends SlytherServerMessageBase> messageType = MessageHandler.INSTANCE.getServerMessage(messageId);
             if (messageType == null) {
@@ -117,7 +122,7 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
                     message.messageId = messageId;
                     message.serverTimeDelta = serverTimeDelta;
                     client.scheduleTask(() -> {
-                        message.read(buffer, client);
+                        message.read(buffer, client, this);
                         return null;
                     });
                 } catch (Exception e) {

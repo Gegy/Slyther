@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -24,7 +25,7 @@ public class MessageSetup extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         int gameRadius = buffer.readUInt24();
         int mscps = buffer.readUInt16();
         int sectorSize = buffer.readUInt16();

@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
@@ -14,7 +15,7 @@ public class MessagePlayerDeath extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         int type = buffer.readUInt8();
         Snake player = client.player;
         Log.info("Final length: {}", player.getLength());

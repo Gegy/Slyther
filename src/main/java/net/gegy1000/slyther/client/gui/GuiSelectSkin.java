@@ -84,7 +84,7 @@ public class GuiSelectSkin extends Gui {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glTranslatef(client.mww2 - (snake.points.get(snake.points.size() / 2).posX), client.mhh2, 0.0F);
+        GL11.glTranslatef(renderHandler.centerX - (snake.points.get(snake.points.size() / 2).posX), renderHandler.centerY, 0.0F);
         float originX = snake.posX;
         float originY = snake.posY;
         float ehang = snake.ehang;

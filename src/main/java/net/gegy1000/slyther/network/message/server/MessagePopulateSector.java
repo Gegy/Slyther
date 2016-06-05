@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.game.entity.ClientFood;
 import net.gegy1000.slyther.game.Color;
@@ -34,7 +35,7 @@ public class MessagePopulateSector extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         while (buffer.hasRemaining()) {
             Color color = Color.values()[buffer.readUInt8() % Color.values().length];
             int x = buffer.readUInt16();

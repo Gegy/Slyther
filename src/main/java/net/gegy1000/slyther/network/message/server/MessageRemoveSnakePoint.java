@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.game.entity.SnakePoint;
@@ -14,7 +15,7 @@ public class MessageRemoveSnakePoint extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         Snake<?> snake = client.getSnake(buffer.readUInt16());
         if (snake != null) {
             if (buffer.hasRemaining(3)) {
@@ -29,7 +30,7 @@ public class MessageRemoveSnakePoint extends SlytherServerMessageBase {
                     snake.moveSpeed = client.NSP1 + client.NSP2 * snake.scale;
                     snake.accelleratingSpeed = snake.moveSpeed + 0.1F;
                     snake.wantedSeperation = snake.scale * 6.0F;
-                    float max = SlytherClient.NSEP / client.gsc;
+                    float max = SlytherClient.NSEP / client.globalScale;
                     if (snake.wantedSeperation > max) {
                         snake.wantedSeperation = max;
                     }

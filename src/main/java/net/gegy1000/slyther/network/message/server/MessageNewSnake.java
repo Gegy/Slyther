@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.game.ProfanityHandler;
@@ -74,7 +75,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         int id = buffer.readUInt16();
         if (buffer.hasRemaining(4)) {
             float angle = (float) (buffer.readUInt24() * (2 * Math.PI / 0xFFFFFF));
@@ -140,7 +141,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             snake.moveSpeed = client.NSP1 + client.NSP2 * snake.scale;
             snake.accelleratingSpeed = snake.moveSpeed + 0.1F;
             snake.wantedSeperation = snake.scale * 6.0F;
-            float max = SlytherClient.NSEP / client.gsc;
+            float max = SlytherClient.NSEP / client.globalScale;
             if (snake.wantedSeperation < max) {
                 snake.wantedSeperation = max;
             }

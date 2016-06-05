@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
@@ -13,8 +14,8 @@ public class MessagePing extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
-        client.waitingForPingReturn = false;
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
+        networkManager.waitingForPingReturn = false;
         if (client.lagging) {
             client.etm *= client.lagMultiplier;
             client.lagging = false;

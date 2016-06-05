@@ -1,11 +1,11 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.LeaderboardEntry;
 import net.gegy1000.slyther.game.ProfanityHandler;
 import net.gegy1000.slyther.game.SkinHandler;
-import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
@@ -39,8 +39,7 @@ public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
-        client.wumsts = true;
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         int playerIndex = buffer.readUInt8();
         client.rank = buffer.readUInt16();
         if (client.rank < client.bestRank) {

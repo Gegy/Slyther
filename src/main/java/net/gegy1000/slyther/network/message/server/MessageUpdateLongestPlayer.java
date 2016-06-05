@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message.server;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.ProfanityHandler;
 import net.gegy1000.slyther.network.MessageByteBuffer;
@@ -14,7 +15,7 @@ public class MessageUpdateLongestPlayer extends SlytherServerMessageBase {
     }
 
     @Override
-    public void read(MessageByteBuffer buffer, SlytherClient client) {
+    public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         int length = buffer.readUInt16();
         float fam = (float) buffer.readUInt24() / 0xFFFFFF;
         int score = (int) Math.floor(15.0F * (client.getFPSL(length) + fam / client.getFMLT(length) - 1.0F) - 5.0F);

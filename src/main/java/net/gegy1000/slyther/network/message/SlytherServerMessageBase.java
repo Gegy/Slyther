@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.network.message;
 
+import net.gegy1000.slyther.client.ClientNetworkManager;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.server.ConnectedClient;
@@ -14,7 +15,7 @@ public abstract class SlytherServerMessageBase implements Message {
 
     public abstract void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client);
 
-    public abstract void read(MessageByteBuffer buffer, SlytherClient client);
+    public abstract void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager);
 
     public abstract int[] getMessageIds();
 

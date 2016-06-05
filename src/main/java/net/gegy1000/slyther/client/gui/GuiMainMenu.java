@@ -1,12 +1,10 @@
 package net.gegy1000.slyther.client.gui;
 
 import com.google.gson.GsonBuilder;
-
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.gui.element.ButtonElement;
 import net.gegy1000.slyther.client.gui.element.TextBoxElement;
 import net.gegy1000.slyther.util.Log;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -87,7 +85,7 @@ public class GuiMainMenu extends Gui {
         backgroundY += Math.sin(angle) * 1.5F;
 
         textureManager.bindTexture("/textures/background.png");
-        drawTexture(0.0F, 0.0F, backgroundX, backgroundY, renderResolution.getWidth() / client.gsc, renderResolution.getHeight() / client.gsc, 599, 519);
+        drawTexture(0.0F, 0.0F, backgroundX, backgroundY, renderResolution.getWidth() / client.globalScale, renderResolution.getHeight() / client.globalScale, 599, 519);
         long time = System.currentTimeMillis();
         double delta = (time - logoTime) / 25D;
         logoTime = time;
