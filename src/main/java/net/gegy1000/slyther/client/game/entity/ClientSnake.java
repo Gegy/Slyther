@@ -4,7 +4,6 @@ import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.Skin;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.game.entity.SnakePoint;
-import org.lwjgl.input.Mouse;
 
 import java.util.List;
 
@@ -18,14 +17,7 @@ public class ClientSnake extends Snake<SlytherClient> {
         for (SnakePoint point : points) {
             point.update();
         }
-        if (this == game.player && game.allowUserInput()) {
-            boolean prev = accelerating;
-            accelerating = Mouse.isButtonDown(0) || Mouse.isButtonDown(1);
-            if (prev != accelerating) {
-                wasAccelerating = prev;
-            }
-        }
-        prevAngle = getAngleForInterpolation(angle, prevAngle);
+        prevAngle = angle;
         float turnSpeed = game.getMamu() * delta * scaleTurnMultiplier * speedTurnMultiplier;
         float moveAmount = speed * delta / 4;
         if (moveAmount > msl) {
@@ -298,6 +290,7 @@ public class ClientSnake extends Snake<SlytherClient> {
                 }
             }
         }
+        prevAngle = getAngleForInterpolation(angle, prevAngle);
         return false;
     }
 }
