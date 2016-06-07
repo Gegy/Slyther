@@ -34,31 +34,31 @@ public class GuiGame extends Gui {
         boolean loading = client.player == null;
         GL11.glPushMatrix();
         textureManager.bindTexture("/textures/background.png");
-        float gsc = Math.max(0.075F, client.globalScale + (float) (prevZoomOffset + frameDelta * (client.zoomOffset - prevZoomOffset)));
-        GL11.glScalef(gsc, gsc, 1.0F);
+        float globalScale = Math.max(0.075F, client.globalScale + (float) (prevZoomOffset + frameDelta * (client.zoomOffset - prevZoomOffset)));
+        GL11.glScalef(globalScale, globalScale, 1.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glTranslatef(renderHandler.centerX / gsc, renderHandler.centerY / gsc, 0.0F);
+        GL11.glTranslatef(renderHandler.centerX / globalScale, renderHandler.centerY / globalScale, 0.0F);
         ClientSnake player = client.player;
         if (!loading) {
-            client.viewX = player.getRenderX(frameDelta) + player.fx + client.fvx;
-            client.viewY = player.getRenderY(frameDelta) + player.fy + client.fvy;
+            client.viewX = player.getRenderX(frameDelta) + player.getRenderFX(frameDelta) + client.fvx;
+            client.viewY = player.getRenderY(frameDelta) + player.getRenderFY(frameDelta) + client.fvy;
         }
         client.viewAngle = (float) Math.atan2(client.viewY - client.GAME_RADIUS, client.viewX - client.GAME_RADIUS);
         client.viewDist = (float) Math.sqrt((client.viewX - client.GAME_RADIUS) * (client.viewX - client.GAME_RADIUS) + (client.viewY - client.GAME_RADIUS) * (client.viewY - client.GAME_RADIUS));
-        renderHandler.bpx1 = client.viewX - (renderHandler.centerX / gsc - 84);
-        renderHandler.bpy1 = client.viewY - (renderHandler.centerY / gsc - 84);
-        renderHandler.bpx2 = client.viewX + (renderHandler.centerX / gsc - 84);
-        renderHandler.bpy2 = client.viewY + (renderHandler.centerY / gsc - 84);
-        renderHandler.fpx1 = client.viewX - (renderHandler.centerX / gsc - 24);
-        renderHandler.fpy1 = client.viewY - (renderHandler.centerY / gsc - 24);
-        renderHandler.fpx2 = client.viewX + (renderHandler.centerX / gsc - 24);
-        renderHandler.fpy2 = client.viewY + (renderHandler.centerY / gsc - 24);
-        renderHandler.apx1 = client.viewX - (renderHandler.centerX / gsc - 210);
-        renderHandler.apy1 = client.viewY - (renderHandler.centerY / gsc - 210);
-        renderHandler.apx2 = client.viewX + (renderHandler.centerX / gsc - 210);
-        renderHandler.apy2 = client.viewY + (renderHandler.centerY / gsc - 210);
-        float sectionWidth = renderResolution.getWidth() / gsc / 2.0F;
-        float sectionHeight = renderResolution.getHeight() / gsc / 2.0F;
+        renderHandler.bpx1 = client.viewX - (renderHandler.centerX / globalScale + 84);
+        renderHandler.bpy1 = client.viewY - (renderHandler.centerY / globalScale + 84);
+        renderHandler.bpx2 = client.viewX + (renderHandler.centerX / globalScale + 84);
+        renderHandler.bpy2 = client.viewY + (renderHandler.centerY / globalScale + 84);
+        renderHandler.fpx1 = client.viewX - (renderHandler.centerX / globalScale + 24);
+        renderHandler.fpy1 = client.viewY - (renderHandler.centerY / globalScale + 24);
+        renderHandler.fpx2 = client.viewX + (renderHandler.centerX / globalScale + 24);
+        renderHandler.fpy2 = client.viewY + (renderHandler.centerY / globalScale + 24);
+        renderHandler.apx1 = client.viewX - (renderHandler.centerX / globalScale + 210);
+        renderHandler.apy1 = client.viewY - (renderHandler.centerY / globalScale + 210);
+        renderHandler.apx2 = client.viewX + (renderHandler.centerX / globalScale + 210);
+        renderHandler.apy2 = client.viewY + (renderHandler.centerY / globalScale + 210);
+        float sectionWidth = renderResolution.getWidth() / globalScale / 2.0F;
+        float sectionHeight = renderResolution.getHeight() / globalScale / 2.0F;
         for (int x = -1; x < 1; x++) {
             for (int y = -1; y < 1; y++) {
                 float offsetX = x * sectionWidth;
@@ -113,21 +113,23 @@ public class GuiGame extends Gui {
                 globalAlpha = 1.75F * client.globalAlpha;
             }
             for (Food food : client.getFoods()) {
-                if (food.renderX >= renderHandler.fpx1 && food.renderX <= renderHandler.fpx2 && food.renderY >= renderHandler.fpy1 && food.renderY <= renderHandler.fpy2) {
+                float renderX = food.getRenderX(frameDelta);
+                float renderY = food.getRenderY(frameDelta);
+                if (renderX >= renderHandler.fpx1 && renderX <= renderHandler.fpx2 && renderY >= renderHandler.fpy1 && renderY <= renderHandler.fpy2) {
                     Color color = food.color;
                     float size = (food.size / 5.0F) * food.rad * 0.25F;
                     GL11.glPushMatrix();
                     GL11.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), globalAlpha * food.fr);
                     GL11.glScalef(size, size, 1.0F);
-                    float x = food.renderX / size;
-                    float y = food.renderY / size;
+                    float x = renderX / size;
+                    float y = renderY / size;
                     drawTexture(x - 64.0F, y - 64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
                     GL11.glPopMatrix();
                 }
             }
-            for (Prey prey : client.getImmutablePreys()) {
-                float posX = prey.getRenderX(frameDelta) + prey.fx;
-                float posY = prey.getRenderY(frameDelta) + prey.fy;
+            for (Prey prey : client.getPreys()) {
+                float posX = prey.getRenderX(frameDelta) + prey.getRenderFX(frameDelta);
+                float posY = prey.getRenderY(frameDelta) + prey.getRenderFY(frameDelta);
                 if (posX >= renderHandler.fpx1 && posX <= renderHandler.fpx2 && posY >= renderHandler.fpy1 && posY <= renderHandler.fpy2) {
                     Color color = prey.color;
                     float size = (prey.size / 10.0F) * prey.rad;
@@ -140,22 +142,22 @@ public class GuiGame extends Gui {
                     GL11.glPopMatrix();
                 }
             }
-            for (Snake snake : client.getSnakes()) {
-                snake.isInView = true;
-                    /*for (int t = snake.points.size() - 1; t >= 0; t--) {
-                        SnakePoint point = snake.points.get(t);
-                        float pointX = point.posX + point.fx;
-                        float pointY = point.posY + point.fy;
-                        if (pointX >= client.bpx1 && pointX <= client.bpx2 && pointY >= client.bpy1 && pointY <= client.bpy2) {
-                            snake.isInView = true;
-                            break;
-                        }
-                    }*/
+            for (Snake<?> snake : client.getSnakes()) {
+                snake.isInView = false;
+                for (int i = snake.points.size() - 1; i >= 0; i--) {
+                    SnakePoint point = snake.points.get(i);
+                    float pointX = point.getRenderX(frameDelta) + point.getRenderFX(frameDelta);
+                    float pointY = point.getRenderY(frameDelta) + point.getRenderFY(frameDelta);
+                    if (pointX >= renderHandler.bpx1 && pointX <= renderHandler.bpx2 && pointY >= renderHandler.bpy1 && pointY <= renderHandler.bpy2) {
+                        snake.isInView = true;
+                        break;
+                    }
+                }
             }
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             for (Snake<?> snake : client.getSnakes()) {
-                float originX = snake.getRenderX(frameDelta) + snake.fx;
-                float originY = snake.getRenderY(frameDelta) + snake.fy;
+                float originX = snake.getRenderX(frameDelta) + snake.getRenderFX(frameDelta);
+                float originY = snake.getRenderY(frameDelta) + snake.getRenderFY(frameDelta);
                 float ehang = snake.ehang;
                 float scale = snake.scale;
                 if (snake.partSeparation != snake.wantedSeperation) {
@@ -229,7 +231,7 @@ public class GuiGame extends Gui {
                                         K += partSeparation;
                                         float pax = lastPointX + (pointX - lastPointX) * K / partDistance;
                                         float pay = lastPointY + (pointY - lastPointY) * K / partDistance;
-                                        if (true) {// pax >= client.bpx1 && pax <= client.bpx2 && pay >= client.bpy1 && pay <= client.bpy2) {
+                                        if (pax >= renderHandler.bpx1 && pax <= renderHandler.bpx2 && pay >= renderHandler.bpy1 && pay <= renderHandler.bpy2) {
                                             xs.add(pax);
                                             ys.add(pay);
                                         }
@@ -248,7 +250,7 @@ public class GuiGame extends Gui {
                             }
                         }
                     }
-                    if (true) {// pointX >= client.bpx1 && pointX <= client.bpx2 && pointY >= client.bpy1 && pointY <= client.bpy2) {
+                    if (pointX >= renderHandler.bpx1 && pointX <= renderHandler.bpx2 && pointY >= renderHandler.bpy1 && pointY <= renderHandler.bpy2) {
                         xs.add(pointX);
                         ys.add(pointY);
                     }

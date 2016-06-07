@@ -26,8 +26,13 @@ public abstract class Prey<GME extends Game<?, ?>> extends Entity<GME> {
     public int ftg;
     public float fx;
     public float fy;
+    public float prevFx;
+    public float prevFy;
     public float rad;
     public float eatenFR;
+
+    public float renderX;
+    public float renderY;
 
     public Prey(GME game, int id, float posX, float posY, float size, Color color, int turningDirection, float wantedAngle, float angle, float speed) {
         super(game, posX, posY);
@@ -45,6 +50,14 @@ public abstract class Prey<GME extends Game<?, ?>> extends Entity<GME> {
         fys = new float[SlytherClient.RFC];
     }
 
+    public float getRenderFX(double frameDelta) {
+        return (float) (prevFx + frameDelta * (fx - prevFx));
+    }
+
+    public float getRenderFY(double frameDelta) {
+        return (float) (prevFy + frameDelta * (fy - prevFy));
+    }
+
     @Override
     public void startTracking(ConnectedClient tracker) {
         tracker.send(new MessageNewPrey(this));
@@ -53,5 +66,15 @@ public abstract class Prey<GME extends Game<?, ?>> extends Entity<GME> {
     @Override
     public void stopTracking(ConnectedClient tracker) {
         tracker.send(new MessageNewPrey(this));
+    }
+
+    @Override
+    public float getRenderX(double frameDelta) {
+        return (float) (prevPosX + frameDelta * (renderX - prevPosX));
+    }
+
+    @Override
+    public float getRenderY(double frameDelta) {
+        return (float) (prevPosY + frameDelta * (renderY - prevPosY));
     }
 }

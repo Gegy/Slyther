@@ -29,6 +29,7 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
     private String ip;
 
     public int bytesPerSecond;
+    public int packetsPerSecond;
 
     public boolean isReplaying;
     public GameRecorder recorder;
@@ -103,6 +104,7 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
         }
         if (buffer.limit() >= 2) {
             bytesPerSecond += buffer.limit();
+            packetsPerSecond++;
             lastPacketTime = client.currentPacketTime;
             client.currentPacketTime = System.currentTimeMillis();
             int serverTimeDelta = buffer.readUInt16();

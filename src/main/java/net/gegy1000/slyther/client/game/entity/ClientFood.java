@@ -11,6 +11,8 @@ public class ClientFood extends Food<SlytherClient> {
 
     @Override
     public boolean update(float delta, float lastDelta, float lastDelta2) {
+        prevPosX = renderX;
+        prevPosY = renderY;
         gfr += delta * gr;
         if (eaten) {
             eatenFr += delta / 41.0F;
@@ -21,8 +23,8 @@ public class ClientFood extends Food<SlytherClient> {
                 rad = lrrad * (1.0F - eatenFr * eaterFrSq);
                 renderX = (int) (posX + (eater.posX + eater.fx + Math.cos(eater.angle + eater.foodAngle) * (43.0F - 24.0F * eaterFrSq) * (1.0F - eaterFrSq) - posX) * eaterFrSq);
                 renderY = (int) (posY + (eater.posY + eater.fy + Math.cos(eater.angle + eater.foodAngle) * (43.0F - 24.0F * eaterFrSq) * (1.0F - eaterFrSq) - posY) * eaterFrSq);
-                renderX += Math.cos(wsp * gfr) * (1.0F - eatenFr) * 6.0F;
-                renderY += Math.sin(wsp * gfr) * (1.0F - eatenFr) * 6.0F;
+                renderX += Math.cos(wantedSpeed * gfr) * (1.0F - eatenFr) * 6.0F;
+                renderY += Math.sin(wantedSpeed * gfr) * (1.0F - eatenFr) * 6.0F;
             }
         } else {
             if (fr != 1.0F) {
@@ -36,8 +38,8 @@ public class ClientFood extends Food<SlytherClient> {
                 }
                 lrrad = rad;
             }
-            renderX = (int) (posX + 6.0F * Math.cos(wsp * gfr));
-            renderY = (int) (posY + 6.0F * Math.sin(wsp * gfr));
+            renderX = (int) (posX + 6.0F * Math.cos(wantedSpeed * gfr));
+            renderY = (int) (posY + 6.0F * Math.sin(wantedSpeed * gfr));
         }
         return false;
     }

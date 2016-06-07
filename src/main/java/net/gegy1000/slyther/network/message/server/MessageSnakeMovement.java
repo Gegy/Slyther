@@ -136,6 +136,8 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
             snake.chl = moveAmount / snake.msl;
             float prevX = snake.posX;
             float prevY = snake.posY;
+            snake.prevPosX = prevX;
+            snake.prevPosY = prevY;
             snake.posX = (float) (x + Math.cos(snake.angle) * moveAmount);
             snake.posY = (float) (y + Math.sin(snake.angle) * moveAmount);
             float moveX = snake.posX - prevX;
@@ -152,6 +154,8 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
                     fpos = 0;
                 }
             }
+            snake.prevFx = snake.fx;
+            snake.prevFy = snake.fy;
             snake.fx = snake.fxs[snake.fpos];
             snake.fy = snake.fys[snake.fpos];
             snake.fchl = snake.fchls[snake.fpos];

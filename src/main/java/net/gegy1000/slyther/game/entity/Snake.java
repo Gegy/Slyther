@@ -90,6 +90,8 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     public int ftg;
     public float fx;
     public float fy;
+    public float prevFx;
+    public float prevFy;
     public float fchl;
     public float[] foodAngles;
     public int foodAngleIndex;
@@ -205,6 +207,14 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
 
     public float getRenderAngle(double frameDelta) {
         return (float) (prevAngle + frameDelta * (getAngleForInterpolation(prevAngle, angle) - prevAngle));
+    }
+
+    public float getRenderFX(double frameDelta) {
+        return (float) (prevFx + frameDelta * (fx - prevFx));
+    }
+
+    public float getRenderFY(double frameDelta) {
+        return (float) (prevFy + frameDelta * (fy - prevFy));
     }
 
     /*

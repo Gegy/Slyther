@@ -47,8 +47,12 @@ public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
             } else if (buffer.hasExactlyRemaining(2)) {
                 prey.speed = buffer.readUInt16() / 1000.0F;
             }
+            prey.prevPosX = prevX;
+            prey.prevPosY = prevY;
             prey.posX = (float) (x + Math.cos(prey.angle) * moveAmount);
             prey.posY = (float) (y + Math.sin(prey.angle) * moveAmount);
+            prey.renderX = prey.posX;
+            prey.renderY = prey.posY;
             float moveX = prey.posX - prevX;
             float moveY = prey.posY - prevY;
             int fpos = prey.fpos;
@@ -60,6 +64,8 @@ public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
                     fpos = 0;
                 }
             }
+            prey.prevFx = prey.fx;
+            prey.prevFy = prey.fy;
             prey.fx = prey.fxs[prey.fpos];
             prey.fy = prey.fys[prey.fpos];
             prey.ftg = SlytherClient.RFC;

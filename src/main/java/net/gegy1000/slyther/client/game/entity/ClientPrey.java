@@ -11,6 +11,10 @@ public class ClientPrey extends Prey<SlytherClient> {
 
     @Override
     public boolean update(float delta, float lastDelta, float lastDelta2) {
+        prevFx = fx;
+        prevFy = fy;
+        prevPosX = renderX;
+        prevPosY = renderY;
         float turnSpeed = game.getMamu2() * delta;
         float moveAmount = speed * delta / 4;
         if (lastDelta > 0) {
@@ -82,7 +86,14 @@ public class ClientPrey extends Prey<SlytherClient> {
         posX += Math.cos(angle) * moveAmount;
         posY += Math.sin(angle) * moveAmount;
         gfr += delta * gr;
+        renderX = posX;
+        renderY = posY;
         if (eaten) {
+            if (eater != null) {
+                float timer = (float) Math.pow(eatenFR, 2);
+                renderX = (float) (posX + (eater.posX + eater.fx + Math.cos(eater.angle + eater.foodAngle) * (43 - 24 * timer) * (1 - timer) - posX) * timer);
+                renderY = (float) (posY + (eater.posY + eater.fy + Math.sin(eater.angle + eater.foodAngle) * (43 - 24 * timer) * (1 - timer) - posY) * timer);
+            }
             if (fr != 1.5F) {
                 fr += delta / 150.0F;
                 if (fr >= 1.5F) {

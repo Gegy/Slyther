@@ -234,11 +234,14 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
 
             if (System.currentTimeMillis() - timer > 1000) {
                 int bytesPerSecond = 0;
+                int packetsPerSecond = 0;
                 if (networkManager != null) {
                     bytesPerSecond = networkManager.bytesPerSecond;
+                    packetsPerSecond = networkManager.packetsPerSecond;
                     networkManager.bytesPerSecond = 0;
+                    networkManager.packetsPerSecond = 0;
                 }
-                Display.setTitle("Slyther - FPS: " + fps + " - UPS: " + ups + " - BPS: " + bytesPerSecond);
+                Display.setTitle("Slyther - FPS: " + fps + " - UPS: " + ups + " - BPS: " + bytesPerSecond + " - PPS: " + packetsPerSecond);
                 fps = 0;
 
                 timer += 1000;
@@ -479,7 +482,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     }
 
     public ClientPrey getPrey(int id) {
-        for (Prey prey : getImmutablePreys()) {
+        for (Prey prey : getPreys()) {
             if (prey.id == id) {
                 return (ClientPrey) prey;
             }

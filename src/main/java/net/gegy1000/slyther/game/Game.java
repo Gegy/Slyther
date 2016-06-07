@@ -4,7 +4,10 @@ import net.gegy1000.slyther.game.entity.*;
 import net.gegy1000.slyther.network.NetworkManager;
 import net.gegy1000.slyther.util.BridedList;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -128,7 +131,7 @@ public abstract class Game<NET extends NetworkManager, CFG extends Configuration
         return sectors.unmodifiable();
     }
 
-    public List<Prey<?>> getImmutablePreys() {
+    public List<Prey<?>> getPreys() {
         return preys.unmodifiable();
     }
 

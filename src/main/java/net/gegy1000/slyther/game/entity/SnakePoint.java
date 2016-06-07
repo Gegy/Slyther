@@ -10,6 +10,8 @@ public class SnakePoint {
     public float prevPosY;
     public float fx;
     public float fy;
+    public float prevFx;
+    public float prevFy;
     public float deltaX;
     public float deltaY;
     public boolean dying;
@@ -24,11 +26,15 @@ public class SnakePoint {
         this.game = game;
         this.posX = posX;
         this.posY = posY;
+        prevPosX = posX;
+        prevPosY = posY;
     }
 
     public void update() {
         prevPosX = posX;
         prevPosY = posY;
+        prevFx = fx;
+        prevFy = fy;
     }
 
     public float getRenderX(double frameDelta) {
@@ -37,6 +43,14 @@ public class SnakePoint {
 
     public float getRenderY(double frameDelta) {
         return (float) (prevPosY + frameDelta * (posY - prevPosY));
+    }
+
+    public float getRenderFX(double frameDelta) {
+        return (float) (prevFx + frameDelta * (fx - prevFx));
+    }
+
+    public float getRenderFY(double frameDelta) {
+        return (float) (prevFy + frameDelta * (fy - prevFy));
     }
 
     public boolean shouldTrack(Sector sector) {

@@ -18,6 +18,8 @@ public class ClientSnake extends Snake<SlytherClient> {
             point.update();
         }
         prevAngle = angle;
+        prevFx = fx;
+        prevFy = fy;
         float turnSpeed = game.getMamu() * delta * scaleTurnMultiplier * speedTurnMultiplier;
         float moveAmount = speed * delta / 4;
         if (moveAmount > msl) {

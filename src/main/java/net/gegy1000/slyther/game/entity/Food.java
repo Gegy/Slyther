@@ -18,7 +18,7 @@ public abstract class Food<GME extends Game<?, ?>> extends Entity<GME> {
     public float fr;
     public float gfr;
     public float gr;
-    public float wsp;
+    public float wantedSpeed;
     public float eatenFr;
     public float renderX;
     public float renderY;
@@ -43,7 +43,7 @@ public abstract class Food<GME extends Game<?, ?>> extends Entity<GME> {
         lrrad = rad;
         gfr = (int) (64.0F * Math.random());
         gr = 0.64F + 0.1F * this.size;
-        wsp = (float) (0.0225F * (2.0F * Math.random() - 1.0F));
+        wantedSpeed = (float) (0.0225F * (2.0F * Math.random() - 1.0F));
     }
 
     @Override
@@ -57,5 +57,15 @@ public abstract class Food<GME extends Game<?, ?>> extends Entity<GME> {
 
     @Override
     public void stopTracking(ConnectedClient tracker) {
+    }
+
+    @Override
+    public float getRenderX(double frameDelta) {
+        return (float) (prevPosX + frameDelta * (renderX - prevPosX));
+    }
+
+    @Override
+    public float getRenderY(double frameDelta) {
+        return (float) (prevPosY + frameDelta * (renderY - prevPosY));
     }
 }
