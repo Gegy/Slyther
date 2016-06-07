@@ -231,10 +231,8 @@ public class GuiGame extends Gui {
                                         K += partSeparation;
                                         float pax = lastPointX + (pointX - lastPointX) * K / partDistance;
                                         float pay = lastPointY + (pointY - lastPointY) * K / partDistance;
-                                        if (pax >= renderHandler.bpx1 && pax <= renderHandler.bpx2 && pay >= renderHandler.bpy1 && pay <= renderHandler.bpy2) {
-                                            xs.add(pax);
-                                            ys.add(pay);
-                                        }
+                                        xs.add(pax);
+                                        ys.add(pay);
                                     }
                                     K = partDistance - K;
                                 }
@@ -250,59 +248,61 @@ public class GuiGame extends Gui {
                             }
                         }
                     }
-                    if (pointX >= renderHandler.bpx1 && pointX <= renderHandler.bpx2 && pointY >= renderHandler.bpy1 && pointY <= renderHandler.bpy2) {
-                        xs.add(pointX);
-                        ys.add(pointY);
-                    }
+                    xs.add(pointX);
+                    ys.add(pointY);
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     textureManager.bindTexture("/textures/shadow.png");
                     for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
                         pointX = (xs.get(pointIndex));
                         pointY = (ys.get(pointIndex));
-                        GL11.glPushMatrix();
-                        GL11.glTranslatef(pointX, pointY, 0);
-                        float pointScale = snake.scale * 0.4F;
-                        if (pointIndex < 4) {
-                            pointScale *= 1 + (4 - pointIndex) * snake.headSwell;
+                        if (pointX >= renderHandler.bpx1 && pointX <= renderHandler.bpx2 && pointY >= renderHandler.bpy1 && pointY <= renderHandler.bpy2) {
+                            GL11.glPushMatrix();
+                            GL11.glTranslatef(pointX, pointY, 0);
+                            float pointScale = snake.scale * 0.4F;
+                            if (pointIndex < 4) {
+                                pointScale *= 1 + (4 - pointIndex) * snake.headSwell;
+                            }
+                            GL11.glScalef(pointScale, pointScale, 1.0F);
+                            drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
+                            GL11.glPopMatrix();
                         }
-                        GL11.glScalef(pointScale, pointScale, 1.0F);
-                        drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
-                        GL11.glPopMatrix();
                     }
                     textureManager.bindTexture("/textures/snake_point.png");
                     for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
                         pointX = (xs.get(pointIndex));
                         pointY = (ys.get(pointIndex));
-                        SkinColor color = pattern[pointIndex % pattern.length];
-                        float colorMultipler = 1.0F;
-                        float offset = (pointIndex / 3.0F % 6.0F);
-                        if (offset >= 3.0F) {
-                            offset = 3.0F - (offset - 3.0F);
-                        }
-                        colorMultipler -= offset / 15.0F;
-                        if (snake.speed > snake.accelleratingSpeed) {
-                            offset = (pointIndex + client.frameTicks / 2.0F) % 20.0F;
-                            if (offset > 10.0F) {
-                                offset = 10.0F - (offset - 10.0F);
+                        if (pointX >= renderHandler.bpx1 && pointX <= renderHandler.bpx2 && pointY >= renderHandler.bpy1 && pointY <= renderHandler.bpy2) {
+                            SkinColor color = pattern[pointIndex % pattern.length];
+                            float colorMultipler = 1.0F;
+                            float offset = (pointIndex / 3.0F % 6.0F);
+                            if (offset >= 3.0F) {
+                                offset = 3.0F - (offset - 3.0F);
                             }
-                            colorMultipler += offset / 10.0F;
-                        } else if (snake.dead) {
-                            offset = (pointIndex + (client.frameTicks * 2.0F)) % 20.0F;
-                            if (offset > 10.0F) {
-                                offset = 10.0F - (offset - 10.0F);
+                            colorMultipler -= offset / 15.0F;
+                            if (snake.dead) {
+                                offset = (pointIndex + (client.frameTicks * 2.0F)) % 20.0F;
+                                if (offset > 10.0F) {
+                                    offset = 10.0F - (offset - 10.0F);
+                                }
+                                colorMultipler += (offset - 5.0F) / 10.0F;
+                            } else if (snake.speed > snake.accelleratingSpeed) {
+                                offset = (pointIndex + client.frameTicks) % 20.0F;
+                                if (offset > 10.0F) {
+                                    offset = 10.0F - (offset - 10.0F);
+                                }
+                                colorMultipler += offset / 10.0F;
                             }
-                            colorMultipler += (offset - 5.0F) / 10.0F;
+                            GL11.glColor4f(color.red * colorMultipler, color.green * colorMultipler, color.blue * colorMultipler, 1.0F - snake.deadAmt * 0.8F);
+                            GL11.glPushMatrix();
+                            GL11.glTranslatef(pointX, pointY, 0);
+                            float pointScale = snake.scale * 0.25F;
+                            if (pointIndex < 4) {
+                                pointScale *= 1 + (4 - pointIndex) * snake.headSwell;
+                            }
+                            GL11.glScalef(pointScale, pointScale, 1.0F);
+                            drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
+                            GL11.glPopMatrix();
                         }
-                        GL11.glColor4f(color.red * colorMultipler, color.green * colorMultipler, color.blue * colorMultipler, 1.0F - snake.deadAmt / 2.0F);
-                        GL11.glPushMatrix();
-                        GL11.glTranslatef(pointX, pointY, 0);
-                        float pointScale = snake.scale * 0.25F;
-                        if (pointIndex < 4) {
-                            pointScale *= 1 + (4 - pointIndex) * snake.headSwell;
-                        }
-                        GL11.glScalef(pointScale, pointScale, 1.0F);
-                        drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
-                        GL11.glPopMatrix();
                     }
                     if (snake.faceTexture == null && !snake.oneEye) {
                         GL11.glPushMatrix();
