@@ -1,32 +1,20 @@
 package net.gegy1000.slyther.network;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import net.gegy1000.slyther.client.SlytherClient;
-import net.gegy1000.slyther.util.Log;
-import net.gegy1000.slyther.util.SystemUtils;
-
-import org.apache.commons.io.IOUtils;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import net.gegy1000.slyther.client.SlytherClient;
+import net.gegy1000.slyther.util.Log;
+import net.gegy1000.slyther.util.SystemUtils;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public enum ServerHandler {
     INSTANCE;
@@ -192,7 +180,7 @@ public enum ServerHandler {
 
     private String getEncodedServerList() throws IOException {
         if (encodedServerList == null) {
-            URL url = new URL("http://slither.io/i49526.txt");
+            URL url = new URL("http://slither.io/i33628.txt");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "Slyther");
             InputStream stream = connection.getInputStream();
