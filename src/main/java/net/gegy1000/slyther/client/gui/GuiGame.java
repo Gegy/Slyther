@@ -281,13 +281,19 @@ public class GuiGame extends Gui {
                         }
                         colorMultipler -= offset / 15.0F;
                         if (snake.speed > snake.accelleratingSpeed) {
-                            offset = (pointIndex + client.frameTicks) / 2.0F % 20.0F;
+                            offset = (pointIndex + client.frameTicks / 2.0F) % 20.0F;
                             if (offset > 10.0F) {
                                 offset = 10.0F - (offset - 10.0F);
                             }
                             colorMultipler += offset / 10.0F;
+                        } else if (snake.dead) {
+                            offset = (pointIndex + (client.frameTicks * 2.0F)) % 20.0F;
+                            if (offset > 10.0F) {
+                                offset = 10.0F - (offset - 10.0F);
+                            }
+                            colorMultipler += (offset - 5.0F) / 10.0F;
                         }
-                        GL11.glColor4f(color.red * colorMultipler, color.green * colorMultipler, color.blue * colorMultipler, 1.0F);
+                        GL11.glColor4f(color.red * colorMultipler, color.green * colorMultipler, color.blue * colorMultipler, 1.0F - snake.deadAmt / 2.0F);
                         GL11.glPushMatrix();
                         GL11.glTranslatef(pointX, pointY, 0);
                         float pointScale = snake.scale * 0.25F;
