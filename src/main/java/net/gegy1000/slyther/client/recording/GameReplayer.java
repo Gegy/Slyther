@@ -5,6 +5,7 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.Thread.State;
 import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -24,6 +25,8 @@ public class GameReplayer implements Runnable {
 
     private File file;
 
+    private Thread thread;
+
     private FileInputStream fin;
 
     private DataInputStream din;
@@ -32,13 +35,16 @@ public class GameReplayer implements Runnable {
 
     private boolean waitingForOpen = true;
 
+    private boolean waitingForClose;
+
     public GameReplayer(File file) {
         this.file = file;
         server = new WebSocketServer(new InetSocketAddress(8004)) {
             @Override
             public void onOpen(WebSocket conn, ClientHandshake handshake) {
                 if (waitingForOpen) {
-                    new Thread(GameReplayer.this, "Replayer").start();   
+                    thread = new Thread(GameReplayer.this, "Replayer");
+                    thread.start();   
                     waitingForOpen = false;
                 } else {
                     Log.warn("Connection was attempted to be made during playback: {}", conn.getRemoteSocketAddress());
@@ -48,6 +54,13 @@ public class GameReplayer implements Runnable {
 
             @Override
             public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+                waitingForClose = true;
+                // Interrupt a long message delay
+                while (waitingForClose) {
+                    if (thread.getState() == State.TIMED_WAITING) {
+                        thread.interrupt();
+                    }
+                }
             }
 
             @Override
@@ -83,7 +96,7 @@ public class GameReplayer implements Runnable {
         din = new DataInputStream(fin);
         long lastTime = System.currentTimeMillis();
         try {
-            while (true) {
+            while (!waitingForClose) {
                 int delta = din.readShort() & 0xFFFF;
                 int length = din.readShort() & 0xFFFF;
                 if (length > messageBuffer.capacity()) {
@@ -101,11 +114,12 @@ public class GameReplayer implements Runnable {
                 lastTime = System.currentTimeMillis();
                 server.connections().forEach(conn -> conn.send(messageBuffer));
             }
-        } catch (EOFException e) {
+        } catch (EOFException | InterruptedException e) {
             // Graceful finish
         } catch (Exception e) {
             UIUtils.displayException("A problem occured while playing back recording", e);
         } finally {
+            waitingForClose = false;
             IOUtils.closeQuietly(fin);
             try {
                 server.stop();
