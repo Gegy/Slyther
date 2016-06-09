@@ -40,6 +40,8 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
 
     public long packetTimeOffset;
 
+    public long currentPacketTime;
+
     public ClientNetworkManager(URI uri, SlytherClient client, String ip, Map<String, String> headers, boolean shouldRecord, boolean isReplaying) throws IOException {
         super(uri, new Draft_17(), headers, 0);
         this.ip = ip;
@@ -82,6 +84,7 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
         send(new MessageClientSetup(client.configuration.nickname, client.configuration.skin));
         ping();
         Log.info("Connected to {}", ip);
+        lastPacketTime = System.currentTimeMillis();
     }
 
     public void ping() {
@@ -105,16 +108,16 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
         if (buffer.limit() >= 2) {
             bytesPerSecond += buffer.limit();
             packetsPerSecond++;
-            lastPacketTime = client.currentPacketTime;
-            client.currentPacketTime = System.currentTimeMillis();
+            lastPacketTime = currentPacketTime;
+            currentPacketTime = System.currentTimeMillis();
             int serverTimeDelta = buffer.readUInt16();
             byte messageId = (byte) buffer.readUInt8();
-            long timeDelta = client.currentPacketTime - lastPacketTime;
+            long timeDelta = currentPacketTime - lastPacketTime;
             if (lastPacketTime == 0) {
                 timeDelta = 0;
             }
             packetTimeOffset += timeDelta - serverTimeDelta;
-            client.etm += Math.max(-180, Math.min(180, timeDelta - serverTimeDelta));
+            client.errorTime += Math.max(-180, Math.min(180, timeDelta - serverTimeDelta));
             Class<? extends SlytherServerMessageBase> messageType = MessageHandler.INSTANCE.getServerMessage(messageId);
             if (messageType == null) {
                 Log.warn("Received unknown message {}, {}! {}", () -> Log.bytes(buffer.array()), messageId & 0xFF, (char) messageId);
@@ -124,7 +127,9 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
                     message.messageId = messageId;
                     message.serverTimeDelta = serverTimeDelta;
                     client.scheduleTask(() -> {
-                        message.read(buffer, client, this);
+                        if (isOpen()) {
+                            message.read(buffer, client, this);
+                        }
                         return null;
                     });
                 } catch (Exception e) {

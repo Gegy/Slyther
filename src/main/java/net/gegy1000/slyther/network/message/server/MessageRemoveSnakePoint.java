@@ -37,7 +37,7 @@ public class MessageRemoveSnakePoint extends SlytherServerMessageBase {
                     break;
                 }
             }
-            snake.snl();
+            snake.updateLength();
         }
     }
 

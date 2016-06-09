@@ -150,7 +150,7 @@ public class MessageNewSnake extends SlytherServerMessageBase {
             Log.debug("Added snake \"{}\" with skin {}", snake.name, snake.skin);
             client.addEntity(snake);
 
-            snake.snl();
+            snake.updateLength();
         } else {
             boolean dead = buffer.readUInt8() == 1;
             Snake snake = client.getSnake(id);

@@ -69,7 +69,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     public long lastTickTime;
     public boolean lagging;
     public float lagMultiplier;
-    public float etm;
+    public float errorTime;
     public float lastTicks;
     public float ticks;
     public float lastTicks2;
@@ -77,14 +77,12 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
 
     public float frameTicks;
 
-    public float globalAlpha = 1.0F;
+    public float globalAlpha;
     public float qsm = 1.0F;
 
     private long lastAccelerateUpdateTime;
-    public long lastTurnTime;
     public float lastSendAngle = Float.MIN_VALUE;
     public long lastSendAngleTime;
-    public long currentPacketTime;
 
     public float viewX;
     public float viewY;
@@ -145,6 +143,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     }
 
     public float delta;
+    public float lastDelta;
     public double frameDelta;
 
     private boolean allowUserInput = true;
@@ -286,6 +285,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         globalScale = INITIAL_SCALE;
         lagMultiplier = 0.0F;
         zoomOffset = 0.0F;
+        globalAlpha = 0.0F;
         ServerHandler.INSTANCE.pingServers();
     }
 
@@ -363,7 +363,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         if (networkManager != null) {
             runTasks();
             long time = System.currentTimeMillis();
-            float lastDelta, lastDelta2;
+            float lastDelta2;
             delta = (time - lastTickTime) / 8.0F;
             lastTickTime = time;
             if (!lagging && networkManager.waitingForPingReturn && time - networkManager.lastPacketTime > 420) {
@@ -386,7 +386,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
                 delta = 120;
             }
             delta *= lagMultiplier;
-            etm *= lagMultiplier;
+            errorTime *= lagMultiplier;
             lastTicks = ticks;
             ticks += delta;
             lastDelta = (float) (Math.floor(ticks) - Math.floor(lastTicks));
@@ -422,16 +422,16 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
                         networkManager.ping();
                     }
                 }
-                etm *= Math.pow(0.993, lastDelta);
+                errorTime *= Math.pow(0.993, lastDelta);
                 if (allowUserInput) {
                     controller.update(this);
-                    if (time - lastSendAngleTime > 100) {
-                        float targetAngle = controller.getTargetAngle();
-                        targetAngle %= PI_2;
-                        if (targetAngle < 0) {
-                            targetAngle += PI_2;
-                        }
-                        if (targetAngle != lastSendAngle) {
+                    float targetAngle = controller.getTargetAngle();
+                    targetAngle %= PI_2;
+                    if (targetAngle < 0) {
+                        targetAngle += PI_2;
+                    }
+                    if (targetAngle != lastSendAngle || lastSendAngleTime == 0) {
+                        if (time - lastSendAngleTime > 100) {
                             lastSendAngle = targetAngle;
                             networkManager.send(new MessageSetAngle(targetAngle));
                         }
@@ -458,18 +458,8 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         }
     }
 
-    public void moveTo(float x, float y) {
-        long time = System.currentTimeMillis();
-        if (time - lastTurnTime > 100) {
-            lastTurnTime = time;
-            float ang = (float) Math.atan2(y - player.posY, x - player.posX);
-            player.eyeAngle = ang;
-            ang %= PI_2;
-            if (ang < 0) {
-                ang += PI_2;
-            }
-            networkManager.send(new MessageSetAngle(ang));
-        }
+    public float getAngleTo(float x, float y) {
+        return (float) Math.atan2(y - player.posY, x - player.posX);
     }
 
     public ClientSnake getSnake(int id) {
@@ -588,22 +578,26 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     @Override
     public void removeSector(Sector sector) {
         super.removeSector(sector);
-        int sectorSize = getSectorSize();
-        List<Entity> entitiesInSector = new ArrayList<>();
-        for (Entity entity : getFoods()) {
-            int sectorX = (int) (entity.posX / sectorSize);
-            int sectorY = (int) (entity.posY / sectorSize);
-            if (sectorX == sector.posX && sectorY == sector.posY) {
-                entitiesInSector.add(entity);
+        if (sector != null) {
+            int sectorSize = getSectorSize();
+            List<Entity> entitiesInSector = new ArrayList<>();
+            for (Entity entity : getFoods()) {
+                int sectorX = (int) (entity.posX / sectorSize);
+                int sectorY = (int) (entity.posY / sectorSize);
+                if (sectorX == sector.posX && sectorY == sector.posY) {
+                    entitiesInSector.add(entity);
+                }
             }
-        }
-        for (Entity entity : entitiesInSector) {
-            removeEntity(entity);
+            for (Entity entity : entitiesInSector) {
+                removeEntity(entity);
+            }
         }
     }
 
     public void close() {
-        networkManager.close(1000, "Forcefully closed by player");
+        if (networkManager != null) {
+            networkManager.close(1000, "Forcefully closed by player");
+        }
         player = null;
         networkManager = null;
     }

@@ -17,7 +17,7 @@ public class MessagePing extends SlytherServerMessageBase {
     public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
         networkManager.waitingForPingReturn = false;
         if (client.lagging) {
-            client.etm *= client.lagMultiplier;
+            client.errorTime *= client.lagMultiplier;
             client.lagging = false;
         }
     }

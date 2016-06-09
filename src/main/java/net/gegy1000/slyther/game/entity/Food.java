@@ -15,14 +15,14 @@ public abstract class Food<GME extends Game<?, ?>> extends Entity<GME> {
     public Snake eater;
 
     public float lrrad;
-    public float fr;
+    public float fade;
     public float gfr;
     public float gr;
     public float wantedSpeed;
     public float eatenFr;
     public float renderX;
     public float renderY;
-    public int rsp;
+    public int fadeSpeed;
     public float rad;
 
     public Food(GME game, int posX, int posY, float size, boolean isNatural, Color color) {
@@ -38,7 +38,7 @@ public abstract class Food<GME extends Game<?, ?>> extends Entity<GME> {
 
         renderX = posX;
         renderY = posY;
-        rsp = isNatural ? 2 : 1;
+        fadeSpeed = isNatural ? 2 : 1;
         rad = 0.00001F;
         lrrad = rad;
         gfr = (int) (64.0F * Math.random());

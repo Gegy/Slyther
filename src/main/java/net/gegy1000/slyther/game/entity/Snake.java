@@ -184,8 +184,7 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
         color = pattern[0];
     }
 
-    //Set new length
-    public void snl() {
+    public void updateLength() {
         double prevTotalLength = totalLength;
         totalLength = sct + fam;
         double lengthDelta = totalLength - prevTotalLength;

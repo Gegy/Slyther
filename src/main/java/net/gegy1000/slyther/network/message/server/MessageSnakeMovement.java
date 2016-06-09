@@ -124,22 +124,22 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
                 snake.wantedSeperation = min;
             }
             if (updateLength) {
-                snake.snl();
+                snake.updateLength();
             }
             if (snake == client.player) {
                 client.originalViewX = snake.posX + snake.fx;
                 client.originalViewY = snake.posY + snake.fy;
             }
-            float moveAmount = client.etm / 8.0F * snake.speed / 4.0F;
+            float moveAmount = client.errorTime / 8.0F * snake.speed / 4.0F;
             moveAmount *= client.lagMultiplier;
             float prevChl = snake.chl - 1;
             snake.chl = moveAmount / snake.msl;
             float prevX = snake.posX;
             float prevY = snake.posY;
-            snake.prevPosX = prevX;
-            snake.prevPosY = prevY;
             snake.posX = (float) (x + Math.cos(snake.angle) * moveAmount);
             snake.posY = (float) (y + Math.sin(snake.angle) * moveAmount);
+            snake.prevPosX = snake.posX;
+            snake.prevPosY = snake.posY;
             float moveX = snake.posX - prevX;
             float moveY = snake.posY - prevY;
             float chlDiff = snake.chl - prevChl;
@@ -154,10 +154,10 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
                     fpos = 0;
                 }
             }
-            snake.prevFx = snake.fx;
-            snake.prevFy = snake.fy;
             snake.fx = snake.fxs[snake.fpos];
             snake.fy = snake.fys[snake.fpos];
+            snake.prevFx = snake.fx;
+            snake.prevFy = snake.fy;
             snake.fchl = snake.fchls[snake.fpos];
             snake.ftg = SlytherClient.RFC;
             snake.ehl = 0;

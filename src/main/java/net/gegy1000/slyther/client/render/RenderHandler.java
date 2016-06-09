@@ -31,14 +31,14 @@ public class RenderHandler {
     public float centerX;
     public float centerY;
 
-    public float bpx1;
-    public float bpy1;
-    public float bpx2;
-    public float bpy2;
-    public float fpx1;
-    public float fpy1;
-    public float fpx2;
-    public float fpy2;
+    public float snakeMinX;
+    public float snakeMinY;
+    public float snakeMaxX;
+    public float snakeMaxY;
+    public float foodMinX;
+    public float foodMinY;
+    public float foodMaxX;
+    public float foodMaxY;
     public float apx1;
     public float apy1;
     public float apx2;

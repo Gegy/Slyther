@@ -46,7 +46,7 @@ public class GuiSelectSkin extends Gui {
             snake.wantedSeperation = nsep;
         }
         snake.partSeparation = snake.wantedSeperation;
-        snake.snl();
+        snake.updateLength();
         snake.aliveAmt = 1.0F;
         snake.relativeEyeX = 1.66F;
         update();

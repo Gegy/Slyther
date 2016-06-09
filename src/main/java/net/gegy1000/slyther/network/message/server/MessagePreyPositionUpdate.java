@@ -20,7 +20,7 @@ public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
         int y = buffer.readUInt16() * 3 + 1;
         ClientPrey prey = client.getPrey(id);
         if (prey != null) {
-            float moveAmount = (client.etm / 8.0F * prey.speed / 4.0F) * client.lagMultiplier;
+            float moveAmount = (client.errorTime / 8.0F * prey.speed / 4.0F) * client.lagMultiplier;
             float prevX = prey.posX;
             float prevY = prey.posY;
             if (buffer.hasExactlyRemaining(9)) {
@@ -47,10 +47,10 @@ public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
             } else if (buffer.hasExactlyRemaining(2)) {
                 prey.speed = buffer.readUInt16() / 1000.0F;
             }
-            prey.prevPosX = prevX;
-            prey.prevPosY = prevY;
             prey.posX = (float) (x + Math.cos(prey.angle) * moveAmount);
             prey.posY = (float) (y + Math.sin(prey.angle) * moveAmount);
+            prey.prevPosX = prey.posX;
+            prey.prevPosY = prey.posY;
             prey.renderX = prey.posX;
             prey.renderY = prey.posY;
             float moveX = prey.posX - prevX;
@@ -64,10 +64,10 @@ public class MessagePreyPositionUpdate extends SlytherServerMessageBase {
                     fpos = 0;
                 }
             }
-            prey.prevFx = prey.fx;
-            prey.prevFy = prey.fy;
             prey.fx = prey.fxs[prey.fpos];
             prey.fy = prey.fys[prey.fpos];
+            prey.prevFx = prey.fx;
+            prey.prevFy = prey.fy;
             prey.ftg = SlytherClient.RFC;
         }
     }

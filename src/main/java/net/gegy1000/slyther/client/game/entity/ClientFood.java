@@ -27,13 +27,13 @@ public class ClientFood extends Food<SlytherClient> {
                 renderY += Math.sin(wantedSpeed * gfr) * (1.0F - eatenFr) * 6.0F;
             }
         } else {
-            if (fr != 1.0F) {
-                fr += rsp * delta / 150.0F;
-                if (fr >= 1.0F) {
-                    fr = 1.0F;
+            if (fade != 1.0F) {
+                fade += fadeSpeed * delta / 150.0F;
+                if (fade >= 1.0F) {
+                    fade = 1.0F;
                     rad = 1.0F;
                 } else {
-                    rad = (float) ((1.0F - Math.cos(Math.PI * fr)) * 0.5F);
+                    rad = (float) ((1.0F - Math.cos(Math.PI * fade)) * 0.5F);
                     rad += 0.66F * (0.5F * (1.0F - Math.cos(Math.PI * rad)) - rad);
                 }
                 lrrad = rad;
