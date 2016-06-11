@@ -1,14 +1,10 @@
 package net.gegy1000.slyther.game;
 
+import net.gegy1000.slyther.util.Log;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-
-import net.gegy1000.slyther.util.Log;
+import java.util.*;
 
 public final class ProfanityHandler {
     private static final String FILTERS_URL = "http://slither.io/filters.txt";
@@ -19,6 +15,7 @@ public final class ProfanityHandler {
 
     static {
         try {
+            Log.debug("Loading profanity list.");
             URL url = new URL(FILTERS_URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "Slyther");
@@ -38,6 +35,7 @@ public final class ProfanityHandler {
                 }
             }
             scanner.close();
+            Log.debug("Loaded profanity list.");
         } catch (Exception e) {
             Log.catching(e);
         }

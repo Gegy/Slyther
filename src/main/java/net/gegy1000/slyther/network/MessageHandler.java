@@ -1,6 +1,7 @@
 package net.gegy1000.slyther.network;
 
-import net.gegy1000.slyther.network.message.*;
+import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
+import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.network.message.client.*;
 import net.gegy1000.slyther.network.message.server.*;
 import net.gegy1000.slyther.util.Log;
@@ -23,7 +24,7 @@ public enum MessageHandler {
         registerServer(MessageUpdateSnake.class);
         registerServer(MessageSnakeMovement.class);
         registerServer(MessagePreyPositionUpdate.class);
-        registerServer(MessageUpdateFam.class);
+        registerServer(MessageUpdateSnakeLength.class);
         registerServer(MessageRemoveFood.class);
         registerServer(MessageRemoveSnakePoint.class);
         registerServer(MessageUpdateLeaderboard.class);

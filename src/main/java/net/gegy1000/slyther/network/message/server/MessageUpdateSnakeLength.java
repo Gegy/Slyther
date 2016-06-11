@@ -8,7 +8,7 @@ import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
-public class MessageUpdateFam extends SlytherServerMessageBase {
+public class MessageUpdateSnakeLength extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
     }

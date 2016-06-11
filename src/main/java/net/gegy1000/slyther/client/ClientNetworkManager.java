@@ -120,7 +120,7 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
             client.errorTime += Math.max(-180, Math.min(180, timeDelta - serverTimeDelta));
             Class<? extends SlytherServerMessageBase> messageType = MessageHandler.INSTANCE.getServerMessage(messageId);
             if (messageType == null) {
-                Log.warn("Received unknown message {}, {}! {}", () -> Log.bytes(buffer.array()), messageId & 0xFF, (char) messageId);
+                Log.warn("Received unknown message {} ({})!", () -> Log.bytes(buffer.array()), (char) messageId);
             } else {
                 try {
                     SlytherServerMessageBase message = messageType.getConstructor().newInstance();

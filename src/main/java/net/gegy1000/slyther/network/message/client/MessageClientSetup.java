@@ -2,12 +2,12 @@ package net.gegy1000.slyther.network.message.client;
 
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.game.ProfanityHandler;
+import net.gegy1000.slyther.game.Skin;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 import net.gegy1000.slyther.util.Log;
-import net.gegy1000.slyther.game.Skin;
 
 public class MessageClientSetup extends SlytherClientMessageBase {
     private String username;
@@ -40,6 +40,9 @@ public class MessageClientSetup extends SlytherClientMessageBase {
         int protocolVersion = buffer.readUInt8() + 1;
         Skin skin = Skin.values()[buffer.readUInt8() % Skin.values().length];
         String name = buffer.readASCIIBytes();
+        if (!ProfanityHandler.isClean(name)) {
+            name = "";
+        }
         client.setup(name, skin, protocolVersion);
         Log.debug("{} ({}) connected with skin {}", client.name, client.id, client.skin);
     }
