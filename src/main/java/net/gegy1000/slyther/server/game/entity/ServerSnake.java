@@ -20,6 +20,11 @@ public class ServerSnake extends Snake<SlytherServer> {
 
     @Override
     public boolean update(float delta, float lastDelta, float lastDelta2) {
+        scale = Math.min(6.0F, (sct - 2.0F) / 106.0F + 1.0F);
+        scaleTurnMultiplier = (float) (Math.pow((7.0F - scale) / 6.0F, 2.0F) * 0.87F + 0.13F);
+        moveSpeed = game.getNsp1() + game.getNsp2() * scale;
+        accelleratingSpeed = moveSpeed * 2.0F;
+        speed = accelerating ? accelleratingSpeed : moveSpeed;
         angle %= SlytherServer.PI_2;
         wantedAngle %= SlytherServer.PI_2;
         if (angle < 0) {
@@ -28,8 +33,8 @@ public class ServerSnake extends Snake<SlytherServer> {
         if (wantedAngle < 0) {
             wantedAngle += SlytherServer.PI_2;
         }
-        float moveX = (float) (Math.cos(angle) * speed);
-        float moveY = (float) (Math.sin(angle) * speed);
+        float moveX = (float) (Math.cos(angle) * speed * delta / 4.0F);
+        float moveY = (float) (Math.sin(angle) * speed * delta / 4.0F);
         posX += moveX;
         posY += moveY;
         boolean angleChange = angle != prevAngle;
@@ -58,7 +63,7 @@ public class ServerSnake extends Snake<SlytherServer> {
             lengthIncrements--;
         }
         for (ConnectedClient client : game.getTrackingClients(this)) {
-            client.send(new MessageSnakeMovement(this, !absolutePosition, lengthIncrements > 0));
+            client.send(new MessageSnakeMovement(this, absolutePosition, lengthIncrements > 0));
         }
         if (!lengthIncrement) {
             points.remove(points.size() - 1);

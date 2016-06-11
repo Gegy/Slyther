@@ -66,19 +66,17 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
                 fpsls[i] = fpsls[i - 1] + 1.0F / fmlts[i - 1];
             }
         }
-        int gameRadius = configuration.gameRadius;
-        int sectorSize = configuration.sectorSize;
-        for (int x = -gameRadius; x < gameRadius; x += sectorSize) {
-            for (int y = -gameRadius; y < gameRadius; y += sectorSize) {
-                ServerSector sector = new ServerSector(this, x / sectorSize, y / sectorSize);
-                populateSector(sector);
-                addSector(sector);
+        int sectorGameRadius = configuration.gameRadius / getSectorSize();
+        for (int x = -sectorGameRadius; x < sectorGameRadius; x++) {
+            for (int y = -sectorGameRadius; y < sectorGameRadius; y++) {
+                addSector(new ServerSector(this, x, y));
             }
         }
         double delta = 0;
         long previousTime = System.nanoTime();
         long timer = System.currentTimeMillis();
-        double nanoUpdates = 1000000000.0 / 30.0;
+        double nanoUpdates = 1000000000.0 / 20.0;
+        lastTickTime = System.currentTimeMillis();
         while (true) {
             long currentTime = System.nanoTime();
             delta += (currentTime - previousTime) / nanoUpdates;
@@ -93,24 +91,11 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
         }
     }
 
-    public void populateSector(ServerSector sector) {
-        int sectorX = sector.posX * configuration.sectorSize;
-        int sectorY = sector.posY * configuration.sectorSize;
-        for (int i = 0; i < rng.nextInt(configuration.maxSpawnFoodPerSector); i++) {
-            int posX = sectorX + rng.nextInt(configuration.sectorSize);
-            int posY = sectorY + rng.nextInt(configuration.sectorSize);
-            int size = rng.nextInt(configuration.maxNaturalFoodSize - configuration.minNaturalFoodSize) + configuration.minNaturalFoodSize;
-            Color color = Color.values()[rng.nextInt(Color.values().length)];
-            sector.addFood(new ServerFood(this, posX, posY, size, true, color));
-        }
-        sector.lastSpawnTime = System.currentTimeMillis();
-    }
-
     public void update() {
         runTasks();
         long time = System.currentTimeMillis();
         float lastDelta, lastDelta2;
-        float delta = (time - lastTickTime) / 8;
+        float delta = (time - lastTickTime) / 8.0F;
         lastTickTime = time;
         lastTicks = ticks;
         ticks += delta;

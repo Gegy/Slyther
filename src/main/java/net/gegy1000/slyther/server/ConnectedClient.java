@@ -94,7 +94,7 @@ public class ConnectedClient {
                     }
                 }
             }
-            viewDistance = 800.0F / gsc;
+            viewDistance = 700.0F / gsc;
             for (Sector sector : server.getSectors()) {
                 if (sector.shouldTrack(this)) {
                     trackSector(sector);

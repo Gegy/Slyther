@@ -12,15 +12,15 @@ import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessageSnakeMovement extends SlytherServerMessageBase {
     private Snake<?> snake;
-    private boolean relative;
+    private boolean absolute;
     private boolean updateLength;
 
     public MessageSnakeMovement() {
     }
 
-    public MessageSnakeMovement(Snake snake, boolean relative, boolean updateLength) {
+    public MessageSnakeMovement(Snake snake, boolean absolute, boolean updateLength) {
         this.snake = snake;
-        this.relative = relative;
+        this.absolute = absolute;
         this.updateLength = updateLength;
     }
 
@@ -29,12 +29,12 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
         buffer.writeUInt16(snake.id);
         SnakePoint head = snake.points.get(snake.points.size() - 1);
         int gameRadius = server.configuration.gameRadius;
-        if (relative) {
+        if (absolute) {
             buffer.writeUInt16((int) snake.posX + gameRadius);
             buffer.writeUInt16((int) snake.posY + gameRadius);
         } else {
-            buffer.writeUInt8((int) ((head.posX - snake.posX) + 128));
-            buffer.writeUInt8((int) ((head.posY - snake.posY) + 128));
+            buffer.writeUInt8((int) ((snake.posX - head.posX) + 128));
+            buffer.writeUInt8((int) ((snake.posY - head.posY) + 128));
         }
         if (updateLength) {
             buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
@@ -188,6 +188,6 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
     @Override
     public int getSendMessageId() {
         char id = updateLength ? 'n' : 'g';
-        return relative ? id : Character.toUpperCase(id);
+        return absolute ? id : Character.toUpperCase(id);
     }
 }
