@@ -1,12 +1,10 @@
 package net.gegy1000.slyther.server;
 
-import net.gegy1000.slyther.network.NetworkManager;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.MessageHandler;
+import net.gegy1000.slyther.network.NetworkManager;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
-import net.gegy1000.slyther.network.message.server.MessageSetup;
 import net.gegy1000.slyther.util.Log;
-
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -59,20 +57,20 @@ public class ServerNetworkManager extends WebSocketServer implements NetworkMana
 
     @Override
     public void onMessage(WebSocket connection, ByteBuffer byteBuffer) {
-        ConnectedClient client = server.getConnectedClient(connection);
-        if (client != null) {
-            client.lastPacketTime = System.currentTimeMillis();
-            MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer);
-            SlytherClientMessageBase message = MessageHandler.INSTANCE.getClientMessage(buffer);
-            if (message == null) {
-                Log.warn("Received unknown message {} from {} ({})", () -> Arrays.toString(buffer.array()), client.name, client.id);
-            } else {
-                server.scheduleTask(() -> {
+        server.scheduleTask(() -> {
+            ConnectedClient client = server.getConnectedClient(connection);
+            if (client != null) {
+                client.lastPacketTime = System.currentTimeMillis();
+                MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer);
+                SlytherClientMessageBase message = MessageHandler.INSTANCE.getClientMessage(buffer);
+                if (message == null) {
+                    Log.warn("Received unknown message {} from {} ({})", () -> Arrays.toString(buffer.array()), client.name, client.id);
+                } else {
                     message.read(buffer, server, client);
-                    return null;
-                });
+                }
             }
-        }
+            return null;
+        });
     }
 
     @Override

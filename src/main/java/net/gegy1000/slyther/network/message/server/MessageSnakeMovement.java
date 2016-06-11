@@ -28,14 +28,13 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
     public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
         buffer.writeUInt16(snake.id);
         SnakePoint head = snake.points.get(snake.points.size() - 1);
-        SnakePoint endPoint = snake.points.get(0);
         int gameRadius = server.configuration.gameRadius;
         if (relative) {
-            buffer.writeUInt16((int) endPoint.posX + gameRadius);
-            buffer.writeUInt16((int) endPoint.posY + gameRadius);
+            buffer.writeUInt16((int) snake.posX + gameRadius);
+            buffer.writeUInt16((int) snake.posY + gameRadius);
         } else {
-            buffer.writeUInt8((int) ((endPoint.posX - head.posX) + 128));
-            buffer.writeUInt8((int) ((endPoint.posY - head.posY) + 128));
+            buffer.writeUInt8((int) ((head.posX - snake.posX) + 128));
+            buffer.writeUInt8((int) ((head.posY - snake.posY) + 128));
         }
         if (updateLength) {
             buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
