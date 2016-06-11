@@ -60,7 +60,6 @@ public class ServerNetworkManager extends WebSocketServer implements NetworkMana
         server.scheduleTask(() -> {
             ConnectedClient client = server.getConnectedClient(connection);
             if (client != null) {
-                client.lastPacketTime = System.currentTimeMillis();
                 MessageByteBuffer buffer = new MessageByteBuffer(byteBuffer);
                 SlytherClientMessageBase message = MessageHandler.INSTANCE.getClientMessage(buffer);
                 if (message == null) {

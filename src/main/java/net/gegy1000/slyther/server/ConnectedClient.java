@@ -112,9 +112,11 @@ public class ConnectedClient {
         if (socket.isOpen()) {
             try {
                 MessageByteBuffer buffer = new MessageByteBuffer();
-                buffer.writeUInt16((int) (System.currentTimeMillis() - lastPacketTime));
+                long time = System.currentTimeMillis();
+                buffer.writeUInt16((int) (time - lastPacketTime));
                 buffer.writeUInt8(message.getSendMessageId());
                 message.write(buffer, server, this);
+                lastPacketTime = time;
                 socket.send(buffer.bytes());
             } catch (Exception e) {
                 Log.error("An error occurred while sending message {} to {} ({})", message.getClass().getName(), name, id);
