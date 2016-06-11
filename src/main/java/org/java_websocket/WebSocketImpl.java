@@ -61,6 +61,8 @@ import org.java_websocket.handshake.ServerHandshakeBuilder;
 import org.java_websocket.server.WebSocketServer.WebSocketWorker;
 import org.java_websocket.util.Charsetfunctions;
 
+import net.gegy1000.slyther.util.Log;
+
 /**
  * Represents one end (client or server) of a single WebSocketImpl connection.
  * Takes care of the "handshake" phase, then allows for easy sending of
@@ -477,27 +479,36 @@ public class WebSocketImpl implements WebSocket {
 		}
 
 		if( key != null ) {
+			Log.debug("WS cancel");
 			// key.attach( null ); //see issue #114
 			key.cancel();
+			Log.debug("WS after cancel	");
 		}
 		if( channel != null ) {
 			try {
+				Log.debug("WS before channel close");
 				channel.close();
+				Log.debug("WS after channel close");
 			} catch ( IOException e ) {
 				wsl.onWebsocketError( this, e );
 			}
 		}
 		try {
+			Log.debug("WS before onClose");
 			this.wsl.onWebsocketClose( this, code, message, remote );
+			Log.debug("WS after onClose");
 		} catch ( RuntimeException e ) {
 			wsl.onWebsocketError( this, e );
 		}
+		Log.debug("WS after close call");
 		if( draft != null )
 			draft.reset();
+		Log.debug("after reset");
 		handshakerequest = null;
 
 		readystate = READYSTATE.CLOSED;
 		this.outQueue.clear();
+		Log.debug("WS end");
 	}
 
 	protected void closeConnection( int code, boolean remote ) {

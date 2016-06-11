@@ -119,14 +119,18 @@ public class GameReplayer implements Runnable {
         } catch (Exception e) {
             UIUtils.displayException("A problem occured while playing back recording", e);
         } finally {
+            Log.debug("in finally!");
             waitingForClose = false;
             IOUtils.closeQuietly(fin);
             try {
+                Log.debug("before stop!");
                 server.stop();
+                Log.debug("after stop!");
             } catch (IOException | InterruptedException e) {
                 Log.error("Exception while stopping server");
                 Log.catching(e);
             }
+            Log.debug("replayer done!");
         }
     }
 }

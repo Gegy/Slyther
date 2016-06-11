@@ -360,8 +360,8 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     }
 
     public void update() {
+        runTasks();
         if (networkManager != null) {
-            runTasks();
             long time = System.currentTimeMillis();
             float lastDelta2;
             delta = (time - lastTickTime) / 8.0F;

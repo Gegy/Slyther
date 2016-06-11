@@ -31,6 +31,8 @@ import java.nio.channels.ByteChannel;
 
 import org.java_websocket.WebSocket.Role;
 
+import net.gegy1000.slyther.util.Log;
+
 public class SocketChannelIOHelper {
 
 	public static boolean read( final ByteBuffer buf, WebSocketImpl ws, ByteChannel channel ) throws IOException {
@@ -86,8 +88,11 @@ public class SocketChannelIOHelper {
 		}
 
 		if( ws != null && ws.outQueue.isEmpty() && ws.isFlushAndClose() && ws.getDraft() != null && ws.getDraft().getRole() != null && ws.getDraft().getRole() == Role.SERVER ) {//
+			Log.debug("before helper sync");
 			synchronized ( ws ) {
+				Log.debug("in helper sync");
 				ws.closeConnection();
+				Log.debug("after closeConn");
 			}
 		}
 		return c != null ? !( (WrappedByteChannel) sockchannel ).isNeedWrite() : true;

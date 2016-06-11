@@ -67,6 +67,8 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.handshake.Handshakedata;
 import org.java_websocket.handshake.ServerHandshakeBuilder;
 
+import net.gegy1000.slyther.util.Log;
+
 /**
  * <tt>WebSocketServer</tt> is an abstract class that only takes care of the
  * HTTP handshake portion of WebSockets. It's up to a subclass to add
@@ -240,10 +242,13 @@ public abstract class WebSocketServer extends WebSocketAdapter implements Runnab
 			ws.close( CloseFrame.GOING_AWAY );
 		}
 
+		Log.debug("before sync this");
 		synchronized ( this ) {
+			Log.debug("in sync this");
 			if( selectorthread != null && selectorthread != Thread.currentThread() ) {
 				selectorthread.interrupt();
 				selector.wakeup();
+				Log.debug("before join");
 				selectorthread.join( timeout );
 			}
 		}
@@ -317,6 +322,7 @@ public abstract class WebSocketServer extends WebSocketAdapter implements Runnab
 					Iterator<SelectionKey> i = keys.iterator();
 
 					while ( i.hasNext() ) {
+						Log.debug("i.hasNext()");
 						conn = null;
 						key = i.next();
 
@@ -366,14 +372,20 @@ public abstract class WebSocketServer extends WebSocketAdapter implements Runnab
 							}
 						}
 						if( key.isWritable() ) {
+							Log.debug("key is writeable");
 							conn = (WebSocketImpl) key.attachment();
+							Log.debug("have attachment");
 							if( SocketChannelIOHelper.batch( conn, conn.channel ) ) {
+								Log.debug("in batch");
 								if( key.isValid() )
 									key.interestOps( SelectionKey.OP_READ );
 							}
+							Log.debug("after attachment");
 						}
+						Log.debug("end i.hasNext()");
 					}
 					while ( !iqueue.isEmpty() ) {
+						Log.debug("iqueue");
 						conn = iqueue.remove( 0 );
 						WrappedByteChannel c = ( (WrappedByteChannel) conn.channel );
 						ByteBuffer buf = takeBuffer();
@@ -392,15 +404,18 @@ public abstract class WebSocketServer extends WebSocketAdapter implements Runnab
 						}
 
 					}
+					Log.debug("selector loop");
 				} catch ( CancelledKeyException e ) {
 					// an other thread may cancel the key
 				} catch ( ClosedByInterruptException e ) {
+					Log.debug("closed by interurupt");
 					return; // do the same stuff as when InterruptedException is thrown
 				} catch ( IOException ex ) {
 					if( key != null )
 						key.cancel();
 					handleIOException( key, conn, ex );
 				} catch ( InterruptedException e ) {
+					Log.debug("closed by interurupt");
 					return;// FIXME controlled shutdown (e.g. take care of buffermanagement)
 				}
 			}
@@ -409,6 +424,7 @@ public abstract class WebSocketServer extends WebSocketAdapter implements Runnab
 			// should hopefully never occur
 			handleFatal( null, e );
 		} finally {
+			Log.debug("selector finally!");
 			if( decoders != null ) {
 				for( WebSocketWorker w : decoders ) {
 					w.interrupt();
