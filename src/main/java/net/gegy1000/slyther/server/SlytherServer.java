@@ -1,6 +1,5 @@
 package net.gegy1000.slyther.server;
 
-import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.ConfigHandler;
 import net.gegy1000.slyther.game.Game;
 import net.gegy1000.slyther.game.LeaderboardEntry;
@@ -8,7 +7,6 @@ import net.gegy1000.slyther.game.entity.Entity;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.game.entity.SnakePoint;
 import net.gegy1000.slyther.network.message.server.MessageUpdateLeaderboard;
-import net.gegy1000.slyther.server.game.entity.ServerFood;
 import net.gegy1000.slyther.server.game.entity.ServerSector;
 import net.gegy1000.slyther.server.game.entity.ServerSnake;
 import net.gegy1000.slyther.util.Log;
@@ -150,8 +148,11 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
     }
 
     public void removeClient(WebSocket socket) {
+        removeClient(getConnectedClient(socket));
+    }
+
+    public void removeClient(ConnectedClient client) {
         scheduleTask(() -> {
-            ConnectedClient client = getConnectedClient(socket);
             clients.remove(client);
             if (client != null) {
                 if (client.name != null) {

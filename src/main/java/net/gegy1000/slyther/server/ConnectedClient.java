@@ -1,20 +1,17 @@
 package net.gegy1000.slyther.server;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-
 import net.gegy1000.slyther.game.Skin;
 import net.gegy1000.slyther.game.entity.Entity;
 import net.gegy1000.slyther.game.entity.Sector;
-import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.network.MessageByteBuffer;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.network.message.server.MessageSetup;
 import net.gegy1000.slyther.server.game.entity.ServerSnake;
 import net.gegy1000.slyther.util.Log;
-
 import org.java_websocket.WebSocket;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectedClient {
     public String name;
@@ -123,7 +120,7 @@ public class ConnectedClient {
                 Log.catching(e);
             }
         } else {
-            server.removeClient(socket);
+            server.removeClient(this);
         }
     }
 }

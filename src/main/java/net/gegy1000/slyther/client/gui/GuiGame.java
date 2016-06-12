@@ -490,7 +490,6 @@ public class GuiGame extends Gui {
         if (key == Keyboard.KEY_BACK || key == Keyboard.KEY_ESCAPE) {
             client.close();
             closeGui();
-            client.openGui(new GuiMainMenu());
         }
     }
 

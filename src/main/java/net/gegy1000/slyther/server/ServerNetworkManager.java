@@ -39,9 +39,11 @@ public class ServerNetworkManager extends WebSocketServer implements NetworkMana
         server.scheduleTask(() -> {
             Log.debug("Initiating a new connection.");
             ConnectedClient client = new ConnectedClient(server, connection, currentClientId);
-            currentClientId++;
-            server.clients.add(client);
-            client.lastPacketTime = System.currentTimeMillis();
+            if (!server.clients.contains(client)) {
+                currentClientId++;
+                server.clients.add(client);
+                client.lastPacketTime = System.currentTimeMillis();
+            }
             return null;
         });
     }
