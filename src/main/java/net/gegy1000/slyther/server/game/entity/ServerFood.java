@@ -8,8 +8,6 @@ import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 public class ServerFood extends Food<SlytherServer> {
-    public ServerSnake eater;
-
     public ServerFood(SlytherServer game, int posX, int posY, float size, boolean isNatural, Color color) {
         super(game, posX, posY, size, isNatural, color);
     }

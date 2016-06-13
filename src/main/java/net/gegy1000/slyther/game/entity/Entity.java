@@ -64,4 +64,15 @@ public abstract class Entity<GME extends Game<?, ?>> {
     public abstract void stopTracking(ConnectedClient tracker);
 
     public abstract boolean update(float delta, float lastDelta, float lastDelta2);
+
+    public Sector<?> getSector() {
+        int sectorX = (int) (posX / game.getSectorSize());
+        int sectorY = (int) (posY / game.getSectorSize());
+        for (Sector<?> sector : game.getSectors()) {
+            if (sector.posX == sectorX && sector.posY == sectorY) {
+                return sector;
+            }
+        }
+        return null;
+    }
 }

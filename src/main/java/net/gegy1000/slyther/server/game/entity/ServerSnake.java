@@ -1,5 +1,6 @@
 package net.gegy1000.slyther.server.game.entity;
 
+import net.gegy1000.slyther.game.entity.Food;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.game.entity.SnakePoint;
 import net.gegy1000.slyther.network.message.server.MessageSnakeMovement;
@@ -75,13 +76,26 @@ public class ServerSnake extends Snake<SlytherServer> {
         }
         float turnSpeed = game.getMamu() * scaleTurnMultiplier * speedTurnMultiplier;
         if (angle != wantedAngle) {
-            turnDirection = angle > wantedAngle ? 1 : 2;
+            turnDirection = angle > wantedAngle ? 2 : 1;
         } else {
             turnDirection = 0;
         }
         angle = wantedAngle;
         for (SnakePoint point : points) {
             point.update();
+        }
+        float eatDist = scale * 60.0F;
+        for (Food<?> food : game.getFoods()) {
+            float deltaX = posX - food.posX;
+            float deltaY = posY - food.posY;
+            float deltaPos = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (deltaPos < eatDist) {
+                food.eaten = true;
+                food.eater = this;
+                for (ConnectedClient client : game.getTrackingClients(food)) {
+                    food.stopTracking(client);
+                }
+            }
         }
         return false;
     }
