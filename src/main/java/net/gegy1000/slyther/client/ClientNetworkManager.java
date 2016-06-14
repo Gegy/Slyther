@@ -36,7 +36,7 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
 
     public boolean waitingForPingReturn;
     public long lastPacketTime;
-    public long lastPingTime;
+    public long lastPingSendTime;
 
     public long packetTimeOffset;
 
@@ -116,7 +116,7 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
             if (lastPacketTime == 0) {
                 timeDelta = 0;
             }
-            packetTimeOffset += timeDelta - serverTimeDelta;
+            packetTimeOffset = serverTimeDelta - timeDelta;
             client.errorTime += Math.max(-180, Math.min(180, timeDelta - serverTimeDelta));
             Class<? extends SlytherServerMessageBase> messageType = MessageHandler.INSTANCE.getServerMessage(messageId);
             if (messageType == null) {

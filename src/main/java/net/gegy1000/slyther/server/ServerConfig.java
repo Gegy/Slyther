@@ -11,8 +11,8 @@ public class ServerConfig implements Configuration {
     public float nsp1 = 5.39F;
     public float nsp2 = 0.4F;
     public float nsp3 = 14.0F;
-    public float mamu = 0.033F;
-    public float mamu2 = 0.028F;
+    public float snakeTurnSpeed = 0.033F;
+    public float preyTurnSpeed = 0.028F;
     public float cst = 0.43F;
     public int serverPort = 444;
     public int leaderboardLength = 10;

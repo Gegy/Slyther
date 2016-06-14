@@ -30,7 +30,7 @@ public class ServerSector extends Sector<SlytherServer> {
             int posX = sectorX + rng.nextInt(sectorSize);
             int posY = sectorY + rng.nextInt(sectorSize);
             int size = rng.nextInt(configuration.maxNaturalFoodSize - configuration.minNaturalFoodSize) + configuration.minNaturalFoodSize;
-            Color color = Color.values()[rng.nextInt(Color.values().length)];
+            Color color = Color.values()[rng.nextInt(9)];
             addFood(new ServerFood(game, posX, posY, size, true, color));
         }
         lastSpawnTime = System.currentTimeMillis();

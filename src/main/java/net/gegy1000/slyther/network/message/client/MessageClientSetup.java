@@ -30,7 +30,7 @@ public class MessageClientSetup extends SlytherClientMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherClient client) {
         buffer.writeUInt8('s');
-        buffer.writeUInt8(8);
+        buffer.writeUInt8(9 - 1);
         buffer.writeUInt8(skin.ordinal());
         buffer.writeASCIIBytes(username);
     }

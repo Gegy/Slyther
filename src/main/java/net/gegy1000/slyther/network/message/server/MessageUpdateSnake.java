@@ -9,6 +9,7 @@ import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
+//10 per second
 public class MessageUpdateSnake extends SlytherServerMessageBase {
     private Snake snake;
     private boolean turnDirection;

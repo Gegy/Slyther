@@ -4,6 +4,7 @@ import net.gegy1000.slyther.game.ConfigHandler;
 import net.gegy1000.slyther.game.Game;
 import net.gegy1000.slyther.game.LeaderboardEntry;
 import net.gegy1000.slyther.game.entity.Entity;
+import net.gegy1000.slyther.game.entity.Sector;
 import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.game.entity.SnakePoint;
 import net.gegy1000.slyther.network.message.server.MessageUpdateLeaderboard;
@@ -28,7 +29,7 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
 
     private long lastLeaderboardUpdateTime;
 
-    private int currentSnakeId;
+    private short currentSnakeId;
 
     private float[] fpsls;
     private float[] fmlts;
@@ -135,8 +136,8 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
 
     public ServerSnake createSnake(ConnectedClient client) {
         int spawnFuzz = configuration.gameRadius / 4;
-        int posX = (rng.nextInt(spawnFuzz) - spawnFuzz / 2);
-        int posY = (rng.nextInt(spawnFuzz) - spawnFuzz / 2);
+        int posX = 0;//(rng.nextInt(spawnFuzz) - spawnFuzz / 2);
+        int posY = 0;//(rng.nextInt(spawnFuzz) - spawnFuzz / 2);
         List<SnakePoint> points = new ArrayList<>();
         for (int i = 1; i >= 0; i--) {
             points.add(new SnakePoint(this, posX + i * 10, posY));
@@ -176,7 +177,17 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
     public List<ConnectedClient> getTrackingClients(Entity entity) {
         List<ConnectedClient> tracking = new ArrayList<>();
         for (ConnectedClient client : clients) {
-            if (client.tracking.contains(entity)) {
+            if (client.trackingEntities.contains(entity)) {
+                tracking.add(client);
+            }
+        }
+        return tracking;
+    }
+
+    public List<ConnectedClient> getTrackingClients(Sector<?> sector) {
+        List<ConnectedClient> tracking = new ArrayList<>();
+        for (ConnectedClient client : clients) {
+            if (client.trackingSectors.contains(sector)) {
                 tracking.add(client);
             }
         }
@@ -189,6 +200,18 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
             client.untrack(entity);
         }
         super.removeEntity(entity);
+    }
+
+    @Override
+    public void addEntity(Entity<?> entity) {
+        super.addEntity(entity);
+        for (Sector sector : getSectors()) {
+            if (entity.canMove() && entity.shouldTrack(sector)) {
+                for (ConnectedClient client : getTrackingClients(sector)) {
+                    client.track(entity);
+                }
+            }
+        }
     }
 
     @Override
@@ -232,13 +255,13 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
     }
 
     @Override
-    public float getMamu() {
-        return configuration.mamu;
+    public float getBaseSnakeTurnSpeed() {
+        return configuration.snakeTurnSpeed;
     }
 
     @Override
-    public float getMamu2() {
-        return configuration.mamu2;
+    public float getBasePreyTurnSpeed() {
+        return configuration.preyTurnSpeed;
     }
 
     @Override

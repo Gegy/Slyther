@@ -15,7 +15,7 @@ public class ClientPrey extends Prey<SlytherClient> {
         prevFy = fy;
         prevPosX = renderX;
         prevPosY = renderY;
-        float turnSpeed = game.getMamu2() * delta;
+        float turnSpeed = game.getBasePreyTurnSpeed() * delta;
         float moveAmount = speed * delta / 4;
         if (lastDelta > 0) {
             if (ftg > 0) {

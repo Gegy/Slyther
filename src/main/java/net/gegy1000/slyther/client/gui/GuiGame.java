@@ -4,7 +4,6 @@ import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.LeaderboardEntry;
-import net.gegy1000.slyther.game.SkinColor;
 import net.gegy1000.slyther.game.entity.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -121,7 +120,7 @@ public class GuiGame extends Gui {
                     Color color = food.color;
                     float size = (food.size / 5.0F) * food.rad * 0.25F;
                     GL11.glPushMatrix();
-                    GL11.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), globalAlpha * food.fade);
+                    GL11.glColor4f(color.red, color.green, color.blue, globalAlpha * food.fade);
                     GL11.glScalef(size, size, 1.0F);
                     float x = renderX / size;
                     float y = renderY / size;
@@ -136,7 +135,7 @@ public class GuiGame extends Gui {
                     Color color = prey.color;
                     float size = (prey.size / 10.0F) * prey.rad;
                     GL11.glPushMatrix();
-                    GL11.glColor4f(color.getRed(), color.getGreen(), color.getBlue(), globalAlpha * prey.fr);
+                    GL11.glColor4f(color.red, color.green, color.blue, globalAlpha * prey.fr);
                     GL11.glScalef(size, size, 1.0F);
                     float x = posX / size;
                     float y = posY / size;
@@ -198,13 +197,13 @@ public class GuiGame extends Gui {
                     float G = (float) (snake.cfl + (1.0F - Math.ceil((snake.chl + snake.fchl) / 0.25F) * 0.25F));
                     float K = 0;
                     float partSeparation = snake.partSeparation * client.qsm;
-                    SkinColor[] pattern = snake.pattern;
+                    Color[] pattern = snake.pattern;
                     for (int pointIndex = snake.points.size() - 1; pointIndex >= 0; pointIndex--) {
                         SnakePoint point = snake.points.get(pointIndex);
                         lastX = x;
                         lastY = y;
-                        x = point.getRenderX(frameDelta) + point.fx;
-                        y = point.getRenderY(frameDelta) + point.fy;
+                        x = point.getRenderX(frameDelta) + point.getRenderFX(frameDelta);
+                        y = point.getRenderY(frameDelta) + point.getRenderFY(frameDelta);
                         if (G > -0.25F) {
                             lastAverageX = averageX;
                             lastAverageY = averageY;
@@ -274,7 +273,7 @@ public class GuiGame extends Gui {
                         pointX = (xs.get(pointIndex));
                         pointY = (ys.get(pointIndex));
                         if (pointX >= renderHandler.snakeMinX && pointX <= renderHandler.snakeMaxX && pointY >= renderHandler.snakeMinY && pointY <= renderHandler.snakeMaxY) {
-                            SkinColor color = pattern[pointIndex % pattern.length];
+                            Color color = pattern[pointIndex % pattern.length];
                             float colorMultipler = 1.0F;
                             float offset = (pointIndex / 3.0F % 6.0F);
                             if (offset >= 3.0F) {
@@ -490,6 +489,7 @@ public class GuiGame extends Gui {
         if (key == Keyboard.KEY_BACK || key == Keyboard.KEY_ESCAPE) {
             client.close();
             closeGui();
+            client.openGui(new GuiMainMenu());
         }
     }
 

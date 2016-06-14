@@ -9,8 +9,19 @@ import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
 public class MessageUpdateSnakeLength extends SlytherServerMessageBase {
+    private Snake<?> snake;
+
+    public MessageUpdateSnakeLength() {
+    }
+
+    public MessageUpdateSnakeLength(Snake<?> snake) {
+        this.snake = snake;
+    }
+
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
+        buffer.writeUInt16(snake.id);
+        buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
     }
 
     @Override

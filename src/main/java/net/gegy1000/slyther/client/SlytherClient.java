@@ -38,8 +38,8 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     public float NSP1;
     public float NSP2;
     public float NSP3;
-    public float MAMU;
-    public float MAMU2;
+    public float SNAKE_TURN_SPEED;
+    public float PREY_TURN_SPEED;
     public float CST;
     public int PROTOCOL_VERSION;
 
@@ -68,7 +68,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
 
     public long lastTickTime;
     public boolean lagging;
-    public float lagMultiplier;
+    public float lagMultiplier = 1.0F;
     public float errorTime;
     public float lastTicks;
     public float ticks;
@@ -283,7 +283,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         player = null;
         lagging = false;
         globalScale = INITIAL_SCALE;
-        lagMultiplier = 0.0F;
+        lagMultiplier = 1.0F;
         zoomOffset = 0.0F;
         globalAlpha = 0.0F;
         ServerHandler.INSTANCE.pingServers();
@@ -314,7 +314,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         }
     }
 
-    public void setup(int gameRadius, int mscps, int sectorSize, int sectorCountAlongEdge, float spangDV, float nsp1, float nsp2, float nsp3, float mamu, float mamu2, float cst, int protocolVersion) {
+    public void setup(int gameRadius, int mscps, int sectorSize, int sectorCountAlongEdge, float spangDV, float nsp1, float nsp2, float nsp3, float snakeTurnSpeed, float preyTurnSpeed, float cst, int protocolVersion) {
         GAME_RADIUS = gameRadius;
         SECTOR_SIZE = sectorSize;
         SECTORS_ALONG_EDGE = sectorCountAlongEdge;
@@ -322,8 +322,8 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         NSP1 = nsp1;
         NSP2 = nsp2;
         NSP3 = nsp3;
-        MAMU = mamu;
-        MAMU2 = mamu2;
+        SNAKE_TURN_SPEED = snakeTurnSpeed;
+        PREY_TURN_SPEED = preyTurnSpeed;
         CST = cst;
         PROTOCOL_VERSION = protocolVersion;
         setMSCPS(mscps);
@@ -360,8 +360,8 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     }
 
     public void update() {
-        if (networkManager != null) {
             runTasks();
+        if (networkManager != null) {
             long time = System.currentTimeMillis();
             float lastDelta2;
             delta = (time - lastTickTime) / 8.0F;
@@ -417,8 +417,8 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
             }
             if (player != null) {
                 if (!networkManager.waitingForPingReturn) {
-                    if (time - networkManager.lastPingTime > 250) {
-                        networkManager.lastPingTime = time;
+                    if (time - networkManager.lastPingSendTime > 250) {
+                        networkManager.lastPingSendTime = time;
                         networkManager.ping();
                     }
                 }
@@ -553,13 +553,13 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     }
 
     @Override
-    public float getMamu() {
-        return MAMU;
+    public float getBaseSnakeTurnSpeed() {
+        return SNAKE_TURN_SPEED;
     }
 
     @Override
-    public float getMamu2() {
-        return MAMU2;
+    public float getBasePreyTurnSpeed() {
+        return PREY_TURN_SPEED;
     }
 
     @Override

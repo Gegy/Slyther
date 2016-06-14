@@ -1,34 +1,41 @@
 package net.gegy1000.slyther.game;
 
 public enum Color {
-    PURPLE(0x9362C3),
-    BLUE(0x8D96F7),
-    CYAN(0x7CC9C9),
-    LIME(0x80FE80),
-    YELLOW(0xE5E56B),
-    ORANGE(0xFA9D5E),
-    PINK(0xF58A8A),
-    RED(0xFC3F3F),
-    MAGENTA(0xE42BFD);
+    LIGHT_PURPLE_1(192, 128, 255),
+    LIGHT_BLUE_1(144, 153, 255),
+    CYAN(128, 208, 208),
+    LIGHT_GREEN(128, 255, 128),
+    LIGHT_YELLOW_1(238, 238, 122),
+    LIGHT_ORANGE(255, 160, 96),
+    PINK(255, 144, 144),
+    LIGHT_RED(255, 64, 64),
+    MAGENTA(224, 48, 224),
+    WHITE(255, 255, 255),
+    LIGHT_BLUE_2(144, 153, 255),
+    GRAY_1(80, 80, 80),
+    YELLOW(255, 192, 80),
+    GREEN_BLUE(40, 136, 96),
+    LIGHT_BLUE_3(100, 117, 255),
+    LIGHT_BLUE_4(120, 134, 255),
+    LIGHT_BLUE_5(72, 84, 255),
+    LIGHT_PURPLE_2(160, 80, 255),
+    LIGHT_YELLOW_2(255, 224, 64),
+    BLUE_1(56, 68, 255),
+    BLUE_2(56, 68, 255),
+    DARK_PURPLE(78, 35, 192),
+    ORANGE(255, 86, 0),
+    LIGHT_BLUE_6(101, 200, 232),
+    GRAY_2(128, 132, 144),
+    GREEN(60, 192, 72),
+    LUMO_GREEN(0, 255, 83),
+    SLUG_RED(217, 69, 69);
 
-    float red, green, blue;
+    public float red, green, blue;
 
-    Color(int color) {
-        red = ((color >> 16) & 0x0000FF) / 255.0F;
-        green = ((color >> 8) & 0x0000FF) / 255.0F;
-        blue = (color & 0x0000FF) / 255.0F;
-    }
-
-    public float getRed() {
-        return red;
-    }
-
-    public float getGreen() {
-        return green;
-    }
-
-    public float getBlue() {
-        return blue;
+    Color(int red, int green, int blue) {
+        this.red = red / 255.0F;
+        this.green = green / 255.0F;
+        this.blue = blue / 255.0F;
     }
 
     public int toHex() {

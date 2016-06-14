@@ -1,7 +1,7 @@
 package net.gegy1000.slyther.game;
 
 public class SkinDetails {
-    public SkinColor[] pattern;
+    public Color[] pattern;
     public boolean hasAntenna;
     public int antennaLength;
     public int antennaPrimaryColor;
@@ -17,7 +17,7 @@ public class SkinDetails {
     public String faceTexture;
     public float antennaScale = 1.0F;
 
-    public SkinDetails(SkinColor[] pattern) {
+    public SkinDetails(Color[] pattern) {
         this.pattern = pattern;
     }
 }

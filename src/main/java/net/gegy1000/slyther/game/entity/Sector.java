@@ -35,7 +35,7 @@ public abstract class Sector<GME extends Game<?, ?>> {
             int sectorY = (int) (entity.posY / game.getSectorSize());
             if (sectorX == posX && sectorY == posY) {
                 if (entity instanceof Food) {
-                    tracker.tracking.add(entity);
+                    tracker.trackingEntities.add(entity);
                 } else {
                     tracker.track(entity);
                 }
@@ -50,11 +50,16 @@ public abstract class Sector<GME extends Game<?, ?>> {
             int sectorY = (int) (entity.posY / game.getSectorSize());
             if (sectorX == posX && sectorY == posY) {
                 if (entity instanceof Food) {
-                    tracker.tracking.remove(entity);
+                    tracker.trackingEntities.remove(entity);
                 } else {
                     tracker.untrack(entity);
                 }
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Sector && ((Sector) o).posX == posX && ((Sector) o).posY == posY;
     }
 }

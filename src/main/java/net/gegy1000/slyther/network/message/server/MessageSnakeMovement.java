@@ -10,6 +10,7 @@ import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
+//4 per second
 public class MessageSnakeMovement extends SlytherServerMessageBase {
     private Snake<?> snake;
     private boolean absolute;
@@ -33,8 +34,8 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
             buffer.writeUInt16((int) snake.posX + gameRadius);
             buffer.writeUInt16((int) snake.posY + gameRadius);
         } else {
-            buffer.writeUInt8((int) ((snake.posX - head.posX) + 128));
-            buffer.writeUInt8((int) ((snake.posY - head.posY) + 128));
+            buffer.writeUInt8(Math.min(255, Math.max(0, (int) ((snake.posX - head.posX) + 128))));
+            buffer.writeUInt8(Math.min(255, Math.max(0, (int) ((snake.posY - head.posY) + 128))));
         }
         if (updateLength) {
             buffer.writeUInt24((int) (snake.fam * 0xFFFFFF));
@@ -79,6 +80,8 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
                 float fy = (snake.posY + snake.fy) - point.posY;
                 point.fx += fx;
                 point.fy += fy;
+                point.prevFx = point.fx;
+                point.prevFy = point.fy;
                 point.exs[point.eiu] = fx;
                 point.eys[point.eiu] = fy;
                 point.efs[point.eiu] = 0;
@@ -94,15 +97,19 @@ public class MessageSnakeMovement extends SlytherServerMessageBase {
                     float fx = point.posX;
                     float fy = point.posY;
                     if (i <= 4) {
-                        distMultiplier = client.CST * i / 4.0F;
+                        distMultiplier = client.getCST() * i / 4.0F;
                     }
                     point.posX += (prevPoint.posX - point.posX) * distMultiplier;
                     point.posY += (prevPoint.posY - point.posY) * distMultiplier;
+                    point.prevPosX = point.posX;
+                    point.prevPosY = point.posY;
                     if (snake.isInView) {
                         fx -= point.posX;
                         fy -= point.posY;
                         point.fx += fx;
                         point.fy += fy;
+                        point.prevFx = fx;
+                        point.prevFy = fy;
                         point.exs[point.eiu] = fx;
                         point.eys[point.eiu] = fy;
                         point.efs[point.eiu] = 0;

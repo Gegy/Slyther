@@ -4,8 +4,8 @@ import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.game.entity.ClientSnake;
 import net.gegy1000.slyther.client.gui.element.ArrowElement;
 import net.gegy1000.slyther.client.gui.element.ButtonElement;
+import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.game.Skin;
-import net.gegy1000.slyther.game.SkinColor;
 import net.gegy1000.slyther.game.entity.SnakePoint;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -111,7 +111,7 @@ public class GuiSelectSkin extends Gui {
         float G = (float) (snake.cfl + (1.0F - Math.ceil((snake.chl + snake.fchl) / 0.25F) * 0.25F));
         float K = 0;
         float O = snake.wantedSeperation * client.qsm;
-        SkinColor[] pattern = snake.pattern;
+        Color[] pattern = snake.pattern;
         for (int pointIndex = snake.points.size() - 1; pointIndex >= 0; pointIndex--) {
             SnakePoint point = snake.points.get(pointIndex);
             lastX = x;
@@ -181,7 +181,7 @@ public class GuiSelectSkin extends Gui {
         for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
             pointX = (xs.get(pointIndex));
             pointY = (ys.get(pointIndex));
-            SkinColor color = pattern[pointIndex % pattern.length];
+            Color color = pattern[pointIndex % pattern.length];
             float colorMultipler = 1.0F;
             float offset = (pointIndex / 3.0F % 6.0F);
             if (offset >= 3.0F) {

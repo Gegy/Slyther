@@ -15,7 +15,7 @@ public enum SkinHandler {
 
     SkinHandler() {
         for (Skin skin : Skin.values()) {
-            PATTERNS.put(skin, new SkinDetails(new SkinColor[] { SkinColor.values()[skin.ordinal() % SkinColor.values().length] }));
+            PATTERNS.put(skin, new SkinDetails(new Color[] { Color.values()[skin.ordinal() % Color.values().length] }));
         }
         try {
             SkinPatternsContainer patterns = new Gson().fromJson(new InputStreamReader(SkinHandler.class.getResourceAsStream("/data/skin_patterns.json")), SkinPatternsContainer.class);

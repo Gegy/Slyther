@@ -68,4 +68,9 @@ public abstract class Food<GME extends Game<?, ?>> extends Entity<GME> {
     public float getRenderY(double frameDelta) {
         return (float) (prevPosY + frameDelta * (renderY - prevPosY));
     }
+
+    @Override
+    public boolean canMove() {
+        return false;
+    }
 }

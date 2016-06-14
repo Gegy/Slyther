@@ -5,6 +5,7 @@ import net.gegy1000.slyther.game.entity.Snake;
 import net.gegy1000.slyther.game.entity.SnakePoint;
 import net.gegy1000.slyther.network.message.server.MessageSnakeMovement;
 import net.gegy1000.slyther.network.message.server.MessageUpdateSnake;
+import net.gegy1000.slyther.network.message.server.MessageUpdateSnakeLength;
 import net.gegy1000.slyther.server.ConnectedClient;
 import net.gegy1000.slyther.server.SlytherServer;
 
@@ -49,8 +50,23 @@ public class ServerSnake extends Snake<SlytherServer> {
         for (ConnectedClient client : game.getTrackingClients(this)) {
             client.send(new MessageUpdateSnake(this, turnDirectionChange, angleChange, wantedAngleChange, speedChange));
         }
-        while (fam > 1.0) {
-            fam -= 1.0;
+        boolean eaten = false;
+        float eatDist = scale * 60.0F;
+        for (Food<?> food : game.getFoods()) {
+            float deltaX = posX - food.posX;
+            float deltaY = posY - food.posY;
+            float deltaPos = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (deltaPos < eatDist) {
+                food.eaten = true;
+                food.eater = this;
+                for (ConnectedClient client : game.getTrackingClients(food)) {
+                    food.stopTracking(client);
+                }
+                eaten = true;
+            }
+        }
+        while (fam > game.getFMLT(sct)) {
+            fam -= game.getFMLT(sct);
             sct++;
             lengthIncrements++;
         }
@@ -64,7 +80,12 @@ public class ServerSnake extends Snake<SlytherServer> {
             lengthIncrements--;
         }
         for (ConnectedClient client : game.getTrackingClients(this)) {
-            client.send(new MessageSnakeMovement(this, absolutePosition, lengthIncrements > 0));
+            client.send(new MessageSnakeMovement(this, absolutePosition, lengthIncrement));
+        }
+        if (eaten && !lengthIncrement) {
+            for (ConnectedClient client : game.getTrackingClients(this)) {
+                client.send(new MessageUpdateSnakeLength(this));
+            }
         }
         if (!lengthIncrement) {
             points.remove(points.size() - 1);
@@ -74,7 +95,7 @@ public class ServerSnake extends Snake<SlytherServer> {
         if (speedTurnMultiplier > 1.0F) {
             speedTurnMultiplier = 1.0F;
         }
-        float turnSpeed = game.getMamu() * scaleTurnMultiplier * speedTurnMultiplier;
+        float turnSpeed = game.getBaseSnakeTurnSpeed() * scaleTurnMultiplier * speedTurnMultiplier;
         if (angle != wantedAngle) {
             turnDirection = angle > wantedAngle ? 2 : 1;
         } else {
@@ -83,19 +104,6 @@ public class ServerSnake extends Snake<SlytherServer> {
         angle = wantedAngle;
         for (SnakePoint point : points) {
             point.update();
-        }
-        float eatDist = scale * 60.0F;
-        for (Food<?> food : game.getFoods()) {
-            float deltaX = posX - food.posX;
-            float deltaY = posY - food.posY;
-            float deltaPos = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            if (deltaPos < eatDist) {
-                food.eaten = true;
-                food.eater = this;
-                for (ConnectedClient client : game.getTrackingClients(food)) {
-                    food.stopTracking(client);
-                }
-            }
         }
         return false;
     }

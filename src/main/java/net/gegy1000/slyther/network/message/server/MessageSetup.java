@@ -18,8 +18,8 @@ public class MessageSetup extends SlytherServerMessageBase {
         buffer.writeUInt16((int) (server.configuration.nsp1 * 100));
         buffer.writeUInt16((int) (server.configuration.nsp2 * 100));
         buffer.writeUInt16((int) (server.configuration.nsp3 * 100));
-        buffer.writeUInt16((int) (server.configuration.mamu * 1000));
-        buffer.writeUInt16((int) (server.configuration.mamu2 * 1000));
+        buffer.writeUInt16((int) (server.configuration.snakeTurnSpeed * 1000));
+        buffer.writeUInt16((int) (server.configuration.preyTurnSpeed * 1000));
         buffer.writeUInt16((int) (server.configuration.cst * 1000));
         buffer.writeUInt8(client.protocolVersion - 1);
     }

@@ -174,7 +174,7 @@
       }
     },
     {
-      "skin": "WHITE_BLUE_RED_STRIPE",
+      "skin": "FRANCE",
       "details": {
         "pattern": [
           "LIGHT_BLUE_3",
@@ -208,7 +208,7 @@
       }
     },
     {
-      "skin": "YELLOW_WHITE_ORANGE_STRIPE",
+      "skin": "D_IVOIRE",
       "details": {
         "pattern": [
           "LIGHT_ORANGE",
@@ -856,7 +856,7 @@
       }
     },
     {
-      "skin": "WHITE_RED_GREEN_STRIPE",
+      "skin": "BULGARIA",
       "details": {
         "pattern": [
           "LIGHT_RED",
@@ -948,6 +948,26 @@
           "LIGHT_YELLOW_2",
           "LIGHT_YELLOW_2",
           "LIGHT_YELLOW_2"
+        ],
+        "hasAntenna": false,
+        "antennaLength": 0,
+        "antennaPrimaryColor": 0,
+        "antennaSecondaryColor": 0,
+        "eyeColor": 16777215,
+        "abrot": false,
+        "atia": 0.0,
+        "atwg": false,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0,
+        "antennaScale": 1.0
+      }
+    },
+    {
+      "skin": "SLUG",
+      "details": {
+        "pattern": [
+          "SLUG_RED"
         ],
         "hasAntenna": false,
         "antennaLength": 0,

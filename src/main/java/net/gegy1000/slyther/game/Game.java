@@ -55,6 +55,25 @@ public abstract class Game<NET extends NetworkManager, CFG extends Configuration
         sectors.remove(sector);
     }
 
+    public Sector<?> getSector(int x, int y) {
+        for (Sector<?> sector : sectors) {
+            if (sector.posX == x && sector.posY == y) {
+                return sector;
+            }
+        }
+        return null;
+    }
+
+    public List<Entity> getEntitiesInSector(Sector sector) {
+        List<Entity> entities = new ArrayList<>();
+        for (Entity entity : this.entities) {
+            if (entity.shouldTrack(sector)) {
+                entities.add(entity);
+            }
+        }
+        return entities;
+    }
+
     public void addEntity(Entity<?> entity) {
         if (!entities.contains(entity)) {
             entities.add(entity);
@@ -143,8 +162,10 @@ public abstract class Game<NET extends NetworkManager, CFG extends Configuration
     public abstract float getNsp1();
     public abstract float getNsp2();
     public abstract float getNsp3();
-    public abstract float getMamu();
-    public abstract float getMamu2();
+
+    public abstract float getBaseSnakeTurnSpeed();
+
+    public abstract float getBasePreyTurnSpeed();
     public abstract float getCST();
 
     public abstract float getFPSL(int sct);

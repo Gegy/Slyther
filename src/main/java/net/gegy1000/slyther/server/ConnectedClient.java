@@ -20,13 +20,13 @@ public class ConnectedClient {
     public WebSocket socket;
     public long lastPacketTime = System.currentTimeMillis();
     public SlytherServer server;
-    public float gsc = 0.9F;
+    public float scale = 0.9F;
     public int protocolVersion;
     public int rank;
     public float viewDistance;
     public int id;
 
-    public List<Entity> tracking = new ArrayList<>();
+    public List<Entity> trackingEntities = new ArrayList<>();
     public List<Sector> trackingSectors = new ArrayList<>();
 
     public ConnectedClient(SlytherServer server, WebSocket socket, int id) {
@@ -44,14 +44,17 @@ public class ConnectedClient {
         this.protocolVersion = protocolVersion;
         if (protocolVersion >= 8) {
             send(new MessageSetup());
-            snake = server.createSnake(this);
-            track(snake);
+            server.scheduleTask(() -> {
+                snake = server.createSnake(this);
+                track(snake);
+                return null;
+            });
         }
     }
 
     public void track(Entity entity) {
-        if (!tracking.contains(entity)) {
-            tracking.add(entity);
+        if (!trackingEntities.contains(entity)) {
+            trackingEntities.add(entity);
             entity.startTracking(this);
         }
     }
@@ -64,7 +67,7 @@ public class ConnectedClient {
     }
 
     public void untrack(Entity entity) {
-        if (tracking.remove(entity)) {
+        if (trackingEntities.remove(entity)) {
             entity.stopTracking(this);
         }
     }
@@ -78,20 +81,20 @@ public class ConnectedClient {
     public void update() {
         if (snake != null) {
             float newScale = 0.4F / Math.max(1.0F, (snake.sct + 16.0F) / 36.0F) + 0.5F;
-            if (gsc != newScale) {
-                if (gsc < newScale) {
-                    gsc += 0.0001F;
-                    if (gsc > newScale) {
-                        gsc = newScale;
+            if (scale != newScale) {
+                if (scale < newScale) {
+                    scale += 0.0001F;
+                    if (scale > newScale) {
+                        scale = newScale;
                     }
-                } else if (gsc > newScale) {
-                    gsc -= 0.0001F;
-                    if (gsc < newScale) {
-                        gsc = newScale;
+                } else if (scale > newScale) {
+                    scale -= 0.0001F;
+                    if (scale < newScale) {
+                        scale = newScale;
                     }
                 }
             }
-            viewDistance = 700.0F / gsc;
+            viewDistance = 700.0F / scale;
             for (Sector sector : server.getSectors()) {
                 if (sector.shouldTrack(this)) {
                     trackSector(sector);
@@ -99,8 +102,26 @@ public class ConnectedClient {
                     untrackSector(sector);
                 }
             }
-            for (Entity entity : server.getEntities()) {
-                entity.updateTrackers(this);
+            List<Entity> entities = new ArrayList<>();
+            for (Sector sector : trackingSectors) {
+                entities.addAll(server.getEntitiesInSector(sector));
+            }
+            List<Entity> untrack = new ArrayList<>();
+            List<Entity> track = new ArrayList<>();
+            for (Entity tracking : trackingEntities) {
+                if (tracking.canMove()) {
+                    if (!entities.contains(tracking)) {
+                        untrack.add(tracking);
+                    } else {
+                        track.add(tracking);
+                    }
+                }
+            }
+            for (Entity entity : untrack) {
+                untrack(entity);
+            }
+            for (Entity entity : track) {
+                track(entity);
             }
         }
     }
@@ -119,8 +140,8 @@ public class ConnectedClient {
                 Log.error("An error occurred while sending message {} to {} ({})", message.getClass().getName(), name, id);
                 Log.catching(e);
             }
-        } else {
-            server.removeClient(this);
+        } else if (server.clients.contains(this)) {
+            server.removeClient(socket);
         }
     }
 }

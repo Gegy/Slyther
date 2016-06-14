@@ -75,9 +75,9 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     public boolean isInView;
     public boolean antennaShown;
     public String antennaTexture;
-    public SkinColor[] pattern;
+    public Color[] pattern;
     public SkinDetails skinDetails;
-    public SkinColor color;
+    public Color color;
     public int eyeRadius;
     public float pupilRadius;
     public float pma;
@@ -149,7 +149,7 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
 
         SkinDetails details = SkinHandler.INSTANCE.getDetails(skin);
 
-        SkinColor[] pattern = new SkinColor[] { SkinColor.values()[skin.ordinal() % SkinColor.values().length] };
+        Color[] pattern = new Color[] { Color.values()[skin.ordinal() % Color.values().length] };
 
         if (details != null) {
             antenna = details.hasAntenna;
@@ -201,7 +201,7 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     }
 
     public int getLength() {
-        return (int) Math.floor(15.0F * (game.getFPSL(sct) + fam / game.getFMLT(sct) - 1.0F) - 5.0F);
+        return (int) Math.floor((15.0F * ((game.getFPSL(sct) + (fam / game.getFMLT(sct))) - 1.0F)) - 5.0F);
     }
 
     public float getRenderAngle(double frameDelta) {
@@ -231,7 +231,7 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     }
 
     @Override
-    public boolean shouldTrack(Sector sector, int sectorX, int sectorY) {
+    public boolean shouldTrack(Sector sector) {
         for (SnakePoint point : points) {
             if (point.shouldTrack(sector)) {
                 return true;
@@ -242,7 +242,7 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
 
     @Override
     public int compareTo(Snake snake) {
-        return Integer.compare(getLength(), snake.getLength());
+        return Integer.compare(snake.getLength(), getLength());
     }
 
     @Override
@@ -258,5 +258,10 @@ public abstract class Snake<GME extends Game<?, ?>> extends Entity<GME> implemen
     @Override
     public boolean equals(Object object) {
         return object instanceof Snake && id == ((Snake) object).id;
+    }
+
+    @Override
+    public boolean canMove() {
+        return true;
     }
 }
