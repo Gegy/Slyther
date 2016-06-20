@@ -982,6 +982,58 @@
         "swell": 0.0,
         "antennaScale": 1.0
       }
+    },
+    {
+      "skin": "GOOGLE_PLAY",
+      "details": {
+        "pattern": [
+          "CYAN",
+          "CYAN",
+          "CYAN",
+          "CYAN",
+          "CYAN",
+          "CYAN",
+          "CYAN",
+          "CYAN",
+          "LIGHT_GREEN",
+          "LIGHT_GREEN",
+          "LIGHT_GREEN",
+          "LIGHT_GREEN",
+          "LIGHT_GREEN",
+          "LIGHT_GREEN",
+          "LIGHT_GREEN",
+          "LIGHT_GREEN",
+          "LIGHT_YELLOW_1",
+          "LIGHT_YELLOW_1",
+          "LIGHT_YELLOW_1",
+          "LIGHT_YELLOW_1",
+          "LIGHT_YELLOW_1",
+          "LIGHT_YELLOW_1",
+          "LIGHT_YELLOW_1",
+          "LIGHT_YELLOW_1",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED"
+        ],
+        "hasAntenna": true,
+        "antennaLength": 9,
+        "antennaPrimaryColor": 10280,
+        "antennaSecondaryColor": 8442064,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0,
+        "antennaTexture": "play",
+        "antennaScale": 1.0
+      }
     }
   ]
 }

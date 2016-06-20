@@ -42,5 +42,6 @@ public enum Skin {
     BRIGHT_YELLOW,
     PEWDIEPIE,
     JELLY,
-    SLUG
+    SLUG,
+    GOOGLE_PLAY
 }

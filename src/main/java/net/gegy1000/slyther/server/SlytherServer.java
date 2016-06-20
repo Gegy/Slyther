@@ -154,12 +154,13 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
 
     public void removeClient(ConnectedClient client) {
         scheduleTask(() -> {
-            clients.remove(client);
-            if (client != null) {
-                if (client.name != null) {
-                    Log.debug("{} ({}) disconnected.", client.name, client.id);
+            if (clients.remove(client)) {
+                if (client != null) {
+                    if (client.name != null) {
+                        Log.debug("{} ({}) disconnected.", client.name, client.id);
+                    }
+                    removeEntity(client.snake);
                 }
-                removeEntity(client.snake);
             }
             return null;
         });
