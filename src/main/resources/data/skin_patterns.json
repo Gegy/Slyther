@@ -41,8 +41,8 @@
       "skin": "LIGHT_BLUE_STARS",
       "details": {
         "pattern": [
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2"
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS"
         ],
         "hasAntenna": false,
         "antennaLength": 0,
@@ -82,7 +82,7 @@
       "skin": "SILVER_GOLD_OUTLINE",
       "details": {
         "pattern": [
-          "GRAY_2"
+          "SILVER_GOLD_OUTLINE"
         ],
         "hasAntenna": false,
         "antennaLength": 0,
@@ -538,7 +538,7 @@
       "skin": "JELLY",
       "details": {
         "pattern": [
-          "LUMO_GREEN"
+          "JELLY_GREEN"
         ],
         "hasAntenna": false,
         "antennaLength": 0,
@@ -649,12 +649,12 @@
       "skin": "LIGHT_BLUE_BLUE_STRIPE_STARS",
       "details": {
         "pattern": [
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2",
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS",
           "BLUE_1",
           "BLUE_2",
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2",
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS",
           "BLUE_2",
           "BLUE_1"
         ],
@@ -687,15 +687,15 @@
           "LIGHT_RED",
           "WHITE",
           "LIGHT_RED",
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2",
-          "LIGHT_BLUE_2"
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS",
+          "LIGHT_BLUE_STARS"
         ],
         "hasAntenna": false,
         "antennaLength": 0,
@@ -1003,14 +1003,14 @@
           "LIGHT_GREEN",
           "LIGHT_GREEN",
           "LIGHT_GREEN",
-          "LIGHT_YELLOW_1",
-          "LIGHT_YELLOW_1",
-          "LIGHT_YELLOW_1",
-          "LIGHT_YELLOW_1",
-          "LIGHT_YELLOW_1",
-          "LIGHT_YELLOW_1",
-          "LIGHT_YELLOW_1",
-          "LIGHT_YELLOW_1",
+          "LIGHT_ORANGE",
+          "LIGHT_ORANGE",
+          "LIGHT_ORANGE",
+          "LIGHT_ORANGE",
+          "LIGHT_ORANGE",
+          "LIGHT_ORANGE",
+          "LIGHT_ORANGE",
+          "LIGHT_ORANGE",
           "LIGHT_RED",
           "LIGHT_RED",
           "LIGHT_RED",
@@ -1032,7 +1032,37 @@
         "pma": 2.3,
         "swell": 0.0,
         "antennaTexture": "play",
-        "antennaScale": 1.0
+        "antennaScale": 1.5
+      }
+    },
+    {
+      "skin": "UNITED_KINGDOM",
+      "details": {
+        "pattern": [
+          "UK",
+          "UK",
+          "UK",
+          "UK",
+          "UK",
+          "UK",
+          "UK",
+          "UK",
+          "WHITE",
+          "WHITE"
+        ],
+        "hasAntenna": true,
+        "antennaLength": 9,
+        "antennaPrimaryColor": 5255216,
+        "antennaSecondaryColor": 16732248,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0,
+        "antennaTexture": "united_kingdom",
+        "antennaScale": 1.5
       }
     }
   ]

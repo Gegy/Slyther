@@ -74,7 +74,7 @@ public class GuiSelectSkin extends Gui {
         backgroundX++;
         int snakePointIndex = 0;
         for (SnakePoint point : snake.points) {
-            point.posY = (float) (15.0F * Math.cos(snakePointIndex / 4.0F + client.frameTicks / 4.0F) * (1.0F - ((float) snakePointIndex / snake.points.size())));
+            point.posY = (float) (15.0F * Math.cos(snakePointIndex / 4.0F + (client.frameTicks) / 4.0F) * (1.0F - ((float) snakePointIndex / snake.points.size())));
             snakePointIndex++;
         }
         textureManager.bindTexture("/textures/background.png");
@@ -272,8 +272,8 @@ public class GuiSelectSkin extends Gui {
                 }
             }
             antennaLength = snake.antennaX.length;
-            float prevX = snake.antennaX[antennaLength - 1];
-            float prevY = snake.antennaY[antennaLength - 1];
+            float prevX = snake.antennaX[0];
+            float prevY = snake.antennaY[0];
             beginConnectedLines(antennaScale * 5.0F, snake.antennaPrimaryColor);
             for (int i = 0; i < antennaLength; i++) {
                 x = snake.antennaX[i];
@@ -285,6 +285,8 @@ public class GuiSelectSkin extends Gui {
                 }
             }
             endConnectedLines();
+            prevX = snake.antennaX[0];
+            prevY = snake.antennaY[0];
             beginConnectedLines(antennaScale * 4.0F, snake.antennaSecondaryColor);
             for (int i = 0; i < antennaLength; i++) {
                 x = snake.antennaX[i];
@@ -298,6 +300,7 @@ public class GuiSelectSkin extends Gui {
             endConnectedLines();
             if (snake.antennaTexture != null) {
                 GL11.glTranslatef(snake.antennaX[antennaLength - 1], snake.antennaY[antennaLength - 1], 0.0F);
+                antennaScale = snake.scale * snake.antennaScale * 0.25F;
                 if (snake.antennaBottomRotate) {
                     float bottomAngle = (float) (Math.atan2(snake.antennaY[antennaLength - 1] - snake.antennaY[antennaLength - 2], snake.antennaX[antennaLength - 1] - snake.antennaX[antennaLength - 2]) - snake.antennaBottomAngle);
                     if (bottomAngle < 0 || bottomAngle >= SlytherClient.PI_2) {
@@ -312,9 +315,9 @@ public class GuiSelectSkin extends Gui {
                     }
                     snake.antennaBottomAngle = (float) ((snake.antennaBottomAngle + 0.15F * bottomAngle) % SlytherClient.PI_2);
                     GL11.glRotatef((float) Math.toDegrees(snake.antennaBottomAngle), 0.0F, 0.0F, 1.0F);
+                    GL11.glTranslatef(32.0F * antennaScale, 0.0F, 0.0F);
                 }
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                antennaScale = snake.scale * snake.antennaScale * 0.25F;
                 GL11.glScalef(antennaScale, antennaScale, 1.0F);
                 textureManager.bindTexture("/textures/" + snake.antennaTexture + ".png");
                 drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);

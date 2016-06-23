@@ -14,7 +14,7 @@ import java.util.List;
 
 public class GuiGame extends Gui {
     private int backgroundX;
-    private float prevZoomOffset;
+    private float zoomVelocity;
 
     @Override
     public void init() {
@@ -24,18 +24,26 @@ public class GuiGame extends Gui {
     public void render(float mouseX, float mouseY) {
         backgroundX++;
         if (client.player != null) {
-            client.zoomOffset += Mouse.getDWheel() * 0.0005F;
+            zoomVelocity += Mouse.getDWheel() * 0.0001F;
+            zoomVelocity *= 0.9F;
+            client.zoomOffset += zoomVelocity;
             if (client.zoomOffset > 1.0F) {
                 client.zoomOffset = 1.0F;
+                if (zoomVelocity > 0.0F) {
+                    zoomVelocity = 0.0F;
+                }
             } else if (client.zoomOffset < -0.75F) {
                 client.zoomOffset = -0.75F;
+                if (zoomVelocity < 0.0F) {
+                    zoomVelocity = 0.0F;
+                }
             }
         }
         double frameDelta = client.frameDelta;
         boolean loading = client.player == null;
         GL11.glPushMatrix();
         textureManager.bindTexture("/textures/background.png");
-        float globalScale = Math.max(0.075F, client.globalScale + (float) (prevZoomOffset + frameDelta * (client.zoomOffset - prevZoomOffset)));
+        float globalScale = Math.max(0.075F, client.globalScale + client.zoomOffset);
         GL11.glScalef(globalScale, globalScale, 1.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glTranslatef(renderHandler.centerX / globalScale, renderHandler.centerY / globalScale, 0.0F);
@@ -281,13 +289,13 @@ public class GuiGame extends Gui {
                             }
                             colorMultipler -= offset / 15.0F;
                             if (snake.dead) {
-                                offset = (pointIndex + (client.frameTicks * 2.0F)) % 20.0F;
+                                offset = (pointIndex + (client.frameTicks)) % 20.0F;
                                 if (offset > 10.0F) {
                                     offset = 10.0F - (offset - 10.0F);
                                 }
                                 colorMultipler += (offset - 5.0F) / 10.0F;
                             } else if (snake.speed > snake.accelleratingSpeed) {
-                                offset = (pointIndex + client.frameTicks) % 20.0F;
+                                offset = (pointIndex + client.frameTicks / 2) % 20.0F;
                                 if (offset > 10.0F) {
                                     offset = 10.0F - (offset - 10.0F);
                                 }
@@ -329,7 +337,7 @@ public class GuiGame extends Gui {
                         GL11.glTranslatef(originX, originY, 0.0F);
                         float faceScale = 0.2F;
                         GL11.glScalef(snake.scale * faceScale, snake.scale * faceScale, 1.0F);
-                        GL11.glRotatef((float) Math.toDegrees(snake.getRenderAngle(frameDelta) + (snake.eyeAngle / 10.0F)), 0.0F, 0.0F, 1.0F);
+                        GL11.glRotatef((float) Math.toDegrees(snake.angle), 0.0F, 0.0F, 1.0F);
                         GL11.glTranslatef(-5.0F / faceScale, 0.0F, 0.0F);
                         textureManager.bindTexture("/textures/" + snake.faceTexture + ".png");
                         drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
@@ -360,9 +368,9 @@ public class GuiGame extends Gui {
                             y = (float) (snake.antennaY[i - 1] + (Math.random() * 2.0F - 1));
                             float diffX = snake.antennaX[i] - x;
                             float diffY = snake.antennaY[i] - y;
-                            float ang = (float) Math.atan2(diffY, diffX);
-                            x += Math.cos(ang) * snake.scale * 4.0F;
-                            y += Math.sin(ang) * snake.scale * 4.0F;
+                            float angle = (float) Math.atan2(diffY, diffX);
+                            x += Math.cos(angle) * snake.scale * 4.0F;
+                            y += Math.sin(angle) * snake.scale * 4.0F;
                             snake.antennaVelocityX[i] += (x - snake.antennaX[i]) * 0.1F;
                             snake.antennaVelocityY[i] += (y - snake.antennaY[i]) * 0.1F;
                             snake.antennaX[i] += snake.antennaVelocityX[i];
@@ -371,17 +379,17 @@ public class GuiGame extends Gui {
                             snake.antennaVelocityY[i] *= 0.88F;
                             diffX = snake.antennaX[i] - snake.antennaX[i - 1];
                             diffY = snake.antennaY[i] - snake.antennaY[i - 1];
-                            float J = (float) Math.sqrt(diffX * diffX + diffY * diffY);
-                            if (J > snake.scale * 4.0F) {
-                                ang = (float) Math.atan2(diffY, diffX);
-                                snake.antennaX[i] = (float) (snake.antennaX[i - 1] + Math.cos(ang) * 4 * snake.scale);
-                                snake.antennaY[i] = (float) (snake.antennaY[i - 1] + Math.sin(ang) * 4 * snake.scale);
+                            float delta = (float) Math.sqrt(diffX * diffX + diffY * diffY);
+                            if (delta > snake.scale * 4.0F) {
+                                angle = (float) Math.atan2(diffY, diffX);
+                                snake.antennaX[i] = (float) (snake.antennaX[i - 1] + Math.cos(angle) * 4 * snake.scale);
+                                snake.antennaY[i] = (float) (snake.antennaY[i - 1] + Math.sin(angle) * 4 * snake.scale);
                             }
                         }
                         antennaLength = snake.antennaX.length;
-                        float prevX = snake.antennaX[antennaLength - 1];
-                        float prevY = snake.antennaY[antennaLength - 1];
-                        beginConnectedLines(antennaScale * 5.0F, snake.antennaPrimaryColor);
+                        float prevX = snake.antennaX[0];
+                        float prevY = snake.antennaY[0];
+                        beginConnectedLines(antennaScale * 5.0F * globalScale, snake.antennaPrimaryColor);
                         for (int i = 0; i < antennaLength; i++) {
                             x = snake.antennaX[i];
                             y = snake.antennaY[i];
@@ -392,7 +400,9 @@ public class GuiGame extends Gui {
                             }
                         }
                         endConnectedLines();
-                        beginConnectedLines(antennaScale * 4.0F, snake.antennaSecondaryColor);
+                        prevX = snake.antennaX[0];
+                        prevY = snake.antennaY[0];
+                        beginConnectedLines(antennaScale * 4.0F * globalScale, snake.antennaSecondaryColor);
                         for (int i = 0; i < antennaLength; i++) {
                             x = snake.antennaX[i];
                             y = snake.antennaY[i];
@@ -405,6 +415,7 @@ public class GuiGame extends Gui {
                         endConnectedLines();
                         if (snake.antennaTexture != null) {
                             GL11.glTranslatef(snake.antennaX[antennaLength - 1], snake.antennaY[antennaLength - 1], 0.0F);
+                            antennaScale = snake.scale * snake.antennaScale * 0.25F;
                             if (snake.antennaBottomRotate) {
                                 float bottomAngle = (float) (Math.atan2(snake.antennaY[antennaLength - 1] - snake.antennaY[antennaLength - 2], snake.antennaX[antennaLength - 1] - snake.antennaX[antennaLength - 2]) - snake.antennaBottomAngle);
                                 if (bottomAngle < 0 || bottomAngle >= SlytherClient.PI_2) {
@@ -419,9 +430,9 @@ public class GuiGame extends Gui {
                                 }
                                 snake.antennaBottomAngle = (float) ((snake.antennaBottomAngle + 0.15F * bottomAngle) % SlytherClient.PI_2);
                                 GL11.glRotatef((float) Math.toDegrees(snake.antennaBottomAngle), 0.0F, 0.0F, 1.0F);
+                                GL11.glTranslatef(32.0F * antennaScale, 0.0F, 0.0F);
                             }
                             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                            antennaScale = snake.scale * snake.antennaScale * 0.25F;
                             GL11.glScalef(antennaScale, antennaScale, 1.0F);
                             textureManager.bindTexture("/textures/" + snake.antennaTexture + ".png");
                             drawTexture(-64.0F, -64.0F, 0.0F, 0.0F, 128.0F, 128.0F, 128.0F, 128.0F);
@@ -481,7 +492,6 @@ public class GuiGame extends Gui {
 
     @Override
     public void update() {
-        prevZoomOffset = client.zoomOffset;
     }
 
     @Override

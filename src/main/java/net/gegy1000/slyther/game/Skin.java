@@ -43,5 +43,6 @@ public enum Skin {
     PEWDIEPIE,
     JELLY,
     SLUG,
-    GOOGLE_PLAY
+    GOOGLE_PLAY,
+    UNITED_KINGDOM
 }

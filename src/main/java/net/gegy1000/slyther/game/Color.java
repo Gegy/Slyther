@@ -11,7 +11,7 @@ public enum Color {
     LIGHT_RED(255, 64, 64),
     MAGENTA(224, 48, 224),
     WHITE(255, 255, 255),
-    LIGHT_BLUE_2(144, 153, 255),
+    LIGHT_BLUE_STARS(144, 153, 255),
     GRAY_1(80, 80, 80),
     YELLOW(255, 192, 80),
     GREEN_BLUE(40, 136, 96),
@@ -25,10 +25,11 @@ public enum Color {
     DARK_PURPLE(78, 35, 192),
     ORANGE(255, 86, 0),
     LIGHT_BLUE_6(101, 200, 232),
-    GRAY_2(128, 132, 144),
+    SILVER_GOLD_OUTLINE(128, 132, 144),
     GREEN(60, 192, 72),
-    LUMO_GREEN(0, 255, 83),
-    SLUG_RED(217, 69, 69);
+    JELLY_GREEN(0, 255, 83),
+    SLUG_RED(217, 69, 69),
+    UK(255, 64, 64);
 
     public float red, green, blue;
 
