@@ -168,4 +168,8 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
             }
         }
     }
+
+    public String getIp() {
+        return ip;
+    }
 }

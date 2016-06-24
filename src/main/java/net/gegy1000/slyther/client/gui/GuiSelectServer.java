@@ -103,7 +103,7 @@ public class GuiSelectServer extends Gui {
         drawCenteredLargeString(server.getClusterIp(), x, y, 0.4F, 0xFFFFFF);
         drawCenteredString(server.getCountryCode(), x, y - 15.0F, 0.4F, 0x00FFFF);
         int ping = server.getPing();
-        drawCenteredString("Ping: " + ping + "ms", x - 18.0F, y + 20.0F, 0.4F, ping < 200 ? 0x00FF00 : ping < 300 ? 0xFFAA00 : 0xFF0000);
+        drawCenteredString("Ping: " + ping + "ms", x - 18.0F, y + 20.0F, 0.4F, 0xFFFF00);
         float barHeight = 2;
         for (int i = 0; i < 5; i++) {
             drawRect(x + (i * 3.5F) + 20.0F, y + 24.0F - barHeight, 2.0F, barHeight, i > bars ? 0xAAAAAA : 0x00FF00);

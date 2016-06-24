@@ -155,6 +155,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     private IController controller = new DefaultController();
 
     private static final File CONFIGURATION_FILE = new File(SystemUtils.getGameFolder(), "config.json");
+    private String server;
 
     public SlytherClient() {
         try {
@@ -302,6 +303,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
                 } else {
                     networkManager = ClientNetworkManager.create(SlytherClient.this, temporaryServerSelection, configuration.shouldRecord);
                 }
+                server = networkManager.getIp();
             } catch (Exception e) {
                 UIUtils.displayException("Connection failed", e);
             }
@@ -603,5 +605,9 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         }
         player = null;
         networkManager = null;
+    }
+
+    public String getServer() {
+        return server;
     }
 }
