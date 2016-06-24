@@ -7,11 +7,13 @@ public class LeaderboardEntry {
     public int score;
     public Color color;
     public ConnectedClient client;
+    public boolean player;
 
-    public LeaderboardEntry(String name, int score, Color color) {
+    public LeaderboardEntry(String name, int score, Color color, boolean player) {
         this.name = name;
         this.score = score;
         this.color = color;
+        this.player = player;
     }
 
     public LeaderboardEntry(ConnectedClient client) {

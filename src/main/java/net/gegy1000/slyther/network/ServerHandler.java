@@ -22,17 +22,21 @@ public enum ServerHandler {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     List<Server> serverList;
+    List<Server> pingedServers = new ArrayList<>();
 
     private String encodedServerList;
 
     private Map<String, String> headers;
+
+    private CountryCodesContainer countryCodes;
 
     Lock serversAvailable = new ReentrantLock();
 
     public Map<String, String> getHeaders() {
         if (headers == null) {
             try (InputStreamReader reader = new InputStreamReader(SlytherClient.class.getResourceAsStream("/data/headers.json"))) {
-                headers = GSON.fromJson(reader, new TypeToken<Map<String, String>>(){}.getType());
+                headers = GSON.fromJson(reader, new TypeToken<Map<String, String>>() {
+                }.getType());
             } catch (IOException | JsonParseException e) {
                 Log.error("Unable to read headers");
                 Log.catching(e);
@@ -53,12 +57,28 @@ public enum ServerHandler {
         return serverList;
     }
 
+    public Map<String, String> getCountryCodes() {
+        if (countryCodes == null) {
+            try {
+                countryCodes = GSON.fromJson(new InputStreamReader(SlytherClient.class.getResourceAsStream("/data/country_codes.json")), CountryCodesContainer.class);
+            } catch (Exception e) {
+                Log.catching(e);
+                return new HashMap<>();
+            }
+        }
+        return countryCodes.codes;
+    }
+
     public Server getServerForPlay() {
         serversAvailable.lock();
         serverList.sort(null);
         Server server = serverList.get(new Random().nextInt(5));
         serversAvailable.unlock();
         return server;
+    }
+
+    public List<Server> getPingedServers() {
+        return pingedServers;
     }
 
     private List<Server> readServerList() {
@@ -198,6 +218,7 @@ public enum ServerHandler {
         private String ip;
         private List<String> ports;
         private int ping = -1;
+        private String countryCode;
 
         public Server(String ip, List<String> ports) {
             this.ip = ip;
@@ -226,6 +247,31 @@ public enum ServerHandler {
                 this.ping += ping;
             }
             ping /= pings.length;
+            if (!ServerHandler.INSTANCE.pingedServers.contains(this)) {
+                ServerHandler.INSTANCE.pingedServers.add(this);
+            }
+        }
+
+        public String getCountryCode() {
+            if (countryCode == null) {
+                new Thread(() -> {
+                    try {
+                        BufferedReader in = new BufferedReader(new InputStreamReader(new URL("http://api.wipmania.com/" + ip).openStream()));
+                        countryCode = in.readLine();
+                        Map<String, String> countryCodes = ServerHandler.INSTANCE.getCountryCodes();
+                        if (countryCodes.containsKey(countryCode)) {
+                            countryCode = countryCodes.get(countryCode);
+                        }
+                        if (countryCode.equalsIgnoreCase("xx")) {
+                            countryCode = "Unknown";
+                        }
+                    } catch (Exception e) {
+                        Log.catching(e);
+                    }
+                }).start();
+                countryCode = "Loading...";
+            }
+            return countryCode;
         }
 
         @Override
@@ -241,5 +287,9 @@ public enum ServerHandler {
     private class ClusterJsonContainer {
         public String ip;
         public List<String> ports;
+    }
+
+    private class CountryCodesContainer {
+        public Map<String, String> codes;
     }
 }

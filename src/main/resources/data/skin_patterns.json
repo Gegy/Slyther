@@ -651,12 +651,12 @@
         "pattern": [
           "LIGHT_BLUE_STARS",
           "LIGHT_BLUE_STARS",
-          "BLUE_1",
-          "BLUE_2",
+          "BLUE_LARGE_STARS",
+          "BLUE_SMALL_STARS",
           "LIGHT_BLUE_STARS",
           "LIGHT_BLUE_STARS",
-          "BLUE_2",
-          "BLUE_1"
+          "BLUE_SMALL_STARS",
+          "BLUE_LARGE_STARS"
         ],
         "hasAntenna": false,
         "antennaLength": 0,
@@ -715,8 +715,8 @@
       "skin": "BLUE_STARS",
       "details": {
         "pattern": [
-          "BLUE_2",
-          "BLUE_2"
+          "BLUE_SMALL_STARS",
+          "BLUE_SMALL_STARS"
         ],
         "hasAntenna": false,
         "antennaLength": 0,
@@ -935,13 +935,13 @@
           "LIGHT_YELLOW_2",
           "LIGHT_YELLOW_2",
           "LIGHT_YELLOW_2",
-          "BLUE_2",
-          "BLUE_1",
-          "BLUE_2",
-          "BLUE_1",
-          "BLUE_2",
-          "BLUE_1",
-          "BLUE_2",
+          "BLUE_SMALL_STARS",
+          "BLUE_LARGE_STARS",
+          "BLUE_SMALL_STARS",
+          "BLUE_LARGE_STARS",
+          "BLUE_SMALL_STARS",
+          "BLUE_LARGE_STARS",
+          "BLUE_SMALL_STARS",
           "LIGHT_YELLOW_2",
           "LIGHT_YELLOW_2",
           "LIGHT_YELLOW_2",

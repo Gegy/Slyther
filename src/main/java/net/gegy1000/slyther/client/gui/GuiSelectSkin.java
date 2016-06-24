@@ -177,18 +177,24 @@ public class GuiSelectSkin extends Gui {
             drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
             GL11.glPopMatrix();
         }
-        textureManager.bindTexture("/textures/snake_point.png");
+        float prevPointX = 0.0F;
+        float prevPointY = 0.0F;
         for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
             pointX = (xs.get(pointIndex));
             pointY = (ys.get(pointIndex));
             Color color = pattern[pointIndex % pattern.length];
-            float colorMultipler = 1.0F;
+            int i = pointIndex % 12;
+            if (i > 6) {
+                i = 6 - (i - 6);
+            }
+            textureManager.bindTexture("/textures/colors/snake_" + color.name().toLowerCase() + "_" + i + ".png");
+            float colorMultiplier = 1.0F;
             float offset = (pointIndex / 3.0F % 6.0F);
             if (offset >= 3.0F) {
                 offset = 3.0F - (offset - 3.0F);
             }
-            colorMultipler -= offset / 15.0F;
-            GL11.glColor4f(color.red * colorMultipler, color.green * colorMultipler, color.blue * colorMultipler, 1.0F);
+            colorMultiplier -= offset / 15.0F;
+            GL11.glColor4f(colorMultiplier, colorMultiplier, colorMultiplier, 1.0F);
             GL11.glPushMatrix();
             GL11.glTranslatef(pointX, pointY, 0);
             float pointScale = snake.scale * 0.25F;
@@ -196,8 +202,11 @@ public class GuiSelectSkin extends Gui {
                 pointScale *= 1 + (4 - pointIndex) * snake.headSwell;
             }
             GL11.glScalef(pointScale, pointScale, 1.0F);
+            GL11.glRotatef((float) Math.toDegrees(pointIndex == xs.size() - 1 ? Math.atan2(pointY - ys.get(pointIndex - 1), pointX - xs.get(pointIndex - 1)) : Math.atan2(pointY - prevPointY, pointX - prevPointX)) - 180.0F, 0.0F, 0.0F, 1.0F);
             drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
             GL11.glPopMatrix();
+            prevPointX = pointX;
+            prevPointY = pointY;
         }
         if (snake.faceTexture == null && !snake.oneEye) {
             GL11.glPushMatrix();
@@ -248,7 +257,7 @@ public class GuiSelectSkin extends Gui {
             }
             for (int i = 1; i <= antennaLength; i++) {
                 snake.antennaVelocityX[i] -= 0.3F;
-                snake.antennaVelocityY[i] += Math.cos(client.frameTicks / 10.0F - 7.0F * y / antennaLength) * 0.14F;
+                snake.antennaVelocityY[i] += Math.cos(client.frameTicks / 5.0F - 7.0F * i / antennaLength) * 0.14F;
                 x = (float) (snake.antennaX[i - 1] + (Math.random() * 2.0F - 1));
                 y = (float) (snake.antennaY[i - 1] + (Math.random() * 2.0F - 1));
                 float diffX = snake.antennaX[i] - x;

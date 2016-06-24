@@ -63,7 +63,7 @@ public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
                 }
             }
             int score = (int) Math.floor(15.0F * (client.getFPSL(length) + fam / client.getFMLT(length) - 1.0F) - 5.0F);
-            client.leaderboard.add(index - 1, new LeaderboardEntry(name, score, color));
+            client.leaderboard.add(index - 1, new LeaderboardEntry(name, score, color, index == playerIndex));
             index++;
         }
     }

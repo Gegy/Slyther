@@ -3,6 +3,7 @@ package net.gegy1000.slyther.client.render;
 import net.gegy1000.slyther.client.SlytherClient;
 import net.gegy1000.slyther.client.gui.Gui;
 import net.gegy1000.slyther.client.gui.GuiMainMenu;
+import net.gegy1000.slyther.game.Color;
 import net.gegy1000.slyther.util.Log;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -73,6 +74,13 @@ public class RenderHandler {
                 Log.catching(e);
             }
             init();
+            for (Color color : Color.values()) {
+                String name = color.name().toLowerCase();
+                for (int i = 0; i < 6; i++) {
+                    textureManager.bindTexture("/textures/colors/snake_" + name + "_" + i + ".png");
+                }
+                Log.debug("Load " + color.name() + " textures.");
+            }
             openGui(new GuiMainMenu());
         } catch (LWJGLException e) {
             Log.catching(e);

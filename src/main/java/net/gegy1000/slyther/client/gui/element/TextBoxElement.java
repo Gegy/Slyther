@@ -17,7 +17,7 @@ public class TextBoxElement extends Element {
         super(gui, posX - (width / 2.0F), posY - (height / 2.0F), width, height);
         this.text = text;
         this.function = function;
-        this.selectionIndex = text.length();
+        selectionIndex = text.length();
     }
 
     @Override
@@ -72,5 +72,13 @@ public class TextBoxElement extends Element {
 
     public String getText() {
         return text;
+    }
+
+    public void setText(String text) {
+        String previous = this.text;
+        this.text = text;
+        if (!previous.equals(text)) {
+            function.apply(this);
+        }
     }
 }

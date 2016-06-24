@@ -276,32 +276,34 @@ public class GuiGame extends Gui {
                             GL11.glPopMatrix();
                         }
                     }
-                    textureManager.bindTexture("/textures/snake_point.png");
+                    float prevPointX = 0.0F;
+                    float prevPointY = 0.0F;
                     for (int pointIndex = xs.size() - 1; pointIndex >= 0; pointIndex--) {
                         pointX = (xs.get(pointIndex));
                         pointY = (ys.get(pointIndex));
                         if (pointX >= renderHandler.snakeMinX && pointX <= renderHandler.snakeMaxX && pointY >= renderHandler.snakeMinY && pointY <= renderHandler.snakeMaxY) {
                             Color color = pattern[pointIndex % pattern.length];
-                            float colorMultipler = 1.0F;
-                            float offset = (pointIndex / 3.0F % 6.0F);
-                            if (offset >= 3.0F) {
-                                offset = 3.0F - (offset - 3.0F);
+                            int i = pointIndex % 12;
+                            if (i > 6) {
+                                i = 6 - (i - 6);
                             }
-                            colorMultipler -= offset / 15.0F;
+                            textureManager.bindTexture("/textures/colors/snake_" + color.name().toLowerCase() + "_" + i + ".png");
+                            float colorMultiplier = 1.0F;
+                            float offset;
                             if (snake.dead) {
                                 offset = (pointIndex + (client.frameTicks)) % 20.0F;
                                 if (offset > 10.0F) {
                                     offset = 10.0F - (offset - 10.0F);
                                 }
-                                colorMultipler += (offset - 5.0F) / 10.0F;
+                                colorMultiplier += (offset - 5.0F) / 10.0F;
                             } else if (snake.speed > snake.accelleratingSpeed) {
                                 offset = (pointIndex + client.frameTicks / 2) % 20.0F;
                                 if (offset > 10.0F) {
                                     offset = 10.0F - (offset - 10.0F);
                                 }
-                                colorMultipler += offset / 10.0F;
+                                colorMultiplier += offset / 10.0F;
                             }
-                            GL11.glColor4f(color.red * colorMultipler, color.green * colorMultipler, color.blue * colorMultipler, 1.0F - snake.deadAmt * 0.8F);
+                            GL11.glColor4f(colorMultiplier, colorMultiplier, colorMultiplier, 1.0F - snake.deadAmt * 0.8F);
                             GL11.glPushMatrix();
                             GL11.glTranslatef(pointX, pointY, 0);
                             float pointScale = snake.scale * 0.25F;
@@ -309,9 +311,12 @@ public class GuiGame extends Gui {
                                 pointScale *= 1 + (4 - pointIndex) * snake.headSwell;
                             }
                             GL11.glScalef(pointScale, pointScale, 1.0F);
+                            GL11.glRotatef((float) Math.toDegrees(pointIndex == xs.size() - 1 ? Math.atan2(pointY - ys.get(pointIndex - 1), pointX - xs.get(pointIndex - 1)) : Math.atan2(pointY - prevPointY, pointX - prevPointX)) - 180.0F, 0.0F, 0.0F, 1.0F);
                             drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
                             GL11.glPopMatrix();
                         }
+                        prevPointX = pointX;
+                        prevPointY = pointY;
                     }
                     if (snake.faceTexture == null && !snake.oneEye) {
                         GL11.glPushMatrix();
@@ -459,7 +464,7 @@ public class GuiGame extends Gui {
             for (int i = 1; i <= leaderboard.size(); i++) {
                 LeaderboardEntry leaderboardEntry = leaderboard.get(i - 1);
                 String text = i + ". " + leaderboardEntry;
-                drawString(text, renderResolution.getWidth() - (font.getWidth(text) / 2.0F) - 8.0F, leaderboardY, 0.5F, leaderboardEntry.color.toHex() | alpha << 24);
+                drawString(text, renderResolution.getWidth() - (font.getWidth(text) / 2.0F) - 8.0F, leaderboardY, 0.5F, (leaderboardEntry.player ? Color.WHITE : leaderboardEntry.color).toHex() | (leaderboardEntry.player ? 255 : alpha) << 24);
 
                 leaderboardY += font.getHeight() / 2.0F + 2;
                 alpha -= alphaChange;

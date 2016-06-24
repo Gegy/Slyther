@@ -115,6 +115,8 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
 
     public ClientConfig configuration;
 
+    public String temporaryServerSelection;
+
     public static final File RECORD_FILE = new File(SystemUtils.getGameFolder(), "game.record");
 
     static {
@@ -162,6 +164,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
             UIUtils.displayException("Unable to read config", e);
             Log.catching(e);
         }
+        temporaryServerSelection = configuration.server;
         Reflections reflections = new Reflections("");
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Controller.class);
         for (Class<?> controller : annotated) {
@@ -293,11 +296,11 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
         allowUserInput = true;
         new Thread(() -> {
             try {
-                if (configuration.server == null) {
+                if (temporaryServerSelection == null) {
                     ServerHandler.Server server = ServerHandler.INSTANCE.getServerForPlay();
                     networkManager = ClientNetworkManager.create(SlytherClient.this, server, configuration.shouldRecord);
                 } else {
-                    networkManager = ClientNetworkManager.create(SlytherClient.this, configuration.server, configuration.shouldRecord);
+                    networkManager = ClientNetworkManager.create(SlytherClient.this, temporaryServerSelection, configuration.shouldRecord);
                 }
             } catch (Exception e) {
                 UIUtils.displayException("Connection failed", e);
@@ -360,7 +363,7 @@ public class SlytherClient extends Game<ClientNetworkManager, ClientConfig> impl
     }
 
     public void update() {
-            runTasks();
+        runTasks();
         if (networkManager != null) {
             long time = System.currentTimeMillis();
             float lastDelta2;

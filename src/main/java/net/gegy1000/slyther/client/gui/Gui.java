@@ -203,8 +203,12 @@ public abstract class Gui {
 
     public void drawRect(float x, float y, float width, float height, int color) {
         GL11.glColor4f((color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 1.0F);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glRectf(x, y, x + width, y + height);
+        drawRect(x, y, width, height);
+    }
+
+    public void drawRectAlpha(float x, float y, float width, float height, int color) {
+        GL11.glColor4f((color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, (color >> 24 & 0xFF) / 255.0F);
+        drawRect(x, y, width, height);
     }
 
     public void drawVertex(float x, float y, float u, float v, float uMultiplier, float vMultiplier) {
