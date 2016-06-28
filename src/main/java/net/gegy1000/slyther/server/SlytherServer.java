@@ -74,7 +74,7 @@ public class SlytherServer extends Game<ServerNetworkManager, ServerConfig> {
         double delta = 0;
         long previousTime = System.nanoTime();
         long timer = System.currentTimeMillis();
-        double nanoUpdates = 1000000000.0 / 20.0;
+        double nanoUpdates = 1000000000.0 / 30.0;
         lastTickTime = System.currentTimeMillis();
         while (true) {
             long currentTime = System.nanoTime();

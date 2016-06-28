@@ -64,10 +64,10 @@ public abstract class Game<NET extends NetworkManager, CFG extends Configuration
         return null;
     }
 
-    public List<Entity> getEntitiesInSector(Sector sector) {
+    public List<Entity> getMovingEntitiesInSector(Sector sector) {
         List<Entity> entities = new ArrayList<>();
         for (Entity entity : this.entities) {
-            if (entity.shouldTrack(sector)) {
+            if (entity.canMove() && entity.shouldTrack(sector)) {
                 entities.add(entity);
             }
         }

@@ -311,7 +311,13 @@ public class GuiGame extends Gui {
                                 pointScale *= 1 + (4 - pointIndex) * snake.headSwell;
                             }
                             GL11.glScalef(pointScale, pointScale, 1.0F);
-                            GL11.glRotatef((float) Math.toDegrees(pointIndex == xs.size() - 1 ? Math.atan2(pointY - ys.get(pointIndex - 1), pointX - xs.get(pointIndex - 1)) : Math.atan2(pointY - prevPointY, pointX - prevPointX)) - 180.0F, 0.0F, 0.0F, 1.0F);
+                            double angle;
+                            if (pointIndex == xs.size() - 1 && pointIndex != 0) {
+                                angle = Math.atan2(pointY - ys.get(pointIndex - 1), pointX - xs.get(pointIndex - 1));
+                            } else {
+                                angle = Math.atan2(pointY - prevPointY, pointX - prevPointX);
+                            }
+                            GL11.glRotatef((float) Math.toDegrees(angle) - 180.0F, 0.0F, 0.0F, 1.0F);
                             drawTexture(-64, -64, 0, 0, 128, 128, 128, 128);
                             GL11.glPopMatrix();
                         }
@@ -483,8 +489,8 @@ public class GuiGame extends Gui {
                     }
                 }
             }
-            float locationMarkerX = (renderResolution.getWidth() - 100.0F) + Math.round((client.player.posX - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7);
-            float locationMarkerY = (renderResolution.getHeight() - 100.0F) + Math.round((client.player.posY - client.GAME_RADIUS) * 40 / client.GAME_RADIUS + 52 - 7);
+            float locationMarkerX = (renderResolution.getWidth() - 100.0F) + ((client.player.posX - client.GAME_RADIUS) * 40.0F / client.GAME_RADIUS + 52.0F - 8.0F);
+            float locationMarkerY = (renderResolution.getHeight() - 100.0F) + ((client.player.posY - client.GAME_RADIUS) * 4.0F / client.GAME_RADIUS + 52.0F - 8.0F);
             drawCircle(locationMarkerX, locationMarkerY, 3.0F, 0x202020);
             drawCircle(locationMarkerX, locationMarkerY, 2.0F, 0xFFFFFF);
             if (client.lagging) {
@@ -505,7 +511,6 @@ public class GuiGame extends Gui {
         if (key == Keyboard.KEY_BACK || key == Keyboard.KEY_ESCAPE) {
             client.close();
             closeGui();
-            client.openGui(new GuiMainMenu());
         }
     }
 

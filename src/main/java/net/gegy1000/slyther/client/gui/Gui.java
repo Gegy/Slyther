@@ -5,6 +5,7 @@ import net.gegy1000.slyther.client.gui.element.Element;
 import net.gegy1000.slyther.client.render.RenderHandler;
 import net.gegy1000.slyther.client.render.RenderResolution;
 import net.gegy1000.slyther.client.render.TextureManager;
+import net.gegy1000.slyther.util.Log;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.TrueTypeFont;
 
@@ -36,9 +37,14 @@ public abstract class Gui {
     public abstract void init();
 
     public final void renderBase(float mouseX, float mouseY) {
-        render(mouseX, mouseY);
-        for (Element element : elements) {
-            element.render(mouseX, mouseY);
+        try {
+            render(mouseX, mouseY);
+            for (Element element : elements) {
+                element.render(mouseX, mouseY);
+            }
+        } catch (Exception e) {
+            Log.error("Error while rendering " + this);
+            Log.catching(e);
         }
     }
 

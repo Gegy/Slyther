@@ -104,7 +104,7 @@ public class ConnectedClient {
             }
             List<Entity> entities = new ArrayList<>();
             for (Sector sector : trackingSectors) {
-                entities.addAll(server.getEntitiesInSector(sector));
+                entities.addAll(server.getMovingEntitiesInSector(sector));
             }
             List<Entity> untrack = new ArrayList<>();
             List<Entity> track = new ArrayList<>();

@@ -16,11 +16,8 @@ public class MessageUpdateLeaderboard extends SlytherServerMessageBase {
     @Override
     public void write(MessageByteBuffer buffer, SlytherServer server, ConnectedClient client) {
         int playerIndex = 0;
-        for (int i = 0; i < server.leaderboard.size(); i++) {
-            if (server.leaderboard.get(i).client.equals(client)) {
-                playerIndex = i;
-                break;
-            }
+        if (client.rank > 0 && client.rank <= server.leaderboard.size()) {
+            playerIndex = client.rank;
         }
         buffer.writeUInt8(playerIndex);
         buffer.writeUInt16(client.rank);
