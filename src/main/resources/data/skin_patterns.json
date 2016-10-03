@@ -1050,19 +1050,14 @@
           "WHITE",
           "WHITE"
         ],
-        "hasAntenna": true,
-        "antennaLength": 9,
-        "antennaPrimaryColor": 5255216,
-        "antennaSecondaryColor": 16732248,
+        "hasAntenna": false,
         "eyeColor": 16777215,
         "abrot": true,
         "atia": 0.5,
         "atwg": true,
         "oneEye": false,
         "pma": 2.3,
-        "swell": 0.0,
-        "antennaTexture": "united_kingdom",
-        "antennaScale": 1.5
+        "swell": 0.0
       }
     }
   ]
