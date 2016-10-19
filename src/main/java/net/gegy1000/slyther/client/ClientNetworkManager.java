@@ -8,7 +8,7 @@ import net.gegy1000.slyther.network.NetworkManager;
 import net.gegy1000.slyther.network.ServerHandler;
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
-import net.gegy1000.slyther.network.message.client.MessageClientSetup;
+import net.gegy1000.slyther.network.message.client.MessageStartLogin;
 import net.gegy1000.slyther.util.Log;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_17;
@@ -81,8 +81,7 @@ public class ClientNetworkManager extends WebSocketClient implements NetworkMana
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
-        send(new MessageClientSetup(client.configuration.nickname, client.configuration.skin));
-        ping();
+        send(new MessageStartLogin());
         Log.info("Connected to {}", ip);
         lastPacketTime = System.currentTimeMillis();
     }

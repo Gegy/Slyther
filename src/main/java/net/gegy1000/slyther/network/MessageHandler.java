@@ -2,8 +2,30 @@ package net.gegy1000.slyther.network;
 
 import net.gegy1000.slyther.network.message.SlytherClientMessageBase;
 import net.gegy1000.slyther.network.message.SlytherServerMessageBase;
-import net.gegy1000.slyther.network.message.client.*;
-import net.gegy1000.slyther.network.message.server.*;
+import net.gegy1000.slyther.network.message.client.MessageAccelerate;
+import net.gegy1000.slyther.network.message.client.MessageClientPing;
+import net.gegy1000.slyther.network.message.client.MessageClientSetup;
+import net.gegy1000.slyther.network.message.client.MessageSetAngle;
+import net.gegy1000.slyther.network.message.client.MessageSetTurn;
+import net.gegy1000.slyther.network.message.server.MessageAddSector;
+import net.gegy1000.slyther.network.message.server.MessageGotServerVersion;
+import net.gegy1000.slyther.network.message.server.MessageNewFood;
+import net.gegy1000.slyther.network.message.server.MessageNewPrey;
+import net.gegy1000.slyther.network.message.server.MessageNewSnake;
+import net.gegy1000.slyther.network.message.server.MessagePing;
+import net.gegy1000.slyther.network.message.server.MessagePlayerDeath;
+import net.gegy1000.slyther.network.message.server.MessagePopulateSector;
+import net.gegy1000.slyther.network.message.server.MessagePreyPositionUpdate;
+import net.gegy1000.slyther.network.message.server.MessageRemoveFood;
+import net.gegy1000.slyther.network.message.server.MessageRemoveSector;
+import net.gegy1000.slyther.network.message.server.MessageRemoveSnakePoint;
+import net.gegy1000.slyther.network.message.server.MessageSetup;
+import net.gegy1000.slyther.network.message.server.MessageSnakeMovement;
+import net.gegy1000.slyther.network.message.server.MessageUpdateLeaderboard;
+import net.gegy1000.slyther.network.message.server.MessageUpdateLongestPlayer;
+import net.gegy1000.slyther.network.message.server.MessageUpdateMap;
+import net.gegy1000.slyther.network.message.server.MessageUpdateSnake;
+import net.gegy1000.slyther.network.message.server.MessageUpdateSnakeLength;
 import net.gegy1000.slyther.util.Log;
 
 import java.util.HashMap;
@@ -33,6 +55,7 @@ public enum MessageHandler {
         registerServer(MessageRemoveSector.class);
         registerServer(MessagePlayerDeath.class);
         registerServer(MessageUpdateMap.class);
+        registerServer(MessageGotServerVersion.class);
     }
 
     public void registerServer(Class<? extends SlytherServerMessageBase> message) {
