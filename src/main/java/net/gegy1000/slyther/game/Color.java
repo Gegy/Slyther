@@ -29,7 +29,14 @@ public enum Color {
     GREEN(60, 192, 72),
     JELLY_GREEN(0, 255, 83),
     SLUG_RED(217, 69, 69),
-    UK(255, 64, 64);
+    UK(255, 64, 64),
+    SHINY_SILVER(32, 32, 32),
+    SHINY_BLUE(80, 80, 288),
+    SHINY_RED(288, 80, 80),
+    SHINY_YELLOW(224, 224, 80),
+    SHINY_ORANGE(224, 128, 48),
+    SHINY_PURPLE(224, 80, 224),
+    SHINY_GREEN(80, 224, 80);
 
     public float red, green, blue;
 

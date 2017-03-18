@@ -1039,16 +1039,273 @@
       "skin": "UNITED_KINGDOM",
       "details": {
         "pattern": [
-          "UK",
-          "UK",
-          "UK",
-          "UK",
-          "UK",
-          "UK",
-          "UK",
-          "UK",
+          "UK"
+        ],
+        "hasAntenna": false,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0
+      }
+    },
+    {
+      "skin": "SHINY_SILVER",
+      "details": {
+        "pattern": [
+          "SHINY_SILVER"
+        ],
+        "hasAntenna": false,
+        "eyeColor": 13948116,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0
+      }
+    },
+    {
+      "skin": "CANADA",
+      "details": {
+        "pattern": [
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
           "WHITE",
-          "WHITE"
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED"
+        ],
+        "hasAntenna": true,
+        "antennaLength": 9,
+        "antennaPrimaryColor": 12591136,
+        "antennaSecondaryColor": 16728128,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0,
+        "antennaTexture": "leaf",
+        "antennaScale": 1.25
+      }
+    },
+    {
+      "skin": "SWITZERLAND",
+      "details": {
+        "pattern": [
+          "LIGHT_RED"
+        ],
+        "hasAntenna": true,
+        "antennaLength": 9,
+        "antennaPrimaryColor": 12591136,
+        "antennaSecondaryColor": 16728128,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0,
+        "antennaTexture": "swiss",
+        "antennaScale": 1.25
+      }
+    },
+    {
+      "skin": "MOLDOVA",
+      "details": {
+        "pattern": [
+          "LIGHT_BLUE_5",
+          "LIGHT_BLUE_5",
+          "LIGHT_BLUE_5",
+          "LIGHT_YELLOW_2",
+          "LIGHT_YELLOW_2",
+          "LIGHT_YELLOW_2",
+          "LIGHT_YELLOW_2",
+          "LIGHT_YELLOW_2",
+          "LIGHT_YELLOW_2",
+          "LIGHT_YELLOW_2",
+          "LIGHT_YELLOW_2",
+          "LIGHT_YELLOW_2",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_RED",
+          "LIGHT_BLUE_5",
+          "LIGHT_BLUE_5",
+          "LIGHT_BLUE_5"
+        ],
+        "hasAntenna": true,
+        "antennaLength": 9,
+        "antennaPrimaryColor": 3158271,
+        "antennaSecondaryColor": 6316287,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0,
+        "antennaTexture": "moldova",
+        "antennaScale": 1.25
+      }
+    },
+    {
+      "skin": "VIETNAM",
+      "details": {
+        "pattern": [
+          "LIGHT_RED"
+        ],
+        "hasAntenna": true,
+        "antennaLength": 9,
+        "antennaPrimaryColor": 12591136,
+        "antennaSecondaryColor": 16728128,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.75,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0,
+        "antennaTexture": "vietnam",
+        "antennaScale": 1.25
+      }
+    },
+    {
+      "skin": "ARGENTINA",
+      "details": {
+        "pattern": [
+          "LIGHT_BLUE_6",
+          "LIGHT_BLUE_6",
+          "LIGHT_BLUE_6",
+          "LIGHT_BLUE_6",
+          "LIGHT_BLUE_6",
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "WHITE",
+          "LIGHT_BLUE_6",
+          "LIGHT_BLUE_6"
+        ],
+        "hasAntenna": true,
+        "antennaLength": 11,
+        "antennaPrimaryColor": 6597839,
+        "antennaSecondaryColor": 8707327,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.7,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0,
+        "antennaTexture": "argentina",
+        "antennaScale": 1.25
+      }
+    },
+    {
+      "skin": "SHINY_BLUE",
+      "details": {
+        "pattern": [
+          "SHINY_BLUE"
+        ],
+        "hasAntenna": false,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0
+      }
+    },
+    {
+      "skin": "SHINY_RED",
+      "details": {
+        "pattern": [
+          "SHINY_RED"
+        ],
+        "hasAntenna": false,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0
+      }
+    },
+    {
+      "skin": "SHINY_YELLOW",
+      "details": {
+        "pattern": [
+          "SHINY_YELLOW"
+        ],
+        "hasAntenna": false,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0
+      }
+    },
+    {
+      "skin": "SHINY_ORANGE",
+      "details": {
+        "pattern": [
+          "SHINY_ORANGE"
+        ],
+        "hasAntenna": false,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0
+      }
+    },
+    {
+      "skin": "SHINY_PURPLE",
+      "details": {
+        "pattern": [
+          "SHINY_PURPLE"
+        ],
+        "hasAntenna": false,
+        "eyeColor": 16777215,
+        "abrot": true,
+        "atia": 0.5,
+        "atwg": true,
+        "oneEye": false,
+        "pma": 2.3,
+        "swell": 0.0
+      }
+    },
+    {
+      "skin": "SHINY_GREEN",
+      "details": {
+        "pattern": [
+          "SHINY_GREEN"
         ],
         "hasAntenna": false,
         "eyeColor": 16777215,
