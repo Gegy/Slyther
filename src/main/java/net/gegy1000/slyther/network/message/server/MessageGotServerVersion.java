@@ -26,13 +26,62 @@ public class MessageGotServerVersion extends SlytherServerMessageBase {
 
     @Override
     public void read(MessageByteBuffer buffer, SlytherClient client, ClientNetworkManager networkManager) {
-        version = buffer.readASCIIBytes();
-        networkManager.send(new MessageClientRiddleAnswer(this.version));
-        networkManager.send(new MessageClientSetup(client.configuration.nickname, client.configuration.skin));
+        networkManager.send(decodeSecret(buffer.array()));
+        byte[] initRequest = new byte[4 + client.configuration.nickname.length()];
+        initRequest[0] = 115;
+        initRequest[1] = 10;
+        initRequest[2] = (byte) client.configuration.skin.ordinal();
+        initRequest[3] = (byte) client.configuration.nickname.length();
+        for (int i = 0; i < client.configuration.nickname.length(); i++) {
+            initRequest[4 + i] = (byte) client.configuration.nickname.codePointAt(i);
+        }
+        networkManager.send(initRequest);
     }
 
     @Override
     public int[] getMessageIds() {
         return new int[] { '6' };
+    }
+
+    private byte[] decodeSecret(byte[] data) {
+        
+        int[] secret = new int[data.length];
+        for (int i = 0; i < data.length; i++) {
+            secret[i] = data[i] & 0xFF;
+        }
+
+        byte[] result = new byte[24];
+
+        int globalValue = 0;
+        for (int i = 0; i < 24; i++) {
+            int value1 = secret[17 + i * 2];
+            if (value1 <= 96) {
+                value1 += 32;
+            }
+            value1 = (value1 - 98 - i * 34) % 26;
+            if (value1 < 0) {
+                value1 += 26;
+            }
+
+            int value2 = secret[18 + i * 2];
+            if (value2 <= 96) {
+                value2 += 32;
+            }
+            value2 = (value2 - 115 - i * 34) % 26;
+            if (value2 < 0) {
+                value2 += 26;
+            }
+
+            int interimResult = (value1 << 4) | value2;
+            int offset = interimResult >= 97 ? 97 : 65;
+            interimResult -= offset;
+            if (i == 0) {
+                globalValue = 2 + interimResult;
+            }
+            result[i] = (byte) ((interimResult + globalValue) % 26 + offset);
+            globalValue += 3 + interimResult;
+        }
+
+        return result;
     }
 }
